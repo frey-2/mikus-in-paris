@@ -1,0 +1,53 @@
+{
+  "topics": [
+    {
+      "id": "top-1",
+      "title": "1. Úvod do elektromagnetizmu",
+      "breadcrumb": "Fyzika > 1. Úvod",
+      "timeText": "Upravené pred 2 hodinami",
+      "content": "Elektromagnetizmus skúma vzájomné pôsobenie elektrických a magnetických polí. Tieto javy sú základom modernej elektroniky, prenosu energie a telekomunikácií. Základnou veličinou je elektrický náboj."
+    },
+    {
+      "id": "top-2",
+      "title": "2. Elektrický náboj a jeho vlastnosti",
+      "breadcrumb": "Fyzika > 2. Elektrický náboj",
+      "timeText": "Dnes o 11:42",
+      "content": "Elektrický náboj je fundamentálna vlastnosť hmoty. Rozlišujeme kladný a záporný náboj. Podľa zákona zachovania náboja v izolovanej sústave zostáva celkový náboj konštantný. Jednotkou náboja je Coulomb (C)."
+    },
+    {
+      "id": "top-3",
+      "title": "2.1 Elementárny náboj a kvantovanie",
+      "breadcrumb": "Fyzika > 2. Náboj > 2.1 Kvantovanie",
+      "timeText": "Upravené pred 3 dňami",
+      "content": "Elementárny náboj e je najmenšie množstvo elektrického náboja, ktoré môže existovať ako voľná častica. Hodnota e = 1.602 × 10⁻¹⁹ C je základnou fyzikálnou konštantou."
+    },
+    {
+      "id": "top-4",
+      "title": "3. Magnetizmus a magnetické pole",
+      "breadcrumb": "Fyzika > 3. Magnetizmus",
+      "timeText": "Upravené včera",
+      "content": "Magnetické pole vzniká pohybom elektrických nábojov (elektrickým prúdom) alebo magnetickými momentmi elementárnych častíc."
+    },
+    {
+      "id": "top-5",
+      "title": "4. Coulombov zákon a sila",
+      "breadcrumb": "Fyzika > 4. Coulombov zákon",
+      "timeText": "Upravené 24. septembra",
+      "content": "Elektrostatická sila medzi dvoma bodovými nábojmi je priamo úmerná súčinu ich veľkostí a nepriamo úmerná štvorcu ich vzdialenosti."
+    }
+  ],
+  "topicTodos": {
+    "top-2": [
+      { "id": 1, "text": "Overiť invariantnosť náboja v skriptách", "done": true },
+      { "id": 2, "text": "Doplniť meranie špecifického náboja", "done": false }
+    ]
+  },
+  "musicPresets": [
+    { "name": "🩵 1 A.M. Study Session - Lofi Girl", "url": "https://www.youtube.com/watch?v=lTRiuFIWV54" },
+    { "name": "🌌 4 A.M. Study Session - Lofi Beats", "url": "https://www.youtube.com/watch?v=TURbeWK2wwg" },
+    { "name": "⚡ Synthwave Chill Radio", "url": "https://www.youtube.com/watch?v=4xDzrJKXOOY" },
+    { "name": "🎹 Relaxing Vocaloid Chill Lofi", "url": "https://www.youtube.com/watch?v=Ow6G-LkGXRQ" }
+  ],
+  "authorPin": "7567"
+}
+

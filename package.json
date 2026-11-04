@@ -1,0 +1,25 @@
+{
+  "name": "mikus-in-paris",
+  "version": "2.0.0",
+  "description": "Mikus in Paris 2.0 - Vedecká a Študijná Cyber Platforma",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "hatsune-miku",
+    "cyber-neon",
+    "research-platform",
+    "study",
+    "node",
+    "express"
+  ],
+  "author": "Frey",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}
+

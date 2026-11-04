@@ -1,0 +1,3132 @@
+<!DOCTYPE html>
+<html lang="sk" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mikus in Paris 2.0 - Vedecká a Študijná Platforma</title>
+  <!-- Firebase SDK (compat — works in plain HTML, no npm needed) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <!-- YouTube IFrame API -->
+  <script id="ytIframeApiScript" src="https://www.youtube.com/iframe_api"></script>
+  <style>
+    /* =========================================================
+       THEME DEFINITIONS: HATSUNE MIKU CYBER NEON
+       ========================================================= */
+    :root[data-theme="dark"] {
+      --bg: #04090f;
+      --bg-radial: radial-gradient(circle at 50% 0%, #082433 0%, #04090f 75%);
+      --surface: #0a1722;
+      --surface-card: rgba(14, 28, 40, 0.88);
+      --miku-cyan: #39c5bb;
+      --miku-neon: #00ffff;
+      --miku-glow: rgba(0, 255, 255, 0.35);
+      --miku-pink: #ff2a85;
+      --miku-pink-glow: rgba(255, 42, 133, 0.4);
+      --text: #e6fbfc;
+      --text-muted: #7ca3b5;
+      --border: rgba(57, 197, 187, 0.3);
+      --border-active: #00ffff;
+      --input-bg: #050d14;
+    }
+
+    /* LIGHT MODE: Pale Neon Turquoise (Nie biele!) */
+    :root[data-theme="light"] {
+      --bg: #bbf0eb;
+      --bg-radial: radial-gradient(circle at 50% 0%, #d5f8f5 0%, #aeece6 75%);
+      --surface: #c2f3ee;
+      --surface-card: rgba(190, 244, 239, 0.9);
+      --miku-cyan: #008f82;
+      --miku-neon: #006b77;
+      --miku-glow: rgba(0, 168, 150, 0.3);
+      --miku-pink: #e60067;
+      --miku-pink-glow: rgba(230, 0, 103, 0.3);
+      --text: #052631;
+      --text-muted: #2d5d6c;
+      --border: rgba(0, 143, 130, 0.45);
+      --border-active: #006b77;
+      --input-bg: #d2f7f3;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-radial);
+      background-attachment: fixed;
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      position: sticky;
+      top: 10px;
+      z-index: 1000;
+      max-width: 1440px;
+      margin: 0 auto 14px auto;
+      background: var(--surface-card);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 9px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px var(--miku-glow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .brand-logo { font-size: 22px; filter: drop-shadow(0 0 6px var(--miku-neon)); }
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, var(--miku-neon), var(--miku-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Pinned Pomodoro Timer in Center */
+    .pinned-pomodoro {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 3px 12px;
+      box-shadow: 0 0 12px var(--miku-glow);
+    }
+    .pinned-pomodoro.active { display: flex; }
+    .pinned-time {
+      font-family: monospace;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--miku-neon);
+      letter-spacing: 1px;
+    }
+    .pomo-control-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .pomo-control-btn:hover { color: var(--miku-neon); background: rgba(57, 197, 187, 0.2); }
+
+    /* Top Actions */
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-nav {
+      background: rgba(57, 197, 187, 0.12);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-nav:hover {
+      background: rgba(57, 197, 187, 0.25);
+      border-color: var(--miku-neon);
+      color: var(--miku-neon);
+      box-shadow: 0 0 10px var(--miku-glow);
+    }
+    .btn-nav.active {
+      background: var(--miku-cyan);
+      color: #04090f;
+      border-color: var(--miku-neon);
+      font-weight: 700;
+    }
+
+    /* Zen Indicator */
+    .zen-indicator {
+      display: none;
+      background: var(--miku-pink);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px var(--miku-pink-glow);
+      cursor: pointer;
+      animation: pulse 2s infinite;
+    }
+    .zen-indicator.active { display: inline-flex; align-items: center; gap: 4px; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+    /* Theme Toggle */
+    .theme-toggle-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.25s;
+    }
+    .theme-toggle-btn:hover {
+      border-color: var(--miku-neon);
+      box-shadow: 0 0 12px var(--miku-glow);
+      transform: rotate(20deg);
+    }
+
+    /* =========================================================
+       VIEW 1: OBSIDIAN GRAPH MAP (PAN & ZOOM ENGINE)
+       ========================================================= */
+    #graphView {
+      max-width: 1440px;
+      margin: 0 auto;
+      height: calc(100vh - 90px);
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+    }
+    .graph-banner {
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      z-index: 10;
+      background: rgba(6, 17, 26, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      pointer-events: none;
+    }
+    .graph-banner h2 { font-size: 14px; color: var(--miku-neon); }
+    .graph-banner p { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+
+    .graph-controls {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 10;
+      display: flex;
+      gap: 6px;
+    }
+    .graph-ctrl-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .graph-ctrl-btn:hover { border-color: var(--miku-neon); color: var(--miku-neon); }
+
+    .graph-cta-btn {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      z-index: 10;
+      background: linear-gradient(135deg, var(--miku-cyan), var(--miku-pink));
+      color: #fff;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      box-shadow: 0 0 15px var(--miku-glow);
+      transition: all 0.25s;
+    }
+    .graph-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 0 22px var(--miku-pink-glow); }
+
+    #graphCanvas {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+
+    /* =========================================================
+       VIEW 2: REGULAR 3-COLUMN STUDIO LAYOUT
+       ========================================================= */
+    #studioView {
+      display: none;
+      max-width: 1440px;
+      margin: 0 auto;
+      grid-template-columns: 280px 1fr 310px;
+      gap: 16px;
+      height: calc(100vh - 90px);
+    }
+    #studioView.active { display: grid; }
+
+    /* ZEN REŽIM: Ľavý panel s témami OSTÁVA viditeľný pre navigáciu, pravý panel (hudba, úlohy) sa skryje */
+    body.zen-active #studioView {
+      grid-template-columns: 280px 1fr !important;
+      gap: 20px !important;
+      max-width: 1300px !important;
+    }
+    body.zen-active .side-panel-right { display: none !important; }
+    body.zen-active #topPomodoro { opacity: 0.25; }
+
+    /* REŽIM IBA NA ČÍTANIE (READ-ONLY OCHRANA PRE NÁVŠTEVNÍKOV) */
+    body.readonly-mode .doc-content-editor { cursor: default; }
+    body.readonly-mode .doc-title-input { pointer-events: none; border-bottom-color: transparent !important; }
+    body.readonly-mode .insert-toolbar,
+    body.readonly-mode .btn-add-todo,
+    body.readonly-mode .todo-del-btn,
+    body.readonly-mode .module-delete-btn,
+    body.readonly-mode .btn-cyber-sm,
+    body.readonly-mode .todo-input-bar {
+      display: none !important;
+    }
+    body.readonly-mode #docSaveIndicator {
+      color: var(--text-muted) !important;
+    }
+
+    .side-panel {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow-y: auto;
+      padding: 16px;
+      position: relative;
+    }
+
+    /* Left Sidebar: Search & Tree */
+    .search-wrapper { position: relative; margin-bottom: 12px; z-index: 50; }
+    .search-input-box {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+    .search-input-box:focus-within { border-color: var(--miku-neon); box-shadow: 0 0 12px var(--miku-glow); }
+    .search-input-box input {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      outline: none;
+      width: 100%;
+      font-size: 13px;
+    }
+
+    .search-dropdown {
+      display: none;
+      position: absolute;
+      top: 40px;
+      left: 0;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.7), 0 0 15px var(--miku-glow);
+      overflow: hidden;
+      z-index: 100;
+    }
+    .search-dropdown-item {
+      padding: 8px 12px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .search-dropdown-item:hover {
+      background: rgba(57, 197, 187, 0.2);
+      color: var(--miku-neon);
+      padding-left: 16px;
+    }
+
+    .chapter-tree-item {
+      padding: 9px 12px;
+      border-radius: 8px;
+      margin-bottom: 5px;
+      cursor: pointer;
+      font-size: 13px;
+      border: 1px solid transparent;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .chapter-tree-item:hover {
+      transform: scale(1.025);
+      background: rgba(57, 197, 187, 0.15);
+      border-color: var(--border);
+      color: var(--miku-neon);
+    }
+    .chapter-tree-item.active {
+      background: rgba(57, 197, 187, 0.2);
+      border-left: 3px solid var(--miku-neon);
+      font-weight: 700;
+      color: var(--text);
+    }
+    .tree-time { display: block; font-size: 10px; color: var(--miku-cyan); margin-top: 2px; }
+
+    /* Center Main Writing Studio */
+    .studio-main {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow-y: auto;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+    }
+    .editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+    .doc-breadcrumb { font-size: 12px; color: var(--text-muted); }
+    .doc-title-input {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      background: transparent;
+      border: none;
+      outline: none;
+      width: 100%;
+      margin-bottom: 12px;
+      border-bottom: 1px dashed transparent;
+      transition: border 0.2s;
+    }
+    .doc-title-input:focus { border-bottom-color: var(--miku-neon); }
+
+    /* Toolbar for Adding Insertable Modules */
+    .insert-toolbar {
+      display: flex;
+      gap: 8px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      margin-bottom: 14px;
+      align-items: center;
+    }
+    .insert-toolbar span.label { font-size: 11px; font-weight: bold; color: var(--miku-cyan); margin-right: 4px; }
+    .btn-insert {
+      background: rgba(57, 197, 187, 0.15);
+      border: 1px solid var(--border);
+      color: var(--miku-neon);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .btn-insert:hover {
+      background: var(--miku-cyan);
+      color: #04090f;
+      box-shadow: 0 0 10px var(--miku-glow);
+    }
+
+    .doc-content-editor {
+      min-height: 140px;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.7;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    /* Wikilink & Hover Card */
+    .wikilink {
+      color: var(--miku-neon);
+      font-weight: 700;
+      text-decoration: underline;
+      cursor: pointer;
+      position: relative;
+    }
+    .wikilink:hover .wikilink-popup { display: block; }
+    .wikilink-popup {
+      display: none;
+      position: absolute;
+      bottom: 24px;
+      left: 0;
+      width: 280px;
+      background: var(--surface);
+      border: 1px solid var(--miku-neon);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.7), 0 0 15px var(--miku-glow);
+      z-index: 100;
+      font-size: 12px;
+      text-decoration: none;
+      cursor: default;
+    }
+
+    /* Modules Container in Center */
+    .modules-area {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .module-card {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      position: relative;
+    }
+    .module-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .module-tag { font-size: 12px; font-weight: bold; color: var(--miku-neon); display: flex; align-items: center; gap: 6px; }
+    .module-close-btn { cursor: pointer; color: var(--text-muted); font-size: 14px; padding: 2px 6px; border-radius: 4px; }
+    .module-close-btn:hover { color: var(--miku-pink); }
+
+    /* Formula Editor Inside Module */
+    .latex-edit-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .latex-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: var(--miku-neon);
+      font-family: monospace;
+      font-size: 13px;
+      outline: none;
+    }
+    .formula-rendered-box {
+      font-family: monospace;
+      font-size: 18px;
+      text-align: center;
+      color: var(--miku-neon);
+      background: rgba(57, 197, 187, 0.08);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .calc-inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .cyber-num-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: var(--text);
+      font-family: monospace;
+      font-size: 13px;
+      outline: none;
+    }
+    .cyber-num-input:focus { border-color: var(--miku-neon); box-shadow: 0 0 8px var(--miku-glow); }
+    .calc-result-badge {
+      background: rgba(57, 197, 187, 0.15);
+      border: 1px solid var(--miku-cyan);
+      border-radius: 6px;
+      padding: 8px 12px;
+      text-align: center;
+      font-weight: 700;
+      color: var(--miku-neon);
+      font-size: 13px;
+    }
+
+    /* Lab Table & Chart */
+    .btn-cyber-sm {
+      background: rgba(57, 197, 187, 0.15);
+      border: 1px solid var(--border);
+      color: var(--miku-neon);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-cyber-sm:hover {
+      background: var(--miku-cyan);
+      color: #04090f;
+      box-shadow: 0 0 10px var(--miku-glow);
+    }
+    table.cyber-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    table.cyber-table th, table.cyber-table td {
+      padding: 6px 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    table.cyber-table th { background: rgba(57, 197, 187, 0.2); }
+    table.cyber-table input {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      text-align: center;
+      font-size: 12px;
+      width: 100%;
+      outline: none;
+      font-family: monospace;
+    }
+
+    /* Callout */
+    .callout-box {
+      background: rgba(255, 42, 133, 0.1);
+      border-left: 4px solid var(--miku-pink);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+
+    /* =========================================================
+       RIGHT PANEL: TO-DO LIST, CONTEXT & OUTLINE
+       ========================================================= */
+    .right-section { margin-bottom: 20px; }
+    .right-section-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--miku-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* To-Do Checklist in Right Panel */
+    .todo-input-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .todo-text-input {
+      flex: 1;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 8px;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+    }
+    .btn-add-todo {
+      background: var(--miku-cyan);
+      color: #04090f;
+      border: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .todo-list-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .todo-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      background: var(--input-bg);
+      border: 1px solid rgba(57, 197, 187, 0.2);
+      border-radius: 6px;
+      padding: 6px 8px;
+      cursor: pointer;
+    }
+    .todo-left { display: flex; align-items: center; gap: 8px; flex: 1; }
+    .todo-box {
+      width: 15px;
+      height: 15px;
+      border: 1.5px solid var(--border);
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+    }
+    .todo-row.done .todo-box {
+      background: var(--miku-cyan);
+      border-color: var(--miku-neon);
+      color: #000;
+      font-weight: bold;
+    }
+    .todo-row.done span.todo-text { text-decoration: line-through; opacity: 0.6; }
+    .todo-del-btn { color: var(--text-muted); cursor: pointer; font-size: 12px; margin-left: 6px; }
+    .todo-del-btn:hover { color: var(--miku-pink); }
+
+    /* Topic Outline (Obsah kapitoly) */
+    .toc-item {
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 4px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .toc-item:hover { color: var(--miku-neon); background: rgba(57, 197, 187, 0.15); }
+
+    /* =========================================================
+       EXTENSIONS (VYCHYTÁVKY) MODAL / POPUP
+       ========================================================= */
+    .extensions-popup {
+      display: none;
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      width: 320px;
+      background: var(--surface);
+      border: 1px solid var(--border-active);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.7), 0 0 20px var(--miku-glow);
+      z-index: 2000;
+      animation: fadeIn 0.2s ease;
+    }
+    .extensions-popup.active { display: block; }
+    .ext-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .ext-header h3 { font-size: 14px; color: var(--miku-neon); display: flex; align-items: center; gap: 6px; }
+    .ext-close { cursor: pointer; color: var(--text-muted); font-size: 16px; }
+    .ext-close:hover { color: var(--miku-pink); }
+
+    .ext-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px;
+    }
+    .ext-desc { font-size: 11px; color: var(--text-muted); }
+
+    /* Toggle Switch */
+    .switch { position: relative; display: inline-block; width: 38px; height: 20px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--border); transition: .3s; border-radius: 20px;
+    }
+    .slider:before {
+      position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px;
+      background-color: white; transition: .3s; border-radius: 50%;
+    }
+
+    /* =========================================================
+       HATSUNE MIKU CYBER VINYL PLAYER v2 — SPOTIFY STYLE
+       ========================================================= */
+    .miku-player-card {
+      background: linear-gradient(160deg, rgba(5,18,28,0.98) 0%, rgba(2,8,15,0.98) 100%);
+      border: 1px solid rgba(0,255,255,0.2);
+      border-radius: 16px;
+      padding: 14px 14px 10px;
+      margin-bottom: 14px;
+      position: relative;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      overflow: visible;
+    }
+    .miku-player-card:hover {
+      border-color: rgba(0,255,255,0.5);
+      box-shadow: 0 0 22px rgba(0,255,255,0.1), 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    /* Top bar: just the Themes pill, no badge */
+    .player-top-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .btn-presets-pill {
+      background: rgba(0,255,255,0.08);
+      border: 1px solid rgba(0,255,255,0.25);
+      color: rgba(0,255,255,0.7);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.2s;
+    }
+    .btn-presets-pill:hover {
+      background: rgba(0,255,255,0.2);
+      color: var(--miku-cyan);
+      border-color: var(--miku-cyan);
+      box-shadow: 0 0 10px var(--miku-glow);
+    }
+
+    /* Main row: Vinyl + Details */
+    .player-main-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    /* ---- VINYL RECORD ---- */
+    .vinyl-record-wrap {
+      width: 72px;
+      height: 72px;
+      position: relative;
+      flex-shrink: 0;
+      cursor: pointer;
+      filter: drop-shadow(0 4px 14px rgba(0,0,0,0.7));
+    }
+    .vinyl-disc {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: box-shadow 0.4s;
+    }
+    /* 5 vinyl design themes, cycling with JS */
+    .vinyl-disc.vd-1 {
+      background: conic-gradient(
+        #003a3a 0deg, #00ffff 20deg, #003a3a 40deg, #001a1a 80deg,
+        #39c5bb 100deg, #001a1a 140deg, #00ffff 160deg, #003a3a 200deg,
+        #001a1a 240deg, #ff2a85 260deg, #001a1a 300deg, #003a3a 340deg, #003a3a 360deg
+      );
+    }
+    .vinyl-disc.vd-2 {
+      background: conic-gradient(
+        #1a0028 0deg, #ff2a85 30deg, #1a0028 60deg, #0a0015 100deg,
+        #ff70a6 120deg, #0a0015 160deg, #ff2a85 180deg, #1a0028 220deg,
+        #0a0015 260deg, #00ffff 280deg, #0a0015 320deg, #1a0028 360deg
+      );
+    }
+    .vinyl-disc.vd-3 {
+      background: conic-gradient(
+        #001420 0deg, #2ee5d6 25deg, #001420 50deg, #000a10 90deg,
+        #39c5bb 110deg, #000a10 150deg, #00ffff 170deg, #001420 210deg,
+        #000a10 250deg, #2ee5d6 270deg, #000a10 310deg, #001420 360deg
+      );
+    }
+    .vinyl-disc.vd-4 {
+      background: conic-gradient(
+        #0a0a1a 0deg, #00ffff 15deg, #0a0a1a 35deg, #ff2a85 55deg,
+        #0a0a1a 80deg, #2ee5d6 100deg, #0a0a1a 130deg, #ff70a6 150deg,
+        #0a0a1a 180deg, #00ffff 200deg, #0a0a1a 230deg, #ff2a85 250deg,
+        #0a0a1a 280deg, #39c5bb 300deg, #0a0a1a 330deg, #ff2a85 355deg, #0a0a1a 360deg
+      );
+    }
+    .vinyl-disc.vd-5 {
+      background: conic-gradient(
+        #001a14 0deg, #39c5bb 20deg, #001a14 45deg, #00ffff 65deg,
+        #001a14 100deg, #ff2a85 120deg, #001a14 155deg, #39c5bb 175deg,
+        #001a14 210deg, #2ee5d6 230deg, #001a14 265deg, #ff70a6 285deg,
+        #001a14 320deg, #00ffff 340deg, #001a14 360deg
+      );
+    }
+    /* Grooves over design */
+    .vinyl-groove-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.45);
+      pointer-events: none;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .vgr-1 { width: 66px; height: 66px; }
+    .vgr-2 { width: 56px; height: 56px; }
+    .vgr-3 { width: 44px; height: 44px; }
+
+    /* Center label — bigger, no text */
+    .vinyl-center-badge {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 0 10px rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .vinyl-disc.vd-1 .vinyl-center-badge,
+    .vinyl-disc.vd-3 .vinyl-center-badge { background: radial-gradient(circle, #00ffff 0%, #39c5bb 40%, #005550 100%); }
+    .vinyl-disc.vd-2 .vinyl-center-badge { background: radial-gradient(circle, #ff70a6 0%, #ff2a85 40%, #4a0025 100%); }
+    .vinyl-disc.vd-4 .vinyl-center-badge { background: radial-gradient(circle, #00ffff 0%, #ff2a85 50%, #1a003a 100%); }
+    .vinyl-disc.vd-5 .vinyl-center-badge { background: radial-gradient(circle, #2ee5d6 0%, #39c5bb 40%, #003328 100%); }
+    /* Spindle hole */
+    .vinyl-center-badge::after {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.7);
+      position: absolute;
+    }
+
+    /* Play state: spin + glow */
+    .vinyl-record-wrap.is-playing .vinyl-disc {
+      animation: spinVinyl 3.5s linear infinite;
+    }
+    .vinyl-record-wrap.is-playing .vinyl-disc.vd-1,
+    .vinyl-record-wrap.is-playing .vinyl-disc.vd-3,
+    .vinyl-record-wrap.is-playing .vinyl-disc.vd-5 {
+      box-shadow: 0 0 20px rgba(0,255,255,0.6), 0 0 40px rgba(0,255,255,0.2);
+    }
+    .vinyl-record-wrap.is-playing .vinyl-disc.vd-2 {
+      box-shadow: 0 0 20px rgba(255,42,133,0.6), 0 0 40px rgba(255,42,133,0.2);
+    }
+    .vinyl-record-wrap.is-playing .vinyl-disc.vd-4 {
+      box-shadow: 0 0 16px rgba(0,255,255,0.4), 0 0 16px rgba(255,42,133,0.4);
+    }
+    @keyframes spinVinyl {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* ---- Track details ---- */
+    .player-details {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .player-track-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: 0.2px;
+    }
+    .player-time-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 9px;
+      color: var(--text-muted);
+      font-family: monospace;
+      letter-spacing: 0.5px;
+    }
+    .player-progress-bar {
+      flex: 1;
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      overflow: visible;
+    }
+    .player-progress-bar:hover { height: 6px; }
+    .player-progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #00ffff, #ff2a85);
+      border-radius: 4px;
+      transition: width 0.5s linear;
+      position: relative;
+    }
+    .player-progress-fill::after {
+      content: '';
+      position: absolute;
+      right: -4px; top: 50%;
+      transform: translateY(-50%);
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 4px rgba(0,255,255,0.8);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .player-progress-bar:hover .player-progress-fill::after { opacity: 1; }
+
+    /* Controls row — Spotify style */
+    .player-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .player-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.65);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s, transform 0.1s;
+      line-height: 1;
+    }
+    .player-btn:hover {
+      color: #fff;
+      transform: scale(1.15);
+    }
+    .play-btn {
+      background: #fff;
+      color: #000 !important;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-size: 12px;
+      box-shadow: 0 2px 10px rgba(0,255,255,0.3);
+      transition: transform 0.1s, box-shadow 0.2s !important;
+    }
+    .play-btn:hover {
+      transform: scale(1.08) !important;
+      box-shadow: 0 4px 16px rgba(0,255,255,0.5) !important;
+    }
+
+    /* Volume */
+    .player-vol-wrap {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-left: 4px;
+    }
+    .player-vol-slider {
+      width: 50px;
+      height: 3px;
+      accent-color: var(--miku-cyan);
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    /* ---- Expand link button ---- */
+    .player-expand-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 6px;
+    }
+    .btn-expand-link {
+      background: transparent;
+      border: none;
+      color: rgba(0,255,255,0.5);
+      font-size: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.2s;
+      padding: 2px 4px;
+    }
+    .btn-expand-link:hover { color: var(--miku-cyan); }
+    .btn-expand-link svg { width: 10px; height: 10px; }
+
+    /* Collapsible YT input */
+    .player-input-row {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      animation: fadeIn 0.2s ease;
+    }
+    .player-input-row.open { display: flex; }
+    .player-yt-input {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(0,255,255,0.2);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 10px;
+      padding: 5px 9px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .player-yt-input:focus {
+      border-color: var(--miku-cyan);
+      box-shadow: 0 0 8px var(--miku-glow);
+    }
+    .btn-yt-load {
+      background: var(--miku-cyan);
+      border: none;
+      color: #04090f;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn-yt-load:hover { opacity: 0.85; transform: scale(1.04); }
+
+    /* Cyber Video Hologram Display / Audio Player */
+    .player-video-wrap {
+      margin-top: 10px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(0,255,255,0.3);
+      background: #02060b;
+      max-height: 160px;
+      opacity: 1;
+      transition: max-height 0.35s ease, opacity 0.3s ease, margin 0.3s ease;
+      position: relative;
+      box-shadow: 0 0 16px rgba(0,255,255,0.15);
+    }
+    .player-video-wrap.collapsed {
+      max-height: 0;
+      opacity: 0;
+      margin-top: 0;
+      pointer-events: none;
+      border: none;
+    }
+    #mikuYtPlayer {
+      width: 100%;
+      height: 140px;
+      border: none;
+      display: block;
+    }
+
+    /* Dropdown Pre-sets */
+    .player-presets-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--surface-card);
+      border: 1px solid rgba(0,255,255,0.25);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.8);
+      z-index: 200;
+      margin-top: 6px;
+    }
+    .player-presets-dropdown.active { display: block; animation: fadeIn 0.15s ease; }
+    .presets-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--miku-cyan);
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(0,255,255,0.15);
+    }
+    .presets-close { cursor: pointer; color: var(--text-muted); font-size: 13px; }
+    .presets-close:hover { color: var(--miku-pink); }
+    .presets-list {
+      max-height: 140px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    .preset-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0,255,255,0.04);
+      border: 1px solid rgba(0,255,255,0.12);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .preset-item:hover { border-color: var(--miku-cyan); color: var(--miku-cyan); background: rgba(0,255,255,0.08); }
+    .preset-item.active-preset { border-color: var(--miku-cyan); color: var(--miku-cyan); background: rgba(0,255,255,0.12); }
+    .preset-del-btn { color: var(--text-muted); cursor: pointer; font-size: 11px; padding: 0 4px; line-height: 1; }
+    .preset-del-btn:hover { color: var(--miku-pink); }
+    .presets-add-box {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      border-top: 1px solid rgba(0,255,255,0.1);
+      padding-top: 10px;
+    }
+    .presets-add-box input {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(0,255,255,0.2);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 10px;
+      padding: 5px 8px;
+      outline: none;
+    }
+    .presets-add-box input:focus { border-color: var(--miku-cyan); }
+    .btn-add-preset {
+      background: rgba(0,255,255,0.12);
+      border: 1px solid rgba(0,255,255,0.35);
+      color: var(--miku-cyan);
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 6px;
+      padding: 5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-add-preset:hover { background: var(--miku-cyan); color: #04090f; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    input:checked + .slider:before { transform: translateX(18px); }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================================
+       TOP NAVIGATION BAR
+       ========================================================= -->
+  <header class="top-bar">
+    <div class="brand" onclick="switchMainView('graph')">
+      <span class="brand-logo">🩵</span>
+      <div>
+        <div class="brand-title">Mikus in Paris 2.0</div>
+        <div style="font-size: 10px; color: var(--text-muted);">Cyber Physical Workspace</div>
+      </div>
+    </div>
+
+    <!-- Pinned Pomodoro Timer in Center (Adjustable duration) -->
+    <div class="pinned-pomodoro" id="topPomodoro">
+      <span style="font-size: 13px;">⏳</span>
+      <span class="pinned-time" id="pomoTime">25:00</span>
+      <button class="pomo-control-btn" id="pomoPlayBtn" onclick="togglePomodoro()">▶</button>
+      <button class="pomo-control-btn" onclick="resetPomodoro()">⟳</button>
+      <button class="pomo-control-btn" onclick="adjustPomoMinutes()" title="Zmeniť dĺžku časovača (napr. 45, 60 min)" style="font-size:11px; border:1px solid var(--border); border-radius:4px; padding:1px 4px;">⏱️ Zmeniť</button>
+    </div>
+
+    <!-- Top Action Controls -->
+    <div class="top-actions">
+      <!-- Zen Indicator -->
+      <div class="zen-indicator" id="zenIndicator" onclick="toggleZenMode(false)" title="Kliknutím vypnúť Zen mód">
+        <span>👁️ ZEN MÓD</span>
+        <span style="font-size: 10px;">✕</span>
+      </div>
+
+      <!-- View Switchers -->
+      <button class="btn-nav active" id="btnGraphNav" onclick="switchMainView('graph')">
+        <span>🕸️ Obsidian Mapa</span>
+      </button>
+      <button class="btn-nav" id="btnStudioNav" onclick="switchMainView('studio')">
+        <span>📑 Štúdio Tém</span>
+      </button>
+
+      <!-- Extensions (Vychytávky) Popup Trigger -->
+      <button class="btn-nav" onclick="toggleExtensionsPopup()">
+        <span>🧩 Vychytávky</span>
+      </button>
+
+      <!-- Author PIN / Read-Only Switcher -->
+      <button class="btn-nav" id="btnAuthMode" onclick="toggleAuthPrompt()" title="Režim úprav / Zámok čítania">
+        <span id="authLockIcon">👑 Autor</span>
+      </button>
+
+      <!-- Theme Switcher (Dark Neon vs Pale Turquoise Neon) -->
+      <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Prepnúť režim (Tmavý neón / Bledo-tyrkysový neón)">
+        🌙
+      </button>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       VIEW 1: OBSIDIAN GRAPH MAP (HOMEPAGE WITH PAN & ZOOM)
+       ========================================================= -->
+  <main id="graphView">
+    <div class="graph-banner">
+      <h2>🕸️ OBSIDIANOVÁ ZNALOSTNÁ 2D MAPA</h2>
+      <p>Ťahaním myši môžete <strong>voľne presúvať guľôčky</strong> na nové pozície alebo hýbať celou mapou. <strong>Krátkym kliknutím</strong> na guľôčku otvoríte štúdio témy. Kolieskom zoomujete.</p>
+    </div>
+
+    <button class="graph-cta-btn" onclick="switchMainView('studio')">
+      📑 Prepnúť na štúdio a zoznam tém ➔
+    </button>
+
+    <div class="graph-controls">
+      <button class="graph-ctrl-btn" onclick="zoomGraph(1.15)" title="Priblížiť">+</button>
+      <button class="graph-ctrl-btn" onclick="zoomGraph(0.85)" title="Oddialiť">-</button>
+      <button class="graph-ctrl-btn" onclick="resetGraphView()" title="Vycentrovať">⟲</button>
+    </div>
+
+    <canvas id="graphCanvas"></canvas>
+  </main>
+
+  <!-- =========================================================
+       VIEW 2: REGULAR 3-COLUMN STUDIO LAYOUT
+       ========================================================= -->
+  <div id="studioView">
+
+    <!-- LEFT SIDEBAR: Search & Chapter Tree -->
+    <aside class="side-panel side-panel-left" id="leftPanel">
+      <div class="search-wrapper">
+        <div class="search-input-box">
+          <span>🔍</span>
+          <input type="text" id="searchInput" placeholder="Hľadať (kliknite sem)..." onfocus="showSearchHistory()" oninput="filterSearch()">
+        </div>
+
+        <!-- Google-style History Dropdown -->
+        <div class="search-dropdown" id="searchDropdown">
+          <div style="padding: 6px 12px; font-size: 10px; color: var(--text-muted); border-bottom: 1px solid var(--border);">
+            🕒 POSLEDNÉ HĽADANÉ
+          </div>
+          <div class="search-dropdown-item" onclick="applySearch('Coulombov zákon')">
+            <span>🕒</span><span>Coulombov zákon</span>
+          </div>
+          <div class="search-dropdown-item" onclick="applySearch('Magnetizmus')">
+            <span>🕒</span><span>Magnetizmus</span>
+          </div>
+          <div class="search-dropdown-item" onclick="applySearch('#na_opravu')">
+            <span>🏷️</span><span>#na_opravu</span>
+          </div>
+          <div class="search-dropdown-item" onclick="applySearch('elementárny náboj')">
+            <span>🕒</span><span>elementárny náboj</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span style="font-size: 11px; font-weight: bold; color: var(--miku-cyan); text-transform: uppercase;">
+          📚 Témy výskumu:
+        </span>
+        <button class="btn-cyber-sm" onclick="createNewTopic()">+ Nová téma</button>
+      </div>
+
+      <div id="topicsTreeContainer">
+        <!-- Dynamicky generované položky kapitol -->
+      </div>
+    </aside>
+
+    <!-- CENTER: Main Text Editor & Insertable Modules -->
+    <section class="studio-main">
+      <div class="editor-header">
+        <span class="doc-breadcrumb" id="docBreadcrumb">Fyzika &gt; 2. Elektrický náboj</span>
+        <span style="font-size: 12px; color: var(--miku-cyan);" id="docSaveIndicator">● Uložené</span>
+      </div>
+
+      <input type="text" class="doc-title-input" id="docTitleInput" value="2.1 Vlastnosti elektrického náboja" oninput="saveCurrentTopic()">
+
+      <!-- Toolbar to Dynamically Insert Modules into Topic -->
+      <div class="insert-toolbar">
+        <span class="label">➕ Vložiť do témy:</span>
+        <button class="btn-insert" onclick="insertModule('formula')">🧮 Vzorec (LaTeX)</button>
+        <button class="btn-insert" onclick="insertModule('lab')">📊 Tabuľka a Graf</button>
+        <button class="btn-insert" onclick="insertModule('callout')">🛡️ Dôležitý zákon</button>
+      </div>
+
+      <textarea class="doc-content-editor" id="docEditor" oninput="saveCurrentTopic()" placeholder="Píšte svoj text, vzorce a výskum sem...">Elektrický náboj patrí medzi fundamentálne vlastnosti hmoty. Nositeľom záporného náboja sú elektróny a kladného protóny. Celkový náboj izolovaného systému zostáva zachovaný.</textarea>
+
+      <!-- Wikilink Demo Box -->
+      <div style="margin: 10px 0; font-size: 13px; color: var(--text-muted);">
+        Odkaz s bublinkou: 
+        <span class="wikilink">[[Elementárny náboj]]
+          <span class="wikilink-popup">
+            <h4 style="color:var(--miku-neon); margin-bottom:4px;">⚛️ Elementárny náboj (e)</h4>
+            <p>Základné kvantum náboja e = 1.602 × 10⁻¹⁹ C. Nositeľom sú elektróny.</p>
+          </span>
+        </span>
+      </div>
+
+      <!-- INSERTED MODULES CONTAINER -->
+      <div class="modules-area" id="modulesArea">
+        <!-- Moduly sa vkladajú sem (Vzorce, Tabuľka s grafom, Callout) -->
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: CYBER MUSIC PLAYER, TO-DO ÚLOHY, KONTEXT & OBSAH KAPITOLY -->
+    <aside class="side-panel side-panel-right" id="rightPanel">
+      <!-- 0. HATSUNE MIKU CYBER VINYL MUSIC PLAYER v2 -->
+      <div class="miku-player-card" id="mikuPlayerCard">
+
+        <!-- Top bar: Video Screen toggle + Themes pill -->
+        <div class="player-top-bar" style="display:flex; justify-content:space-between; align-items:center;">
+          <button class="btn-presets-pill" id="btnToggleVideoScreen" onclick="toggleVideoScreen()" title="Zobraziť / skryť miniobrazovku">
+            📺 Skryť video
+          </button>
+          <button class="btn-presets-pill" onclick="togglePresetsMenu()" title="Hudobné témy">
+            🎵 Themes
+          </button>
+        </div>
+
+        <!-- Main row: Vinyl + Details -->
+        <div class="player-main-row">
+
+          <!-- Rotating Vinyl disc (5 rotating designs) -->
+          <div class="vinyl-record-wrap" id="vinylRecord" onclick="togglePlayMusic()" title="Play / Pause">
+            <div class="vinyl-disc vd-1" id="vinylDisc">
+              <div class="vinyl-groove-ring vgr-1"></div>
+              <div class="vinyl-groove-ring vgr-2"></div>
+              <div class="vinyl-groove-ring vgr-3"></div>
+              <div class="vinyl-center-badge"></div>
+            </div>
+          </div>
+
+          <!-- Track info + progress + controls -->
+          <div class="player-details">
+            <div class="player-track-name" id="playerTrackName">Miku Lo-Fi Study Beats</div>
+
+            <div class="player-time-row">
+              <span id="playerCurrentTime">0:00</span>
+              <div class="player-progress-bar" id="playerProgressBar" onclick="seekTrackClick(event)">
+                <div class="player-progress-fill" id="playerProgressFill"></div>
+              </div>
+              <span id="playerTotalTime">0:00</span>
+            </div>
+
+            <!-- Controls: Prev | Play | Next | Vol -->
+            <div class="player-controls">
+              <button class="player-btn" onclick="prevTrack()" title="Predchádzajúca">⏮</button>
+              <button class="player-btn play-btn" id="playerPlayBtn" onclick="togglePlayMusic()">▶</button>
+              <button class="player-btn" onclick="nextTrack()" title="Nasledujúca">⏭</button>
+              <div class="player-vol-wrap">
+                <button class="player-btn" id="playerVolBtn" onclick="toggleMute()" title="Stlmiť">🔊</button>
+                <input type="range" class="player-vol-slider" id="playerVolSlider" min="0" max="100" value="70"
+                  oninput="setVolume(this.value)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Expand arrow for custom URL input -->
+        <div class="player-expand-row">
+          <button class="btn-expand-link" onclick="toggleLinkInput()" title="Vložiť vlastný YouTube link">
+            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M2 4l3 3 3-3"/>
+            </svg>
+            Vlastný link
+          </button>
+        </div>
+
+        <!-- Collapsible YT URL input -->
+        <div class="player-input-row" id="playerInputRow">
+          <input type="text" class="player-yt-input" id="ytUrlInput"
+            placeholder="YouTube video alebo playlist URL..."
+            onkeydown="if(event.key==='Enter') loadCustomYtUrl()">
+          <button class="btn-yt-load" onclick="loadCustomYtUrl()">▶</button>
+        </div>
+
+        <!-- Presets dropdown -->
+        <div class="player-presets-dropdown" id="presetsDropdown">
+          <div class="presets-header">
+            <span>🎵 HUDOBNÉ TÉMY</span>
+            <span class="presets-close" onclick="togglePresetsMenu()">✕</span>
+          </div>
+          <div class="presets-list" id="presetsList"></div>
+          <div class="presets-add-box">
+            <input type="text" id="newPresetName" placeholder="Názov (napr. Synthwave)...">
+            <input type="text" id="newPresetUrl" placeholder="YouTube URL...">
+            <button class="btn-add-preset" onclick="addNewPreset()">+ Pridať</button>
+          </div>
+        </div>
+
+        <!-- Cyber Video Hologram Display / Audio Player -->
+        <div class="player-video-wrap" id="playerVideoWrap">
+          <div id="mikuYtPlayer"></div>
+        </div>
+      </div>
+
+
+      <!-- 1. ÚLOHY A REŠERŠ K TÉME (PREMIESTNENÉ SEM S MOŽNOSŤOU PRIDÁVANIA) -->
+      <div class="right-section">
+        <div class="right-section-title">
+          <span>☑️ ÚLOHY &amp; REŠERŠ</span>
+          <span style="font-size:10px; color:var(--text-muted);" id="todoCountBadge">2 úlohy</span>
+        </div>
+
+        <div class="todo-input-bar">
+          <input type="text" class="todo-text-input" id="newTodoInput" placeholder="Nová úloha (Enter)..." onkeydown="if(event.key==='Enter') addTodoItem()">
+          <button class="btn-add-todo" onclick="addTodoItem()" title="Pridať úlohu">+</button>
+        </div>
+
+        <div class="todo-list-wrap" id="todoListContainer">
+          <!-- Dynamicky generované to-do úlohy -->
+        </div>
+      </div>
+
+      <!-- 2. KONTEXT A OSNOVA TÉMY (VYSVETLENIE A RÝCHLA NAVIGÁCIA) -->
+      <div class="right-section">
+        <div class="right-section-title">
+          <span>📑 OSNOVA &amp; KONTEXT TÉMY</span>
+        </div>
+        <div style="font-size:11px; color:var(--text-muted); line-height:1.4; margin-bottom:8px;">
+          Rýchly prehľad sekcií aktuálnej kapitoly. Kliknutím skočíte na danú časť.
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;" id="tocList">
+          <div class="toc-item" onclick="scrollToElement('docTitleInput')">• Úvod a základné delenie</div>
+          <div class="toc-item" onclick="scrollToElement('modulesArea')">- Vzorce a výpočty (dQ)</div>
+          <div class="toc-item" onclick="scrollToElement('modulesArea')">- Zákon zachovania náboja</div>
+        </div>
+      </div>
+
+      <!-- 3. ŠTATISTIKA DOKUMENTU -->
+      <div class="right-section">
+        <div class="right-section-title">
+          <span>📊 ŠTATISTIKY</span>
+        </div>
+        <div style="font-size:12px; color:var(--text-muted); background:var(--input-bg); padding:10px; border-radius:8px; border:1px solid var(--border); line-height:1.8;">
+          <div>Počet slov: <strong style="color:var(--text);" id="statWordCount">38</strong></div>
+          <div>Počet znakov: <strong style="color:var(--text);" id="statCharCount">254</strong></div>
+          <div>Čas čítania: <strong style="color:var(--text);">~1 min</strong></div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- =========================================================
+       EXTENSIONS (VYCHYTÁVKY) POPUP MODAL
+       ========================================================= -->
+  <div class="extensions-popup" id="extPopup">
+    <div class="ext-header">
+      <h3><span>🧩</span> Vychytávky &amp; Nastavenia</h3>
+      <span class="ext-close" onclick="toggleExtensionsPopup()">✕</span>
+    </div>
+
+    <!-- Pomodoro Extension -->
+    <div class="ext-item">
+      <div>
+        <strong>Pomodoro Časovač</strong>
+        <div class="ext-desc">Pripne časovač hore v lište</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="extTogglePomo" onchange="toggleExtensionSetting('pomo', this.checked)">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <!-- Zen Mode Extension -->
+    <div class="ext-item">
+      <div>
+        <strong>Zen Režim</strong>
+        <div class="ext-desc">Skryje pravý panel a vycentruje čisté čítanie</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="extToggleZen" onchange="toggleZenMode(this.checked)">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <!-- Author PIN / Read-Only Extension -->
+    <div class="ext-item">
+      <div>
+        <strong>Autorský PIN (Ochrana úprav)</strong>
+        <div class="ext-desc">Chráni poznámky pred prepísaním inými</div>
+      </div>
+      <button class="btn-cyber-sm" onclick="changeAuthorPin()">Nastaviť PIN</button>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       JAVASCRIPT ARCHITECTURE & MODULES
+       ========================================================= -->
+  <script>
+    // --- 1. DATA MODEL & LOCAL STORAGE ---
+    const DEFAULT_TOPICS = [
+      {
+        id: "top-1",
+        title: "1. Úvod do elektrostatiky",
+        breadcrumb: "Fyzika > 1. Úvod",
+        timeText: "Upravené pred 2 dňami",
+        content: "Elektrostatika je náuka o silových a energetických účinkoch elektrických nábojov v pokoji. Historicky prvé pozorovania pochádzajú zo starovekého Grécka."
+      },
+      {
+        id: "top-2",
+        title: "2.1 Vlastnosti elektrického náboja",
+        breadcrumb: "Fyzika > 2. Elektrický náboj > 2.1 Vlastnosti",
+        timeText: "Upravené dnes o 18:30",
+        content: "Elektrický náboj patrí medzi fundamentálne vlastnosti hmoty. Nositeľom záporného náboja sú elektróny a kladného protóny. Celkový náboj izolovaného systému zostáva zachovaný."
+      },
+      {
+        id: "top-3",
+        title: "2.2 Elementárny náboj",
+        breadcrumb: "Fyzika > 2. Elektrický náboj > 2.2 Elementárny náboj",
+        timeText: "Upravené pred 20 min",
+        content: "Elementárny náboj e je najmenšie množstvo elektrického náboja, ktoré môže existovať ako voľná častica. Hodnota e = 1.602 × 10⁻¹⁹ C je základnou fyzikálnou konštantou."
+      },
+      {
+        id: "top-4",
+        title: "3. Magnetizmus a magnetické pole",
+        breadcrumb: "Fyzika > 3. Magnetizmus",
+        timeText: "Upravené včera",
+        content: "Magnetické pole vzniká pohybom elektrických nábojov (elektrickým prúdom) alebo magnetickými momentmi elementárnych častíc."
+      },
+      {
+        id: "top-5",
+        title: "4. Coulombov zákon a sila",
+        breadcrumb: "Fyzika > 4. Coulombov zákon",
+        timeText: "Upravené 24. septembra",
+        content: "Elektrostatická sila medzi dvoma bodovými nábojmi je priamo úmerná súčinu ich veľkostí a nepriamo úmerná štvorcu ich vzdialenosti."
+      }
+    ];
+
+    let topics = JSON.parse(localStorage.getItem('miku_topics')) || DEFAULT_TOPICS;
+    let activeTopicId = localStorage.getItem('miku_active_topic') || "top-2";
+    let activeTheme = localStorage.getItem('miku_theme') || "dark";
+    let extensions = JSON.parse(localStorage.getItem('miku_extensions')) || { pomo: true, zen: false };
+
+    let topicTodos = JSON.parse(localStorage.getItem('miku_todos')) || {
+      "top-2": [
+        { id: 1, text: "Overiť invariantnosť náboja v skriptách", done: true },
+        { id: 2, text: "Doplniť meranie špecifického náboja", done: false }
+      ]
+    };
+
+    // =========================================================
+    // 1.5 FIREBASE CLOUD REAL-TIME DATABASE SYNC
+    // =========================================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyCtZz1Itu6_InVukbZkrCXmXMUbIEhCmfU",
+      authDomain: "miku-research-bfb53.firebaseapp.com",
+      projectId: "miku-research-bfb53",
+      storageBucket: "miku-research-bfb53.firebasestorage.app",
+      messagingSenderId: "1021346121144",
+      appId: "1:1021346121144:web:1e3fd9ab75244bc241fb4d"
+    };
+
+    let fbDb = null;
+    let fbDocRef = null;
+    let fbSyncDebounce = null;
+    let isCloudInitialized = false;
+
+    function initFirebase() {
+      try {
+        if (typeof firebase !== 'undefined') {
+          if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+          }
+          fbDb = firebase.firestore();
+          fbDocRef = fbDb.collection('research').doc('main');
+          isCloudInitialized = true;
+          console.log("🔥 Firebase Firestore úspešne prepojené: miku-research-bfb53");
+          loadCloudData();
+          listenToCloudUpdates();
+        }
+      } catch (err) {
+        console.warn("Firebase init:", err);
+      }
+    }
+
+    // =========================================================
+    // 1.5 NODE.JS BACKEND REST API & CLOUD SYNC (HYBRID)
+    // =========================================================
+    const BACKEND_API_BASE = window.location.origin;
+    let isBackendActive = false;
+    let backendSyncDebounce = null;
+
+    async function checkAndInitBackend() {
+      try {
+        const res = await fetch(`${BACKEND_API_BASE}/api/state`);
+        if (res.ok) {
+          isBackendActive = true;
+          const data = await res.json();
+          console.log("🚀 Node.js Backend REST API aktívne!", data);
+          if (data.topics && Array.isArray(data.topics) && data.topics.length > 0) {
+            topics = data.topics;
+            localStorage.setItem('miku_topics', JSON.stringify(topics));
+          }
+          if (data.topicTodos && typeof data.topicTodos === 'object') {
+            topicTodos = data.topicTodos;
+            localStorage.setItem('miku_todos', JSON.stringify(topicTodos));
+          }
+          if (data.musicPresets && Array.isArray(data.musicPresets) && data.musicPresets.length > 0) {
+            musicPresets = data.musicPresets;
+            localStorage.setItem('miku_music_presets', JSON.stringify(musicPresets));
+            renderPresetsList();
+          }
+          renderStudio();
+          if (typeof initGraphCanvas === 'function') {
+            graphNodes = [];
+            initGraphCanvas();
+          }
+          const indicator = document.getElementById('docSaveIndicator');
+          if (indicator) {
+            indicator.innerText = "⚡ Pripojené k Node.js API";
+            indicator.style.color = "var(--miku-cyan)";
+          }
+          return;
+        }
+      } catch (e) {
+        console.log("Node backend nedostupný, používam záložný cloud:", e.message);
+      }
+      // Ak nebeží lokálny Node server, použije sa Firebase Cloud
+      initFirebase();
+    }
+
+    function syncDataToCloud() {
+      const indicator = document.getElementById('docSaveIndicator');
+      if (indicator) {
+        indicator.innerText = isBackendActive ? "⚡ Ukladám do Node.js DB..." : "☁️ Synchronizujem s cloudom...";
+        indicator.style.color = "var(--miku-pink)";
+      }
+
+      // 1. Uloženie na Node.js Backend (ak je aktívny)
+      if (isBackendActive && isAuthorMode) {
+        clearTimeout(backendSyncDebounce);
+        backendSyncDebounce = setTimeout(async () => {
+          try {
+            await fetch(`${BACKEND_API_BASE}/api/topics`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'x-author-pin': authorPin || '' },
+              body: JSON.stringify({ topics })
+            });
+            await fetch(`${BACKEND_API_BASE}/api/todos`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'x-author-pin': authorPin || '' },
+              body: JSON.stringify({ topicTodos })
+            });
+            await fetch(`${BACKEND_API_BASE}/api/music`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'x-author-pin': authorPin || '' },
+              body: JSON.stringify({ musicPresets })
+            });
+            if (indicator) {
+              indicator.innerText = "⚡ Uložené v Node.js DB";
+              indicator.style.color = "var(--miku-cyan)";
+            }
+          } catch (err) {
+            console.warn("Chyba Node backend sync:", err);
+          }
+        }, 1000);
+        return;
+      }
+
+      // 2. Záložný Firebase sync
+      if (!isAuthorMode || !fbDocRef) return;
+      clearTimeout(fbSyncDebounce);
+      fbSyncDebounce = setTimeout(async () => {
+        try {
+          await fbDocRef.set({
+            topics: topics,
+            topicTodos: topicTodos,
+            musicPresets: musicPresets,
+            authorPin: authorPin || "",
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+
+          if (indicator) {
+            indicator.innerText = "☁️ Uložené v cloude";
+            indicator.style.color = "var(--miku-cyan)";
+          }
+        } catch (err) {
+          console.warn("Chyba synchronizácie do cloudu:", err);
+          if (indicator) {
+            indicator.innerText = "● Uložené lokálne (offline)";
+            indicator.style.color = "var(--text-muted)";
+          }
+        }
+      }, 1200);
+    }
+
+    async function loadCloudData() {
+      if (!fbDocRef) return;
+      try {
+        const snap = await fbDocRef.get();
+        if (snap.exists) {
+          const data = snap.data();
+          if (data.topics && Array.isArray(data.topics) && data.topics.length > 0) {
+            topics = data.topics;
+            localStorage.setItem('miku_topics', JSON.stringify(topics));
+          }
+          if (data.topicTodos && typeof data.topicTodos === 'object') {
+            topicTodos = data.topicTodos;
+            localStorage.setItem('miku_todos', JSON.stringify(topicTodos));
+          }
+          if (data.musicPresets && Array.isArray(data.musicPresets) && data.musicPresets.length > 0) {
+            musicPresets = data.musicPresets;
+            localStorage.setItem('miku_music_presets', JSON.stringify(musicPresets));
+            renderPresetsList();
+          }
+          if (data.authorPin) {
+            authorPin = data.authorPin;
+            localStorage.setItem('miku_author_pin', authorPin);
+          }
+          renderStudio();
+          if (typeof initGraphCanvas === 'function') {
+            graphNodes = [];
+            initGraphCanvas();
+          }
+          const indicator = document.getElementById('docSaveIndicator');
+          if (indicator) {
+            indicator.innerText = "☁️ Synchronizované s cloudom";
+            indicator.style.color = "var(--miku-cyan)";
+          }
+        } else {
+          // Prvýkrát vytvárame cloudový dokument
+          if (isAuthorMode) {
+            syncDataToCloud();
+          }
+        }
+      } catch (err) {
+        console.warn("Chyba načítania z cloudu:", err);
+      }
+    }
+
+    function listenToCloudUpdates() {
+      if (!fbDocRef) return;
+      fbDocRef.onSnapshot(snap => {
+        if (!snap.exists) return;
+        // Pre čitateľov / návštevníkov v reálnom čase aktualizuj dáta z cloudu
+        if (!isAuthorMode) {
+          const data = snap.data();
+          if (data.topics && Array.isArray(data.topics)) {
+            topics = data.topics;
+            localStorage.setItem('miku_topics', JSON.stringify(topics));
+            renderTopicTree();
+            loadTopic(activeTopicId);
+          }
+          if (data.topicTodos) {
+            topicTodos = data.topicTodos;
+            localStorage.setItem('miku_todos', JSON.stringify(topicTodos));
+            renderTodoList();
+          }
+          if (data.musicPresets && Array.isArray(data.musicPresets)) {
+            musicPresets = data.musicPresets;
+            localStorage.setItem('miku_music_presets', JSON.stringify(musicPresets));
+            renderPresetsList();
+          }
+          if (data.authorPin) {
+            authorPin = data.authorPin;
+          }
+        }
+      }, err => console.warn("Cloud listener:", err));
+    }
+
+    // --- 2. THEME CONTROLLER (HATSUNE MIKU CYBER NEON VS PALE NEON TURQUOISE) ---
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      const btn = document.getElementById('themeToggleBtn');
+      if (theme === 'dark') {
+        btn.innerText = '🌙';
+        btn.title = "Prepnúť na bledo-tyrkysový neón";
+      } else {
+        btn.innerText = '☀️';
+        btn.title = "Prepnúť na tmavý neón";
+      }
+      localStorage.setItem('miku_theme', theme);
+    }
+
+    function toggleTheme() {
+      activeTheme = activeTheme === 'dark' ? 'light' : 'dark';
+      applyTheme(activeTheme);
+    }
+
+    // --- 3. VIEW SWITCHER (GRAPH VS STUDIO) ---
+    function switchMainView(view) {
+      const graphView = document.getElementById('graphView');
+      const studioView = document.getElementById('studioView');
+      const btnGraph = document.getElementById('btnGraphNav');
+      const btnStudio = document.getElementById('btnStudioNav');
+
+      if (view === 'graph') {
+        graphView.style.display = 'flex';
+        studioView.classList.remove('active');
+        btnGraph.classList.add('active');
+        btnStudio.classList.remove('active');
+        initGraphCanvas();
+      } else {
+        graphView.style.display = 'none';
+        studioView.classList.add('active');
+        btnGraph.classList.remove('active');
+        btnStudio.classList.add('active');
+        renderStudio();
+      }
+    }
+
+    // --- 4. TOPIC SELECTION & TREE RENDER ---
+    function renderStudio() {
+      renderTopicTree();
+      loadTopic(activeTopicId);
+      renderTodoList();
+      renderDefaultModulesIfEmpty();
+    }
+
+    function renderTopicTree() {
+      const container = document.getElementById('topicsTreeContainer');
+      container.innerHTML = '';
+
+      topics.forEach(t => {
+        const item = document.createElement('div');
+        item.className = `chapter-tree-item ${t.id === activeTopicId ? 'active' : ''}`;
+        item.innerHTML = `
+          <div>${t.title}</div>
+          <span class="tree-time">⏱️ ${t.timeText}</span>
+        `;
+        item.onclick = () => {
+          activeTopicId = t.id;
+          localStorage.setItem('miku_active_topic', activeTopicId);
+          renderStudio();
+        };
+        container.appendChild(item);
+      });
+    }
+
+    function loadTopic(id) {
+      const topic = topics.find(t => t.id === id) || topics[0];
+      activeTopicId = topic.id;
+      document.getElementById('docTitleInput').value = topic.title;
+      document.getElementById('docBreadcrumb').innerText = topic.breadcrumb || `Fyzika > ${topic.title}`;
+      document.getElementById('docEditor').value = topic.content;
+      updateWordCounts();
+      renderTodoList();
+    }
+
+    function saveCurrentTopic() {
+      const topic = topics.find(t => t.id === activeTopicId);
+      if (topic) {
+        topic.title = document.getElementById('docTitleInput').value;
+        topic.content = document.getElementById('docEditor').value;
+        topic.timeText = "Práve upravené";
+        localStorage.setItem('miku_topics', JSON.stringify(topics));
+        renderTopicTree();
+        updateWordCounts();
+
+        const indicator = document.getElementById('docSaveIndicator');
+        indicator.innerText = "● Uložené";
+        indicator.style.color = "var(--miku-cyan)";
+        syncDataToCloud();
+      }
+    }
+
+    function createNewTopic() {
+      const newId = "top-" + (topics.length + 1);
+      const title = prompt("Zadajte názov novej témy:", "Nová kapitola fyziky");
+      if (title) {
+        topics.push({
+          id: newId,
+          title: title,
+          breadcrumb: `Fyzika > ${title}`,
+          timeText: "Práve vytvorené",
+          content: "Sem napíšte obsah kapitoly..."
+        });
+        localStorage.setItem('miku_topics', JSON.stringify(topics));
+        activeTopicId = newId;
+        renderStudio();
+        syncDataToCloud();
+      }
+    }
+
+    function updateWordCounts() {
+      const text = document.getElementById('docEditor').value.trim();
+      const words = text ? text.split(/\s+/).length : 0;
+      const chars = text.length;
+      document.getElementById('statWordCount').innerText = words;
+      document.getElementById('statCharCount').innerText = chars;
+    }
+
+    function scrollToElement(id) {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // --- 5. GOOGLE-STYLE SEARCH DROPDOWN ---
+    function showSearchHistory() { document.getElementById('searchDropdown').style.display = 'block'; }
+    function applySearch(val) {
+      document.getElementById('searchInput').value = val;
+      document.getElementById('searchDropdown').style.display = 'none';
+      filterSearch();
+    }
+    function filterSearch() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const items = document.querySelectorAll('.chapter-tree-item');
+      items.forEach(it => {
+        it.style.display = it.innerText.toLowerCase().includes(q) ? 'block' : 'none';
+      });
+    }
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.search-wrapper')) {
+        document.getElementById('searchDropdown').style.display = 'none';
+      }
+    });
+
+    // --- 6. TO-DO LIST V PRAVOM PANELI S PRIDÁVANÍM ---
+    function renderTodoList() {
+      const container = document.getElementById('todoListContainer');
+      const list = topicTodos[activeTopicId] || [];
+      container.innerHTML = '';
+
+      document.getElementById('todoCountBadge').innerText = `${list.length} úloh`;
+
+      list.forEach((td, idx) => {
+        const row = document.createElement('div');
+        row.className = `todo-row ${td.done ? 'done' : ''}`;
+        row.innerHTML = `
+          <div class="todo-left" onclick="toggleTodoItem(${idx})">
+            <div class="todo-box">${td.done ? '✓' : ''}</div>
+            <span class="todo-text">${td.text}</span>
+          </div>
+          <span class="todo-del-btn" onclick="deleteTodoItem(${idx})" title="Zmazať">✕</span>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function addTodoItem() {
+      const input = document.getElementById('newTodoInput');
+      const text = input.value.trim();
+      if (!text) return;
+      if (!topicTodos[activeTopicId]) topicTodos[activeTopicId] = [];
+      topicTodos[activeTopicId].push({ id: Date.now(), text: text, done: false });
+      localStorage.setItem('miku_todos', JSON.stringify(topicTodos));
+      input.value = '';
+      renderTodoList();
+      syncDataToCloud();
+    }
+
+    function toggleTodoItem(idx) {
+      if (topicTodos[activeTopicId] && topicTodos[activeTopicId][idx]) {
+        topicTodos[activeTopicId][idx].done = !topicTodos[activeTopicId][idx].done;
+        localStorage.setItem('miku_todos', JSON.stringify(topicTodos));
+        renderTodoList();
+        syncDataToCloud();
+      }
+    }
+
+    function deleteTodoItem(idx) {
+      if (topicTodos[activeTopicId]) {
+        topicTodos[activeTopicId].splice(idx, 1);
+        localStorage.setItem('miku_todos', JSON.stringify(topicTodos));
+        renderTodoList();
+        syncDataToCloud();
+      }
+    }
+
+    // --- 7. MODULY DO TÉMY: VZORCE, TABUĽKA S GRAFOM, CALLOUT ---
+    function renderDefaultModulesIfEmpty() {
+      const area = document.getElementById('modulesArea');
+      if (area.children.length === 0) {
+        insertModule('formula');
+        insertModule('lab');
+      }
+    }
+
+    function insertModule(type) {
+      const area = document.getElementById('modulesArea');
+      const mod = document.createElement('div');
+      mod.className = 'module-card';
+
+      if (type === 'formula') {
+        mod.innerHTML = `
+          <div class="module-top-row">
+            <span class="module-tag">🧮 INTERAKTÍVNY VZOREC (LATEX EDITOVATEĽNÝ)</span>
+            <span class="module-close-btn" onclick="this.closest('.module-card').remove()">✕ Zmazať</span>
+          </div>
+          <div class="latex-edit-bar">
+            <input type="text" class="latex-input" value="dQ = I \\cdot dt \\implies Q = I \\cdot t" oninput="updateFormulaText(this)">
+          </div>
+          <div class="formula-rendered-box">Q = I · t</div>
+          <div class="calc-inputs-grid">
+            <div>
+              <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:3px;">Prúd I [A]:</label>
+              <input type="number" class="cyber-num-input" value="2.5" step="0.1" oninput="calcModuleCharge(this)">
+            </div>
+            <div>
+              <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:3px;">Čas t [s]:</label>
+              <input type="number" class="cyber-num-input" value="4.0" step="0.5" oninput="calcModuleCharge(this)">
+            </div>
+          </div>
+          <div class="calc-result-badge">Výsledok: Q = 10.00 C</div>
+        `;
+      } else if (type === 'lab') {
+        const modId = "labMod_" + Date.now();
+        mod.id = modId;
+        mod.innerHTML = `
+          <div class="module-top-row">
+            <span class="module-tag">📊 LABORATÓRNA TABUĽKA &amp; ŽIVÝ GRAF</span>
+            <span class="module-close-btn" onclick="this.closest('.module-card').remove()">✕ Zmazať</span>
+          </div>
+          <div class="lab-controls-bar">
+            <button class="btn-cyber-sm" onclick="addModuleRow('${modId}')">+ Pridať riadok</button>
+            <button class="btn-cyber-sm" style="color:var(--miku-pink); border-color:var(--miku-pink);" onclick="removeModuleRow('${modId}')">- Zmazať riadok</button>
+            <button class="btn-cyber-sm" onclick="addModuleCol('${modId}')">+ Pridať stĺpec</button>
+            <button class="btn-cyber-sm" style="color:var(--miku-pink); border-color:var(--miku-pink);" onclick="removeModuleCol('${modId}')">- Zmazať stĺpec</button>
+          </div>
+          <div style="display:flex; gap:12px; margin-bottom:8px; font-size:12px;">
+            <label>Os X: <select class="cyber-num-input select-x" style="width:auto; padding:2px 8px;" onchange="renderModuleChart('${modId}')"></select></label>
+            <label>Os Y: <select class="cyber-num-input select-y" style="width:auto; padding:2px 8px;" onchange="renderModuleChart('${modId}')"></select></label>
+          </div>
+          <div style="max-height:140px; overflow:auto; border:1px solid var(--border); border-radius:6px; margin-bottom:8px;">
+            <table class="cyber-table">
+              <thead>
+                <tr class="header-row">
+                  <th style="width:40px;">Bod</th>
+                  <th><input type="text" class="header-name" value="Napätie U [V]" oninput="updateModuleAxes('${modId}')"></th>
+                  <th><input type="text" class="header-name" value="Prúd I [A]" oninput="updateModuleAxes('${modId}')"></th>
+                </tr>
+              </thead>
+              <tbody class="body-rows">
+                <tr><td>1.</td><td><input type="number" value="100" oninput="renderModuleChart('${modId}')"></td><td><input type="number" value="0.8" step="0.1" oninput="renderModuleChart('${modId}')"></td></tr>
+                <tr><td>2.</td><td><input type="number" value="150" oninput="renderModuleChart('${modId}')"></td><td><input type="number" value="1.2" step="0.1" oninput="renderModuleChart('${modId}')"></td></tr>
+                <tr><td>3.</td><td><input type="number" value="200" oninput="renderModuleChart('${modId}')"></td><td><input type="number" value="1.5" step="0.1" oninput="renderModuleChart('${modId}')"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <svg class="chart-svg" width="100%" height="160" viewBox="0 0 480 160" style="background:var(--surface); border:1px solid var(--border); border-radius:6px; overflow:visible;"></svg>
+        `;
+        setTimeout(() => updateModuleAxes(modId), 50);
+      } else if (type === 'callout') {
+        mod.innerHTML = `
+          <div class="module-top-row">
+            <span class="module-tag" style="color:var(--miku-pink);">🛡️ ZÁKON / DÔLEŽITÉ UPOZORNENIE</span>
+            <span class="module-close-btn" onclick="this.closest('.module-card').remove()">✕ Zmazať</span>
+          </div>
+          <div class="callout-box" contenteditable="true" style="outline:none;">
+            [!important] Zákon zachovania náboja: V elektricky izolovanej sústave zostáva celkový algebraický súčet nábojov konštantný.
+          </div>
+        `;
+      }
+
+      area.appendChild(mod);
+    }
+
+    function updateFormulaText(inp) {
+      const card = inp.closest('.module-card');
+      const display = card.querySelector('.formula-rendered-box');
+      display.innerText = inp.value;
+    }
+
+    function calcModuleCharge(inp) {
+      const card = inp.closest('.module-card');
+      const inputs = card.querySelectorAll('.cyber-num-input');
+      const i = parseFloat(inputs[0].value) || 0;
+      const t = parseFloat(inputs[1].value) || 0;
+      const q = (i * t).toFixed(2);
+      card.querySelector('.calc-result-badge').innerText = `Výsledok: Q = ${q} C`;
+    }
+
+    // Dynamic Module Table & Chart Functions
+    function updateModuleAxes(modId) {
+      const mod = document.getElementById(modId);
+      if (!mod) return;
+      const headers = mod.querySelectorAll('.header-name');
+      const selX = mod.querySelector('.select-x');
+      const selY = mod.querySelector('.select-y');
+      const currX = parseInt(selX.value) || 0;
+      const currY = parseInt(selY.value) !== undefined && !isNaN(parseInt(selY.value)) ? parseInt(selY.value) : (headers.length > 1 ? 1 : 0);
+
+      selX.innerHTML = '';
+      selY.innerHTML = '';
+      headers.forEach((h, idx) => {
+        selX.innerHTML += `<option value="${idx}" ${idx === currX ? 'selected' : ''}>${h.value || 'Stĺpec ' + (idx + 1)}</option>`;
+        selY.innerHTML += `<option value="${idx}" ${idx === currY ? 'selected' : ''}>${h.value || 'Stĺpec ' + (idx + 1)}</option>`;
+      });
+      renderModuleChart(modId);
+    }
+
+    function addModuleRow(modId) {
+      const mod = document.getElementById(modId);
+      const tbody = mod.querySelector('.body-rows');
+      const count = tbody.children.length + 1;
+      const colCount = mod.querySelectorAll('.header-row th').length - 1;
+      const lastRow = tbody.lastElementChild;
+
+      const tr = document.createElement('tr');
+      let html = `<td>${count}.</td>`;
+      for (let c = 0; c < colCount; c++) {
+        let val = 100 * count;
+        if (lastRow && lastRow.children[c + 1]) {
+          const prev = parseFloat(lastRow.children[c + 1].querySelector('input').value) || 0;
+          val = prev > 20 ? (prev + 50) : (prev + 0.3);
+        }
+        html += `<td><input type="number" value="${typeof val === 'number' && val % 1 !== 0 ? val.toFixed(1) : val}" step="0.1" oninput="renderModuleChart('${modId}')"></td>`;
+      }
+      tr.innerHTML = html;
+      tbody.appendChild(tr);
+      renderModuleChart(modId);
+    }
+
+    function removeModuleRow(modId) {
+      const mod = document.getElementById(modId);
+      const tbody = mod.querySelector('.body-rows');
+      if (tbody.children.length > 2) {
+        tbody.removeChild(tbody.lastElementChild);
+        renderModuleChart(modId);
+      }
+    }
+
+    function addModuleCol(modId) {
+      const mod = document.getElementById(modId);
+      const headerRow = mod.querySelector('.header-row');
+      const idx = headerRow.children.length;
+      const th = document.createElement('th');
+      th.innerHTML = `<input type="text" class="header-name" value="Veličina ${idx}" oninput="updateModuleAxes('${modId}')">`;
+      headerRow.appendChild(th);
+
+      const rows = mod.querySelectorAll('.body-rows tr');
+      rows.forEach(r => {
+        const td = document.createElement('td');
+        td.innerHTML = `<input type="number" value="10" step="0.1" oninput="renderModuleChart('${modId}')">`;
+        r.appendChild(td);
+      });
+      updateModuleAxes(modId);
+    }
+
+    function removeModuleCol(modId) {
+      const mod = document.getElementById(modId);
+      const headerRow = mod.querySelector('.header-row');
+      if (headerRow.children.length > 3) {
+        headerRow.removeChild(headerRow.lastElementChild);
+        mod.querySelectorAll('.body-rows tr').forEach(r => r.removeChild(r.lastElementChild));
+        updateModuleAxes(modId);
+      } else {
+        alert('Tabuľka musí mať aspoň 2 stĺpce pre graf.');
+      }
+    }
+
+    function renderModuleChart(modId) {
+      const mod = document.getElementById(modId);
+      if (!mod) return;
+      const selX = mod.querySelector('.select-x');
+      const selY = mod.querySelector('.select-y');
+      const headers = mod.querySelectorAll('.header-name');
+      const colX = parseInt(selX.value) || 0;
+      const colY = parseInt(selY.value) !== undefined && !isNaN(parseInt(selY.value)) ? parseInt(selY.value) : 1;
+      const labelX = headers[colX] ? headers[colX].value : 'X';
+      const labelY = headers[colY] ? headers[colY].value : 'Y';
+
+      const rows = mod.querySelectorAll('.body-rows tr');
+      const points = [];
+      rows.forEach(r => {
+        const inX = r.children[colX + 1]?.querySelector('input');
+        const inY = r.children[colY + 1]?.querySelector('input');
+        if (inX && inY) points.push({ x: parseFloat(inX.value) || 0, y: parseFloat(inY.value) || 0 });
+      });
+
+      const svg = mod.querySelector('.chart-svg');
+      if (!svg) return;
+
+      const maxX = Math.max(...points.map(p => p.x), 10) * 1.15;
+      const maxY = Math.max(...points.map(p => p.y), 1.0) * 1.25;
+
+      const chartW = 400;
+      const chartH = 100;
+      const ox = 45;
+      const oy = 130;
+
+      const getX = val => ox + (val / maxX) * chartW;
+      const getY = val => oy - (val / maxY) * chartH;
+
+      let html = `
+        <line x1="${ox}" y1="15" x2="${ox}" y2="${oy}" stroke="var(--border)" stroke-width="2"/>
+        <line x1="${ox}" y1="${oy}" x2="${ox + chartW + 10}" y2="${oy}" stroke="var(--border)" stroke-width="2"/>
+        <text x="${ox + chartW}" y="${oy + 20}" fill="var(--miku-neon)" font-size="10" font-weight="bold" text-anchor="end">${labelX}</text>
+        <text x="${ox - 8}" y="14" fill="var(--miku-neon)" font-size="10" font-weight="bold">${labelY}</text>
+      `;
+
+      if (points.length >= 2) {
+        html += `<line x1="${getX(points[0].x)}" y1="${getY(points[0].y)}" x2="${getX(points[points.length-1].x)}" y2="${getY(points[points.length-1].y)}" stroke="var(--miku-cyan)" stroke-width="2" stroke-dasharray="4,4"/>`;
+      }
+
+      points.forEach((p, idx) => {
+        const px = getX(p.x);
+        const py = getY(p.y);
+        html += `
+          <circle cx="${px}" cy="${py}" r="5" fill="var(--miku-pink)" stroke="#fff" stroke-width="1.5">
+            <title>Bod ${idx+1}: [${p.x}, ${p.y}]</title>
+          </circle>
+          <text x="${px}" y="${py - 8}" fill="var(--text)" font-size="9" text-anchor="middle" font-family="monospace">[${p.x}, ${p.y}]</text>
+        `;
+      });
+
+      svg.innerHTML = html;
+    }
+
+    // --- 8. PINNED POMODORO TIMER S NASTAVITEĽNÝM ČASOM (>25 MIN) ---
+    let pomoTotalSeconds = 1500; // 25 min default
+    let pomoSecondsLeft = 1500;
+    let pomoInterval = null;
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function togglePomodoro() {
+      const btn = document.getElementById('pomoPlayBtn');
+      if (pomoInterval) {
+        clearInterval(pomoInterval);
+        pomoInterval = null;
+        btn.innerText = '▶';
+      } else {
+        btn.innerText = '⏸';
+        pomoInterval = setInterval(() => {
+          if (pomoSecondsLeft > 0) {
+            pomoSecondsLeft--;
+            document.getElementById('pomoTime').innerText = formatTime(pomoSecondsLeft);
+          } else {
+            clearInterval(pomoInterval);
+            alert('Čas vypršal! Skvelá práca, dajte si prestávku.');
+          }
+        }, 1000);
+      }
+    }
+
+    function resetPomodoro() {
+      if (pomoInterval) clearInterval(pomoInterval);
+      pomoInterval = null;
+      pomoSecondsLeft = pomoTotalSeconds;
+      document.getElementById('pomoTime').innerText = formatTime(pomoTotalSeconds);
+      document.getElementById('pomoPlayBtn').innerText = '▶';
+    }
+
+    function adjustPomoMinutes() {
+      const currentMin = Math.round(pomoTotalSeconds / 60);
+      const val = prompt("Nastavte dĺžku časovača v minútach (napr. 25, 45, 60, 90):", currentMin);
+      const num = parseInt(val);
+      if (!isNaN(num) && num > 0) {
+        pomoTotalSeconds = num * 60;
+        resetPomodoro();
+      }
+    }
+
+    // --- 9. EXTENSIONS (VYCHYTÁVKY) SYSTEM ---
+    function toggleExtensionsPopup() {
+      document.getElementById('extPopup').classList.toggle('active');
+    }
+
+    function toggleExtensionSetting(key, val) {
+      extensions[key] = val;
+      localStorage.setItem('miku_extensions', JSON.stringify(extensions));
+      applyExtensionSettings();
+    }
+
+    function applyExtensionSettings() {
+      const pomoBox = document.getElementById('topPomodoro');
+      pomoBox.classList.toggle('active', !!extensions.pomo);
+      document.getElementById('extTogglePomo').checked = !!extensions.pomo;
+    }
+
+    function toggleZenMode(enable) {
+      extensions.zen = enable;
+      document.body.classList.toggle('zen-active', enable);
+      document.getElementById('zenIndicator').classList.toggle('active', enable);
+      document.getElementById('extToggleZen').checked = enable;
+      localStorage.setItem('miku_extensions', JSON.stringify(extensions));
+    }
+
+    // --- 9.1 HATSUNE MIKU CYBER VINYL MUSIC PLAYER (YOUTUBE API & REAL AUDIO) ---
+    let ytPlayer = null;
+    let ytPlayerReady = false;
+    let isMusicPlaying = false;
+    let isPlayerMuted = false;
+    let currentVinylDesign = 1;
+    let currentPresetIndex = 0;
+    let playerProgressInterval = null;
+    let playerElapsedSeconds = 0;
+    let playerTotalSeconds = 0;
+
+    const DEFAULT_MUSIC_PRESETS = [
+      { name: "🩵 STUDY WITH MIKU - Official Lofi", url: "https://www.youtube.com/watch?v=gdssxLx7ofs" },
+      { name: "🌌 Lofi Girl - Relax & Study Beats",  url: "https://www.youtube.com/watch?v=5qap5aO4i9A" },
+      { name: "⚡ Cyberpunk Synthwave Chill Radio", url: "https://www.youtube.com/watch?v=4xDzrJKXOOY" },
+      { name: "🎹 Chill Piano Study Atmosphere",    url: "https://www.youtube.com/watch?v=jfKfPfyJRdk" }
+    ];
+
+    let musicPresets = JSON.parse(localStorage.getItem('miku_music_presets')) || DEFAULT_MUSIC_PRESETS;
+
+    function parseYoutubeUrl(url) {
+      if (!url) return { videoId: null, listId: null };
+      const str = url.trim();
+      let videoId = null, listId = null;
+      try {
+        const u = new URL(str);
+        listId  = u.searchParams.get('list');
+        videoId = u.searchParams.get('v');
+        if (!videoId && u.hostname.includes('youtu.be')) {
+          videoId = u.pathname.slice(1).split(/[?#]/)[0];
+        }
+      } catch(e) {}
+      if (!listId) {
+        const lm = str.match(/[?&]list=([^#&?]+)/);
+        if (lm) listId = lm[1];
+      }
+      if (!videoId) {
+        const vm = str.match(/(?:youtu\.be\/|v\/|embed\/|watch\?v=)([^#&?\s]+)/);
+        if (vm) videoId = vm[1];
+        else if (/^[a-zA-Z0-9_-]{11}$/.test(str)) {
+          videoId = str;
+        }
+      }
+      return { videoId, listId };
+    }
+
+    function formatTrackTime(sec) {
+      if (!sec || isNaN(sec) || sec < 0) return '0:00';
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function cycleVinylDesign() {
+      currentVinylDesign = (currentVinylDesign % 5) + 1;
+      const disc = document.getElementById('vinylDisc');
+      if (disc) disc.className = 'vinyl-disc vd-' + currentVinylDesign;
+    }
+
+    function updatePlayerUiPlaying(playing) {
+      const vinyl = document.getElementById('vinylRecord');
+      const btn   = document.getElementById('playerPlayBtn');
+      if (vinyl) vinyl.classList.toggle('is-playing', playing);
+      if (btn)   btn.textContent = playing ? '⏸' : '▶';
+    }
+
+    function initYouTubePlayer() {
+      if (ytPlayerReady || ytPlayer) return;
+      if (typeof YT === 'undefined' || !YT.Player) {
+        if (!document.getElementById('ytIframeApiScript')) {
+          const tag = document.createElement('script');
+          tag.id = 'ytIframeApiScript';
+          tag.src = "https://www.youtube.com/iframe_api";
+          document.head.appendChild(tag);
+        }
+        return;
+      }
+      try {
+        const p0 = musicPresets[currentPresetIndex] || DEFAULT_MUSIC_PRESETS[0];
+        const parsed = parseYoutubeUrl(p0.url);
+        const vid = parsed.videoId || 'gdssxLx7ofs';
+
+        ytPlayer = new YT.Player('mikuYtPlayer', {
+          height: '140',
+          width: '100%',
+          videoId: vid,
+          playerVars: {
+            'autoplay': 0,
+            'controls': 1,
+            'rel': 0,
+            'modestbranding': 1,
+            'playsinline': 1,
+            'enablejsapi': 1
+          },
+          events: {
+            'onReady': onYtPlayerReady,
+            'onStateChange': onYtPlayerStateChange,
+            'onError': onYtPlayerError
+          }
+        });
+      } catch (err) {
+        console.warn("YouTube API init:", err);
+      }
+    }
+
+    // YouTube IFrame API Callback
+    window.onYouTubeIframeAPIReady = function() {
+      initYouTubePlayer();
+    };
+
+    if (typeof YT !== 'undefined' && YT.Player) {
+      initYouTubePlayer();
+    }
+
+    function onYtPlayerReady() {
+      ytPlayerReady = true;
+      try {
+        ytPlayer.unMute();
+        ytPlayer.setVolume(80);
+      } catch(e) {}
+      const p = musicPresets[currentPresetIndex];
+      if (p) {
+        const nameEl = document.getElementById('playerTrackName');
+        if (nameEl) nameEl.textContent = p.name;
+      }
+    }
+
+    function onYtPlayerStateChange(e) {
+      if (typeof YT === 'undefined') return;
+      if (e.data === YT.PlayerState.PLAYING) {
+        isMusicPlaying = true;
+        updatePlayerUiPlaying(true);
+        startProgressTimer();
+      } else if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
+        isMusicPlaying = false;
+        updatePlayerUiPlaying(false);
+        stopProgressTimer();
+      }
+    }
+
+    function onYtPlayerError(e) {
+      console.warn("YouTube Player error:", e.data);
+      const nameEl = document.getElementById('playerTrackName');
+      if (nameEl) nameEl.textContent = "⚠️ Video nie je dostupné, skúšam ďalšiu...";
+      setTimeout(() => {
+        nextTrack();
+      }, 2000);
+    }
+
+    /* --- progress timer & sync --- */
+    function startProgressTimer() {
+      stopProgressTimer();
+      playerProgressInterval = setInterval(() => {
+        if (!ytPlayer || !ytPlayerReady || typeof ytPlayer.getCurrentTime !== 'function') return;
+        try {
+          const cur = ytPlayer.getCurrentTime() || 0;
+          const dur = ytPlayer.getDuration() || 0;
+          playerElapsedSeconds = Math.floor(cur);
+          playerTotalSeconds = Math.floor(dur);
+
+          const curEl  = document.getElementById('playerCurrentTime');
+          const durEl  = document.getElementById('playerTotalTime');
+          const fillEl = document.getElementById('playerProgressFill');
+
+          if (curEl) curEl.textContent = formatTrackTime(playerElapsedSeconds);
+          if (durEl) {
+            durEl.textContent = dur > 0 ? formatTrackTime(playerTotalSeconds) : 'LIVE';
+          }
+          if (fillEl && dur > 0) {
+            fillEl.style.width = Math.min((cur / dur) * 100, 100) + '%';
+          }
+        } catch (e) {}
+      }, 500);
+    }
+
+    function stopProgressTimer() {
+      if (playerProgressInterval) clearInterval(playerProgressInterval);
+      playerProgressInterval = null;
+    }
+
+    function togglePlayMusic() {
+      if (!ytPlayer || !ytPlayerReady) {
+        initYouTubePlayer();
+        const nameEl = document.getElementById('playerTrackName');
+        if (nameEl) nameEl.textContent = "⏳ Pripravujem hudbu, kliknite znova...";
+        return;
+      }
+      try {
+        if (isMusicPlaying) {
+          ytPlayer.pauseVideo();
+        } else {
+          ytPlayer.unMute();
+          ytPlayer.setVolume(80);
+          ytPlayer.playVideo();
+        }
+      } catch (e) {
+        console.warn("Play error:", e);
+      }
+    }
+
+    function loadTrack(url, title, autoplay = true) {
+      const { videoId, listId } = parseYoutubeUrl(url);
+      const nameEl  = document.getElementById('playerTrackName');
+      if (nameEl && title) nameEl.textContent = title;
+      cycleVinylDesign();
+
+      if (!ytPlayer || !ytPlayerReady) return;
+
+      try {
+        if (listId) {
+          ytPlayer.loadPlaylist({ list: listId, listType: 'playlist' });
+        } else if (videoId) {
+          if (autoplay) {
+            ytPlayer.loadVideoById(videoId);
+          } else {
+            ytPlayer.cueVideoById(videoId);
+          }
+        }
+        if (autoplay) {
+          ytPlayer.unMute();
+          ytPlayer.playVideo();
+        }
+      } catch (e) {
+        console.warn("Load track error:", e);
+      }
+    }
+
+    function prevTrack() {
+      currentPresetIndex = (currentPresetIndex - 1 + musicPresets.length) % musicPresets.length;
+      const p = musicPresets[currentPresetIndex];
+      loadTrack(p.url, p.name, true);
+      markActivePreset();
+    }
+
+    function nextTrack() {
+      currentPresetIndex = (currentPresetIndex + 1) % musicPresets.length;
+      const p = musicPresets[currentPresetIndex];
+      loadTrack(p.url, p.name, true);
+      markActivePreset();
+    }
+
+    function toggleMute() {
+      if (!ytPlayer || !ytPlayerReady) return;
+      const btn = document.getElementById('playerVolBtn');
+      const slider = document.getElementById('playerVolSlider');
+      isPlayerMuted = !isPlayerMuted;
+      if (isPlayerMuted) {
+        ytPlayer.mute();
+        if (btn) btn.textContent = '🔇';
+        if (slider) slider.value = 0;
+      } else {
+        ytPlayer.unMute();
+        if (btn) btn.textContent = '🔊';
+        if (slider) slider.value = 70;
+      }
+    }
+
+    function setVolume(val) {
+      if (!ytPlayer || !ytPlayerReady) return;
+      const v = parseInt(val, 10);
+      ytPlayer.setVolume(v);
+      const btn = document.getElementById('playerVolBtn');
+      if (v === 0) {
+        isPlayerMuted = true;
+        if (btn) btn.textContent = '🔇';
+      } else {
+        isPlayerMuted = false;
+        if (btn) btn.textContent = '🔊';
+      }
+    }
+
+    function seekTrackClick(e) {
+      const bar = document.getElementById('playerProgressBar');
+      if (!bar) return;
+      const rect = bar.getBoundingClientRect();
+      const pos  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+
+      if (ytPlayer && ytPlayerReady && typeof ytPlayer.getDuration === 'function') {
+        const dur = ytPlayer.getDuration() || 0;
+        if (dur > 0) {
+          ytPlayer.seekTo(pos * dur, true);
+          playerElapsedSeconds = Math.floor(pos * dur);
+          const fill = document.getElementById('playerProgressFill');
+          if (fill) fill.style.width = (pos * 100) + '%';
+        }
+      }
+    }
+
+    function toggleVideoScreen() {
+      const wrap = document.getElementById('playerVideoWrap');
+      const btn = document.getElementById('btnToggleVideoScreen');
+      if (!wrap) return;
+      const isCollapsed = wrap.classList.toggle('collapsed');
+      if (btn) {
+        btn.textContent = isCollapsed ? '📺 Video' : '📺 Skryť video';
+        btn.style.color = isCollapsed ? '' : 'var(--miku-pink)';
+      }
+    }
+
+    function toggleLinkInput() {
+      const row = document.getElementById('playerInputRow');
+      if (row) row.classList.toggle('open');
+    }
+
+    function loadCustomYtUrl() {
+      const input = document.getElementById('ytUrlInput');
+      if (!input) return;
+      const val = input.value.trim();
+      if (!val) return;
+      loadTrack(val, 'Vlastný odkaz', true);
+      input.value = '';
+      const row = document.getElementById('playerInputRow');
+      if (row) row.classList.remove('open');
+    }
+
+    /* --- presets UI --- */
+    function togglePresetsMenu() {
+      const drop = document.getElementById('presetsDropdown');
+      if (!drop) return;
+      drop.classList.toggle('active');
+      if (drop.classList.contains('active')) renderPresetsList();
+    }
+
+    function renderPresetsList() {
+      const container = document.getElementById('presetsList');
+      if (!container) return;
+      container.innerHTML = '';
+      musicPresets.forEach((p, idx) => {
+        const item = document.createElement('div');
+        item.className = 'preset-item' + (idx === currentPresetIndex ? ' active-preset' : '');
+        item.innerHTML = `<span style="flex:1;cursor:pointer" onclick="selectMusicPreset(${idx})">🎵 ${p.name}</span><span class="preset-del-btn" onclick="deleteMusicPreset(${idx})">✕</span>`;
+        container.appendChild(item);
+      });
+    }
+
+    function markActivePreset() {
+      document.querySelectorAll('#presetsList .preset-item').forEach((el, i) => {
+        el.classList.toggle('active-preset', i === currentPresetIndex);
+      });
+    }
+
+    function selectMusicPreset(idx) {
+      currentPresetIndex = idx;
+      const p = musicPresets[idx];
+      loadTrack(p.url, p.name, true);
+      markActivePreset();
+      const drop = document.getElementById('presetsDropdown');
+      if (drop) drop.classList.remove('active');
+    }
+
+    function deleteMusicPreset(idx) {
+      if (musicPresets.length <= 1) { alert('Musí zostať aspoň jedna hudobná téma.'); return; }
+      musicPresets.splice(idx, 1);
+      if (currentPresetIndex >= musicPresets.length) currentPresetIndex = 0;
+      localStorage.setItem('miku_music_presets', JSON.stringify(musicPresets));
+      renderPresetsList();
+      syncDataToCloud();
+    }
+
+    function addNewPreset() {
+      const n = document.getElementById('newPresetName');
+      const u = document.getElementById('newPresetUrl');
+      if (!n || !u || !n.value.trim() || !u.value.trim()) { alert('Zadajte názov aj URL.'); return; }
+      musicPresets.push({ name: n.value.trim(), url: u.value.trim() });
+      localStorage.setItem('miku_music_presets', JSON.stringify(musicPresets));
+      n.value = ''; u.value = '';
+      renderPresetsList();
+      syncDataToCloud();
+    }
+
+    // --- 9.2 AUTORSKÝ REŽIM (ADMIN PIN & READ-ONLY OCHRANA PRE ZDIEĽANIE) ---
+    let authorPin = localStorage.getItem('miku_author_pin') || "";
+    let isAuthorMode = localStorage.getItem('miku_is_author') !== "false";
+
+    function applyAuthorMode(isAuth) {
+      isAuthorMode = isAuth;
+      document.body.classList.toggle('readonly-mode', !isAuth);
+      const docEditor = document.getElementById('docEditor');
+      const docTitle = document.getElementById('docTitleInput');
+      if (docEditor) docEditor.readOnly = !isAuth;
+      if (docTitle) docTitle.readOnly = !isAuth;
+
+      const authBtn = document.getElementById('authLockIcon');
+      if (authBtn) {
+        authBtn.innerText = isAuth ? "👑 Autor" : "🔒 Režim čítania";
+        authBtn.style.color = isAuth ? "var(--miku-cyan)" : "var(--miku-pink)";
+      }
+      localStorage.setItem('miku_is_author', isAuth);
+    }
+
+    function toggleAuthPrompt() {
+      if (isAuthorMode) {
+        const lock = confirm("Chcete prepnúť zobrazenie do režimu Iba na čítanie (Read-Only) pre náhľad toho, čo vidí návštevník?");
+        if (lock) applyAuthorMode(false);
+      } else {
+        if (!authorPin) {
+          applyAuthorMode(true);
+          alert("Ste v Autorskom režime. V menu 'Vychytávky' si môžete kedykoľvek nastaviť vlastný bezpečnostný PIN kód.");
+          return;
+        }
+        const input = prompt("Zadajte Autorský PIN pre odomknutie úprav:");
+        if (input === authorPin) {
+          applyAuthorMode(true);
+          alert("✅ Úspešne odomknuté! Máte plné autorské práva.");
+        } else if (input !== null) {
+          alert("❌ Nesprávny PIN kód.");
+        }
+      }
+    }
+
+    function changeAuthorPin() {
+      if (authorPin) {
+        const current = prompt("Zadajte aktuálny PIN kód:");
+        if (current !== authorPin) {
+          alert("Nesprávny pôvodný PIN.");
+          return;
+        }
+      }
+      const newPin = prompt("Zadajte nový 4-miestny PIN (alebo nechajte prázdne pre zrušenie PINu):");
+      if (newPin !== null) {
+        authorPin = newPin.trim();
+        localStorage.setItem('miku_author_pin', authorPin);
+        alert(authorPin ? `✅ PIN kód bol nastavený: ${authorPin}` : "Ochrana PINom bola vypnutá.");
+        syncDataToCloud();
+      }
+    }
+
+    // --- 10. OBSIDIAN GRAPH VIEW (POHYB, PAN, ZOOM A SPOĽAHLIVÉ ODDELENIE ŤAHANIA A KLIKNUTIA) ---
+    let panX = 0;
+    let panY = 0;
+    let zoomScale = 1.0;
+    let graphNodes = [];
+    let graphLinks = [];
+    let isMouseDown = false;
+    let startMouseX = 0;
+    let startMouseY = 0;
+    let origMouseDownX = 0;
+    let origMouseDownY = 0;
+    let hasDragged = false;
+    let dragTargetNode = null;
+    let isPanning = false;
+    let graphCanvasEventsAttached = false;
+    let renderGraphCanvas = null;
+
+    function initGraphCanvas() {
+      const canvas = document.getElementById('graphCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+
+      if (panX === 0 && panY === 0) {
+        panX = canvas.width / 2;
+        panY = canvas.height / 2;
+      }
+
+      // Inicializuj uzly iba ak ešte neexistujú (zachová ich manuálne presunuté pozície)
+      if (graphNodes.length === 0) {
+        const colors = ["#00ffff", "#39c5bb", "#ff2a85", "#2ee5d6", "#ff70a6"];
+        graphNodes = topics.map((t, i) => {
+          const angle = (i / topics.length) * Math.PI * 2;
+          const radius = Math.min(canvas.width, canvas.height) * 0.32;
+          return {
+            id: t.id,
+            title: t.title,
+            x: Math.cos(angle) * radius,
+            y: Math.sin(angle) * radius,
+            r: 26,
+            color: colors[i % colors.length]
+          };
+        });
+
+        graphLinks = [];
+        for (let i = 0; i < graphNodes.length; i++) {
+          graphLinks.push({ from: graphNodes[i], to: graphNodes[(i + 1) % graphNodes.length] });
+          if (i % 2 === 0) graphLinks.push({ from: graphNodes[0], to: graphNodes[i] });
+        }
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(panX, panY);
+        ctx.scale(zoomScale, zoomScale);
+
+        // Draw Links
+        graphLinks.forEach(l => {
+          ctx.beginPath();
+          ctx.moveTo(l.from.x, l.from.y);
+          ctx.lineTo(l.to.x, l.to.y);
+          ctx.strokeStyle = "rgba(57, 197, 187, 0.35)";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        });
+
+        // Draw Nodes
+        graphNodes.forEach(n => {
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+          ctx.fillStyle = n.color;
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = n.color;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.r - 4, 0, Math.PI * 2);
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "bold 13px sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(n.title, n.x, n.y + n.r + 16);
+        });
+
+        ctx.restore();
+      }
+
+      renderGraphCanvas = render;
+      render();
+
+      function screenToWorld(sx, sy) {
+        return {
+          x: (sx - panX) / zoomScale,
+          y: (sy - panY) / zoomScale
+        };
+      }
+
+      if (!graphCanvasEventsAttached) {
+        graphCanvasEventsAttached = true;
+
+        canvas.addEventListener('mousedown', e => {
+          isMouseDown = true;
+          hasDragged = false;
+          const rect = canvas.getBoundingClientRect();
+          startMouseX = e.clientX - rect.left;
+          startMouseY = e.clientY - rect.top;
+          origMouseDownX = startMouseX;
+          origMouseDownY = startMouseY;
+          const world = screenToWorld(startMouseX, startMouseY);
+
+          dragTargetNode = graphNodes.find(n => Math.hypot(n.x - world.x, n.y - world.y) < n.r);
+          isPanning = !dragTargetNode;
+          canvas.style.cursor = dragTargetNode ? "grabbing" : "move";
+        });
+
+        window.addEventListener('mousemove', e => {
+          const cvs = document.getElementById('graphCanvas');
+          if (!cvs) return;
+          const rect = cvs.getBoundingClientRect();
+
+          if (!isMouseDown) {
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+            const world = screenToWorld(mx, my);
+            const hovered = graphNodes.find(n => Math.hypot(n.x - world.x, n.y - world.y) < n.r);
+            cvs.style.cursor = hovered ? "pointer" : "grab";
+            return;
+          }
+
+          const curX = e.clientX - rect.left;
+          const curY = e.clientY - rect.top;
+          const dx = curX - startMouseX;
+          const dy = curY - startMouseY;
+
+          // Celková vzdialenosť od pôvodného mousedown bodu
+          const totalDist = Math.hypot(curX - origMouseDownX, curY - origMouseDownY);
+          if (totalDist > 4) {
+            hasDragged = true;
+          }
+
+          if (dragTargetNode) {
+            dragTargetNode.x += dx / zoomScale;
+            dragTargetNode.y += dy / zoomScale;
+          } else if (isPanning) {
+            panX += dx;
+            panY += dy;
+          }
+
+          startMouseX = curX;
+          startMouseY = curY;
+          if (renderGraphCanvas) renderGraphCanvas();
+        });
+
+        window.addEventListener('mouseup', e => {
+          if (isMouseDown) {
+            const cvs = document.getElementById('graphCanvas');
+            if (cvs) {
+              const rect = cvs.getBoundingClientRect();
+              const endX = e.clientX - rect.left;
+              const endY = e.clientY - rect.top;
+              const totalDist = Math.hypot(endX - origMouseDownX, endY - origMouseDownY);
+
+              // IBA AK BOLO ČISTÉ KLIKNUTIE BEZ POHYBU (totalDist <= 4 && !hasDragged) A NA GUĽÔČKU:
+              if (dragTargetNode && !hasDragged && totalDist <= 4) {
+                activeTopicId = dragTargetNode.id;
+                localStorage.setItem('miku_active_topic', activeTopicId);
+                switchMainView('studio');
+              }
+            }
+          }
+          isMouseDown = false;
+          hasDragged = false;
+          dragTargetNode = null;
+          isPanning = false;
+          const cvs = document.getElementById('graphCanvas');
+          if (cvs) cvs.style.cursor = "grab";
+        });
+
+        // Touch podpora pre mobilné a dotykové displeje
+        canvas.addEventListener('touchstart', e => {
+          if (e.touches.length !== 1) return;
+          const t = e.touches[0];
+          isMouseDown = true;
+          hasDragged = false;
+          const rect = canvas.getBoundingClientRect();
+          startMouseX = t.clientX - rect.left;
+          startMouseY = t.clientY - rect.top;
+          origMouseDownX = startMouseX;
+          origMouseDownY = startMouseY;
+          const world = screenToWorld(startMouseX, startMouseY);
+
+          dragTargetNode = graphNodes.find(n => Math.hypot(n.x - world.x, n.y - world.y) < n.r);
+          isPanning = !dragTargetNode;
+        }, { passive: false });
+
+        window.addEventListener('touchmove', e => {
+          if (!isMouseDown || e.touches.length !== 1) return;
+          const cvs = document.getElementById('graphCanvas');
+          if (!cvs) return;
+          const t = e.touches[0];
+          const rect = cvs.getBoundingClientRect();
+          const curX = t.clientX - rect.left;
+          const curY = t.clientY - rect.top;
+          const dx = curX - startMouseX;
+          const dy = curY - startMouseY;
+
+          const totalDist = Math.hypot(curX - origMouseDownX, curY - origMouseDownY);
+          if (totalDist > 4) {
+            hasDragged = true;
+          }
+
+          if (dragTargetNode) {
+            dragTargetNode.x += dx / zoomScale;
+            dragTargetNode.y += dy / zoomScale;
+          } else if (isPanning) {
+            panX += dx;
+            panY += dy;
+          }
+
+          startMouseX = curX;
+          startMouseY = curY;
+          if (renderGraphCanvas) renderGraphCanvas();
+          e.preventDefault();
+        }, { passive: false });
+
+        window.addEventListener('touchend', e => {
+          if (isMouseDown && e.changedTouches.length > 0) {
+            const cvs = document.getElementById('graphCanvas');
+            if (cvs) {
+              const t = e.changedTouches[0];
+              const rect = cvs.getBoundingClientRect();
+              const endX = t.clientX - rect.left;
+              const endY = t.clientY - rect.top;
+              const totalDist = Math.hypot(endX - origMouseDownX, endY - origMouseDownY);
+
+              if (dragTargetNode && !hasDragged && totalDist <= 4) {
+                activeTopicId = dragTargetNode.id;
+                localStorage.setItem('miku_active_topic', activeTopicId);
+                switchMainView('studio');
+              }
+            }
+          }
+          isMouseDown = false;
+          hasDragged = false;
+          dragTargetNode = null;
+          isPanning = false;
+        });
+
+        // Zoom s kolieskom myši
+        canvas.addEventListener('wheel', e => {
+          e.preventDefault();
+          const factor = e.deltaY < 0 ? 1.1 : 0.9;
+          zoomScale = Math.min(Math.max(zoomScale * factor, 0.3), 3.0);
+          if (renderGraphCanvas) renderGraphCanvas();
+        }, { passive: false });
+
+        // Automatické prispôsobenie pri zmene veľkosti okna
+        window.addEventListener('resize', () => {
+          const cvs = document.getElementById('graphCanvas');
+          if (cvs && cvs.parentElement) {
+            cvs.width = cvs.parentElement.clientWidth;
+            cvs.height = cvs.parentElement.clientHeight;
+            if (renderGraphCanvas) renderGraphCanvas();
+          }
+        });
+      }
+
+      window.zoomGraph = factor => {
+        zoomScale = Math.min(Math.max(zoomScale * factor, 0.3), 3.0);
+        if (renderGraphCanvas) renderGraphCanvas();
+      };
+
+      window.resetGraphView = () => {
+        panX = canvas.width / 2;
+        panY = canvas.height / 2;
+        zoomScale = 1.0;
+        const colors = ["#00ffff", "#39c5bb", "#ff2a85", "#2ee5d6", "#ff70a6"];
+        graphNodes = topics.map((t, i) => {
+          const angle = (i / topics.length) * Math.PI * 2;
+          const radius = Math.min(canvas.width, canvas.height) * 0.32;
+          return {
+            id: t.id,
+            title: t.title,
+            x: Math.cos(angle) * radius,
+            y: Math.sin(angle) * radius,
+            r: 26,
+            color: colors[i % colors.length]
+          };
+        });
+        graphLinks = [];
+        for (let i = 0; i < graphNodes.length; i++) {
+          graphLinks.push({ from: graphNodes[i], to: graphNodes[(i + 1) % graphNodes.length] });
+          if (i % 2 === 0) graphLinks.push({ from: graphNodes[0], to: graphNodes[i] });
+        }
+        if (renderGraphCanvas) renderGraphCanvas();
+      };
+    }
+
+    // --- 11. INITIALIZATION ON LOAD ---
+    window.addEventListener('DOMContentLoaded', () => {
+      applyTheme(activeTheme);
+      applyExtensionSettings();
+      applyAuthorMode(isAuthorMode);
+      renderPresetsList();
+      checkAndInitBackend();
+
+      // Ensure YouTube player initializes
+      if (typeof YT !== 'undefined' && YT.Player) {
+        initYouTubePlayer();
+      } else if (!document.getElementById('ytIframeApiScript')) {
+        const tag = document.createElement('script');
+        tag.id = 'ytIframeApiScript';
+        tag.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(tag);
+      }
+
+      // Pre-load first preset name into player (no autoplay)
+      if (musicPresets.length > 0) {
+        const p0 = musicPresets[0];
+        const nameEl = document.getElementById('playerTrackName');
+        if (nameEl) nameEl.textContent = p0.name;
+        const disc = document.getElementById('vinylDisc');
+        if (disc) disc.className = 'vinyl-disc vd-1';
+      }
+      switchMainView('graph'); // Homepage starts on Obsidian Graph Map
+    });
+  </script>
+</body>
+</html>
