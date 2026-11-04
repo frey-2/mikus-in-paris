@@ -1282,8 +1282,8 @@
       </button>
 
       <!-- Author PIN / Read-Only Switcher -->
-      <button class="btn-nav" id="btnAuthMode" onclick="toggleAuthPrompt()" title="Režim úprav / Zámok čítania">
-        <span id="authLockIcon">👑 Autor</span>
+      <button class="btn-nav" id="btnAuthMode" onclick="toggleAuthPrompt()" title="Kliknite pre zadanie PINu a odomknutie úprav">
+        <span id="authLockIcon">🔒 Režim čítania</span>
       </button>
 
       <!-- Theme Switcher (Dark Neon vs Pale Turquoise Neon) -->
@@ -2738,8 +2738,9 @@
     }
 
     // --- 9.2 AUTORSKÝ REŽIM (ADMIN PIN & READ-ONLY OCHRANA PRE ZDIEĽANIE) ---
-    let authorPin = localStorage.getItem('miku_author_pin') || "";
-    let isAuthorMode = localStorage.getItem('miku_is_author') !== "false";
+    let authorPin = localStorage.getItem('miku_author_pin') || "7567";
+    // VŠETCI návštevníci automaticky začínajú ako ČITATELIA (Read-Only)
+    let isAuthorMode = false;
 
     function applyAuthorMode(isAuth) {
       isAuthorMode = isAuth;
@@ -2751,28 +2752,53 @@
 
       const authBtn = document.getElementById('authLockIcon');
       if (authBtn) {
-        authBtn.innerText = isAuth ? "👑 Autor" : "🔒 Režim čítania";
+        authBtn.innerText = isAuth ? "👑 Autor (Úpravy povolené)" : "🔒 Režim čítania (Klikni pre zadanie PINu)";
         authBtn.style.color = isAuth ? "var(--miku-cyan)" : "var(--miku-pink)";
       }
       localStorage.setItem('miku_is_author', isAuth);
     }
 
-    function toggleAuthPrompt() {
+    async function toggleAuthPrompt() {
       if (isAuthorMode) {
-        const lock = confirm("Chcete prepnúť zobrazenie do režimu Iba na čítanie (Read-Only) pre náhľad toho, čo vidí návštevník?");
-        if (lock) applyAuthorMode(false);
+        // Ak už je autor odomknutý, kliknutím sa bezpečne zamkne späť do režimu čítania
+        applyAuthorMode(false);
+        alert("🔒 Stránka bola zamknutá do režimu Iba na čítanie.");
       } else {
-        if (!authorPin) {
-          applyAuthorMode(true);
-          alert("Ste v Autorskom režime. V menu 'Vychytávky' si môžete kedykoľvek nastaviť vlastný bezpečnostný PIN kód.");
-          return;
+        const input = prompt("Zadajte Autorský PIN kód pre odomknutie úprav:");
+        if (input === null || input.trim() === "") return;
+
+        const pinCandidate = input.trim();
+
+        // 1. Overenie cez Node.js Backend API
+        if (isBackendActive) {
+          try {
+            const res = await fetch(`${BACKEND_API_BASE}/api/auth/verify`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ pin: pinCandidate })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+              authorPin = pinCandidate;
+              localStorage.setItem('miku_author_pin', authorPin);
+              applyAuthorMode(true);
+              alert("✅ Úspešne overené cez server! Máte plné autorské práva.");
+              return;
+            }
+          } catch(e) {
+            console.warn("Backend auth overenie zlyhalo, skúšam lokálny PIN:", e);
+          }
         }
-        const input = prompt("Zadajte Autorský PIN pre odomknutie úprav:");
-        if (input === authorPin) {
+
+        // 2. Overenie podľa uloženého PINu
+        const validPin = authorPin || "7567";
+        if (pinCandidate === validPin) {
+          authorPin = pinCandidate;
+          localStorage.setItem('miku_author_pin', authorPin);
           applyAuthorMode(true);
           alert("✅ Úspešne odomknuté! Máte plné autorské práva.");
-        } else if (input !== null) {
-          alert("❌ Nesprávny PIN kód.");
+        } else {
+          alert("❌ Nesprávny PIN kód! Úpravy zostávajú uzamknuté.");
         }
       }
     }
