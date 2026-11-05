@@ -1926,14 +1926,23 @@
     function loadTopic(id) {
       const topic = topics.find(t => t.id === id) || topics[0];
       activeTopicId = topic.id;
-      document.getElementById('docTitleInput').value = topic.title;
+      const titleEl = document.getElementById('docTitleInput');
+      const editorEl = document.getElementById('docEditor');
+      if (titleEl) {
+        titleEl.value = topic.title;
+        titleEl.readOnly = !isAuthorMode;
+      }
       document.getElementById('docBreadcrumb').innerText = topic.breadcrumb || `Fyzika > ${topic.title}`;
-      document.getElementById('docEditor').value = topic.content;
+      if (editorEl) {
+        editorEl.value = topic.content;
+        editorEl.readOnly = !isAuthorMode;
+      }
       updateWordCounts();
       renderTodoList();
     }
 
     function saveCurrentTopic() {
+      if (!isAuthorMode) return;
       const topic = topics.find(t => t.id === activeTopicId);
       if (topic) {
         topic.title = document.getElementById('docTitleInput').value;
@@ -1951,6 +1960,10 @@
     }
 
     function createNewTopic() {
+      if (!isAuthorMode) {
+        alert("🔒 Na pridanie novej témy musíte odomknúť Autorský režim zadaním PINu.");
+        return;
+      }
       const newId = "top-" + (topics.length + 1);
       const title = prompt("Zadajte názov novej témy:", "Nová kapitola fyziky");
       if (title) {
@@ -2739,8 +2752,9 @@
 
     // --- 9.2 AUTORSKÝ REŽIM (ADMIN PIN & READ-ONLY OCHRANA PRE ZDIEĽANIE) ---
     let authorPin = localStorage.getItem('miku_author_pin') || "7567";
-    // VŠETCI návštevníci automaticky začínajú ako ČITATELIA (Read-Only)
+    // VŠETCI návštevníci VŽDY začínajú ako ČITATELIA (žiadne predvolené odomknutie)
     let isAuthorMode = false;
+    localStorage.removeItem('miku_is_author');
 
     function applyAuthorMode(isAuth) {
       isAuthorMode = isAuth;
