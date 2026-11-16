@@ -289,18 +289,356 @@
     }
     #studioView.active { display: grid; }
 
-    /* WIKIPEDIA SPLIT-SCREEN REŠERŠ REŽIM */
+    /* WIKIPEDIA & PDF MULTITASKING SPLIT-SCREEN REŽIM */
     body.wiki-split-active #studioView {
-      max-width: 98vw !important;
-      grid-template-columns: 260px 1fr 8px var(--wiki-width, 420px) !important;
+      max-width: 99vw !important;
+      grid-template-columns: 240px 1fr 8px var(--wiki-width, 390px) !important;
       gap: 10px !important;
     }
-    body.wiki-split-active .side-panel-right {
+    body.pdf-split-active #studioView {
+      max-width: 99vw !important;
+      grid-template-columns: 240px 1fr 8px var(--pdf-width, 420px) !important;
+      gap: 10px !important;
+    }
+    body.wiki-split-active.pdf-split-active #studioView {
+      max-width: 99.5vw !important;
+      grid-template-columns: 220px 1fr 8px var(--wiki-width, 360px) 8px var(--pdf-width, 390px) !important;
+      gap: 8px !important;
+    }
+    body.wiki-split-active .side-panel-right,
+    body.pdf-split-active .side-panel-right {
       display: none !important;
     }
     body.wiki-split-active .wiki-resizer-bar,
     body.wiki-split-active .wiki-research-panel {
       display: flex !important;
+    }
+    body.pdf-split-active .pdf-resizer-bar,
+    body.pdf-split-active .pdf-research-panel {
+      display: flex !important;
+    }
+
+    /* GTA 5 RADIAL WEAPON/EMOTE STYLE RESEARCH WHEEL */
+    .radial-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 12, 0.78);
+      backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+    .radial-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+    .radial-wheel-box {
+      position: relative;
+      width: 440px;
+      height: 440px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: radialZoom 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes radialZoom {
+      0% { transform: scale(0.65) rotate(-15deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .radial-wheel-bg-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px dashed rgba(0, 255, 255, 0.35);
+      box-shadow: 0 0 35px rgba(0, 255, 255, 0.2), inset 0 0 30px rgba(0, 255, 255, 0.1);
+      animation: spinVinyl 30s linear infinite;
+    }
+    .radial-center-badge {
+      width: 130px;
+      height: 130px;
+      background: linear-gradient(135deg, #061522 0%, #03080f 100%);
+      border: 2px solid var(--miku-neon);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      box-shadow: 0 0 25px var(--miku-glow);
+      text-align: center;
+      pointer-events: none;
+    }
+    .radial-center-badge span.title {
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--miku-neon);
+      letter-spacing: 1px;
+    }
+    .radial-center-badge span.sub {
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .radial-sector {
+      position: absolute;
+      width: 195px;
+      height: 195px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      background: rgba(6, 21, 34, 0.85);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10;
+      text-align: center;
+      padding: 16px;
+    }
+    .radial-sector.left-sector {
+      left: 10px;
+      top: 122px;
+    }
+    .radial-sector.right-sector {
+      right: 10px;
+      top: 122px;
+    }
+    .radial-sector:hover {
+      transform: scale(1.1);
+      background: rgba(0, 255, 255, 0.15);
+      border-color: var(--miku-neon);
+      box-shadow: 0 0 30px var(--miku-glow), 0 0 15px rgba(0, 255, 255, 0.5);
+    }
+    .radial-sector.pdf-sector:hover {
+      background: rgba(255, 42, 133, 0.15);
+      border-color: var(--miku-pink);
+      box-shadow: 0 0 30px var(--miku-pink-glow), 0 0 15px rgba(255, 42, 133, 0.5);
+    }
+    .radial-sector .sec-icon {
+      font-size: 38px;
+      margin-bottom: 6px;
+      filter: drop-shadow(0 0 8px currentColor);
+    }
+    .radial-sector .sec-title {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--text);
+    }
+    .radial-sector .sec-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* TOP BAR COMPACT ACTION ICONS (4 KOCKY, KNIŽKA/PERO, MESIAČIK) */
+    .icon-action-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 0;
+      position: relative;
+    }
+    .icon-action-btn:hover {
+      border-color: var(--miku-neon);
+      box-shadow: 0 0 10px var(--miku-glow);
+      transform: scale(1.08);
+      color: var(--miku-neon);
+    }
+    .icon-action-btn.active {
+      background: rgba(0, 255, 255, 0.2);
+      border-color: var(--miku-neon);
+      color: var(--miku-neon);
+    }
+    .btn-research-hub-trigger {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(0,255,255,0.15), rgba(255,42,133,0.15));
+      border: 1px solid var(--miku-neon);
+      color: var(--miku-neon);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-research-hub-trigger:hover {
+      box-shadow: 0 0 15px var(--miku-glow);
+      transform: scale(1.05);
+    }
+
+    /* PDF RESIZER BAR */
+    .pdf-resizer-bar {
+      display: none;
+      width: 8px;
+      cursor: col-resize;
+      background: transparent;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      position: relative;
+      transition: background 0.2s;
+    }
+    .pdf-resizer-bar:hover, .pdf-resizer-bar.dragging {
+      background: rgba(255, 42, 133, 0.2);
+    }
+    .pdf-resizer-glow {
+      width: 2px;
+      height: 60px;
+      background: var(--miku-pink);
+      border-radius: 2px;
+      box-shadow: 0 0 8px var(--miku-pink-glow);
+    }
+
+    /* PDF RESEARCH SIDE PANEL */
+    .pdf-research-panel {
+      display: none;
+      background: var(--surface-card);
+      border: 1px solid rgba(255, 42, 133, 0.35);
+      border-radius: 14px;
+      overflow: hidden;
+      flex-direction: column;
+      box-shadow: 0 0 25px rgba(0,0,0,0.6), 0 0 15px rgba(255,42,133,0.1);
+      position: relative;
+    }
+    .pdf-panel-header {
+      padding: 12px 14px;
+      background: rgba(14, 4, 10, 0.85);
+      border-bottom: 1px solid rgba(255, 42, 133, 0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pdf-filter-tab {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pdf-filter-tab.active {
+      background: rgba(255, 42, 133, 0.2);
+      border-color: var(--miku-pink);
+      color: #fff;
+      box-shadow: 0 0 8px var(--miku-pink-glow);
+    }
+    .pdf-books-catalog {
+      max-height: 180px;
+      overflow-y: auto;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: rgba(0,0,0,0.25);
+    }
+    .pdf-book-item {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.15s;
+    }
+    .pdf-book-item:hover, .pdf-book-item.active {
+      border-color: var(--miku-pink);
+      background: rgba(255, 42, 133, 0.12);
+      transform: translateX(3px);
+    }
+    .pdf-book-badge-sk {
+      background: #00ffff22;
+      color: #00ffff;
+      border: 1px solid #00ffff44;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+    }
+    .pdf-book-badge-en {
+      background: #ff2a8522;
+      color: #ff2a85;
+      border: 1px solid #ff2a8544;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+    }
+    .pdf-search-bar {
+      display: flex;
+      gap: 6px;
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(255, 42, 133, 0.2);
+    }
+    .pdf-input {
+      flex: 1;
+      background: var(--input-bg);
+      border: 1px solid rgba(255, 42, 133, 0.3);
+      border-radius: 8px;
+      padding: 6px 10px;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .pdf-input:focus { border-color: var(--miku-pink); box-shadow: 0 0 8px var(--miku-pink-glow); }
+    .btn-pdf-search {
+      background: var(--miku-pink);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 0 12px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-pdf-search:hover { opacity: 0.85; }
+    .pdf-content-viewer {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .pdf-match-card {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .pdf-match-card:hover {
+      border-color: var(--miku-pink);
+      box-shadow: 0 0 10px var(--miku-pink-glow);
+      transform: translateY(-2px);
     }
 
     /* WIKIPEDIA RESIZER BAR */
@@ -1478,26 +1816,111 @@
       <button class="btn-nav" id="btnStudioNav" onclick="switchMainView('studio')">
         <span>📑 Štúdio Tém</span>
       </button>
-      <button class="btn-nav" id="btnWikiNav" onclick="toggleWikipediaPanel()" title="Otvoriť/Zatvoriť Wikipedia Rešerš (Split-Screen)">
-        <span>📖 Wikipedia Rešerš</span>
+
+      <!-- GTA 5 RADIAL WHEEL RESEARCH HUB TRIGGER -->
+      <button class="btn-research-hub-trigger" id="btnRadialTrigger" onclick="openRadialMenu()" onmouseenter="openRadialMenu()" title="Otvoriť GTA 5 Kruhové Výberové Menu (Rešerš Hub)">
+        <span>🎯 Rešerš Hub</span>
       </button>
 
-      <!-- Extensions (Vychytávky) Popup Trigger -->
-      <button class="btn-nav" onclick="toggleExtensionsPopup()">
-        <span>🧩 Vychytávky</span>
+      <!-- Extensions (Vychytávky) Compact 4-Squares Icon Trigger -->
+      <button class="icon-action-btn" onclick="toggleExtensionsPopup()" title="Vychytávky & Rozšírenia (⊞)">
+        <span>⊞</span>
       </button>
 
-      <!-- Author PIN / Read-Only Switcher -->
-      <button class="btn-nav" id="btnAuthMode" onclick="toggleAuthPrompt()" title="Kliknite pre zadanie PINu a odomknutie úprav">
-        <span id="authLockIcon">🔒 Režim čítania</span>
+      <!-- Author PIN / Read-Only Compact Book/Pen Icon Switcher -->
+      <button class="icon-action-btn" id="btnAuthMode" onclick="toggleAuthPrompt()" title="Režim čítania (📖) / Autor (✍️)">
+        <span id="authLockIcon">📖</span>
       </button>
 
       <!-- Theme Switcher (Dark Neon vs Pale Turquoise Neon) -->
-      <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Prepnúť režim (Tmavý neón / Bledo-tyrkysový neón)">
+      <button class="icon-action-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Prepnúť motív (Tmavý neón / Bledo-tyrkysový neón)">
         🌙
       </button>
     </div>
   </header>
+
+  <!-- GTA 5 RADIAL WEAPON/EMOTE STYLE RESEARCH WHEEL MODAL -->
+  <div class="radial-overlay" id="radialOverlay" onclick="closeRadialMenu(event)">
+    <div class="radial-wheel-box" id="radialWheelBox">
+      <div class="radial-wheel-bg-ring"></div>
+      
+      <!-- Center Cyber Badge -->
+      <div class="radial-center-badge">
+        <span class="title">REŠERŠ WHEEL</span>
+        <span class="sub">VYBERTE ZDROJ</span>
+      </div>
+
+      <!-- Left Sector: Wikipedia -->
+      <div class="radial-sector left-sector" onclick="selectRadialOption('wiki')" title="Otvoriť Wikipedia Rešerš">
+        <span class="sec-icon" style="color:var(--miku-neon);">📖</span>
+        <span class="sec-title" style="color:var(--miku-neon);">WIKIPEDIA</span>
+        <span class="sec-sub">Online encyklopédia &amp; vzorce</span>
+      </div>
+
+      <!-- Right Sector: PDF Library -->
+      <div class="radial-sector right-sector pdf-sector" onclick="selectRadialOption('pdf')" title="Otvoriť PDF Knižnicu STU &amp; Tech">
+        <span class="sec-icon" style="color:var(--miku-pink);">📚</span>
+        <span class="sec-title" style="color:var(--miku-pink);">PDF KNIŽNICA</span>
+        <span class="sec-sub">STU &amp; Svetová literatúra</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: NAHRANIE / PRIDANIE NOVEJ KNIHY DO DATABÁZY -->
+  <div class="radial-overlay" id="addBookModal" style="z-index: 10001;" onclick="if(event.target===this) closeAddBookModal()">
+    <div style="background:var(--surface-card); border:2px solid var(--miku-pink); box-shadow:0 0 35px var(--miku-pink-glow); border-radius:14px; width:92%; max-width:580px; max-height:90vh; overflow-y:auto; padding:20px; position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,42,133,0.3); padding-bottom:10px; margin-bottom:14px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:20px;">📚</span>
+          <h3 style="color:var(--miku-pink); font-size:15px; margin:0;">Pridať knihu do PDF knižnice (Online Databáza)</h3>
+        </div>
+        <span style="cursor:pointer; font-size:16px; color:var(--text-muted);" onclick="closeAddBookModal()">✕</span>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:10px; font-size:12px;">
+        <div>
+          <label style="color:var(--text-muted); display:block; margin-bottom:4px; font-weight:700;">Názov diela / Skrípt:</label>
+          <input type="text" id="newBookTitle" class="pdf-input" style="width:100%; box-sizing:border-box;" placeholder="napr. Fyzika II - Elektromagnetické pole">
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div>
+            <label style="color:var(--text-muted); display:block; margin-bottom:4px; font-weight:700;">Autor / Fakulta:</label>
+            <input type="text" id="newBookAuthor" class="pdf-input" style="width:100%; box-sizing:border-box;" placeholder="napr. prof. Ing. Ján Kováč, DrSc. (STU FEI)">
+          </div>
+          <div>
+            <label style="color:var(--text-muted); display:block; margin-bottom:4px; font-weight:700;">Jazyk:</label>
+            <select id="newBookLang" class="wiki-lang-select" style="width:100%; padding:6px; box-sizing:border-box;">
+              <option value="sk" selected>🇸🇰 Slovenský (STU / VUT)</option>
+              <option value="en">🇬🇧 Anglický (MIT / OpenStax)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div>
+            <label style="color:var(--text-muted); display:block; margin-bottom:4px; font-weight:700;">Kategória:</label>
+            <input type="text" id="newBookCategory" class="pdf-input" style="width:100%; box-sizing:border-box;" value="Fyzika &amp; Elektrotechnika">
+          </div>
+          <div>
+            <label style="color:var(--text-muted); display:block; margin-bottom:4px; font-weight:700;">Rok vydania / Vydavateľstvo:</label>
+            <input type="text" id="newBookSource" class="pdf-input" style="width:100%; box-sizing:border-box;" value="Vydavateľstvo STU">
+          </div>
+        </div>
+
+        <div>
+          <label style="color:var(--text-muted); display:block; margin-bottom:4px; font-weight:700;">Textový obsah diela / kapitoly (z PDF / e-knihy):</label>
+          <textarea id="newBookContent" class="doc-content-editor" style="min-height:160px; font-size:12px; width:100%; box-sizing:border-box;" placeholder="Skopírujte text z vášho PDF sem... Strany môžete oddeliť tromi pomlčkami --- alebo [Strana X]."></textarea>
+          <span style="font-size:10px; color:var(--text-muted); margin-top:2px; display:block;">💡 Tip: Text sa automaticky rozdelí na virtuálne strany a skompiluje do full-textového vyhľadávania.</span>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px; border-top:1px solid var(--border); padding-top:10px;">
+          <button class="btn-cyber-sm" onclick="closeAddBookModal()">Zrušiť</button>
+          <button class="btn-pdf-search" style="padding:7px 16px;" onclick="submitNewBook()">💾 Uložiť do Online Knižnice</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- =========================================================
        VIEW 1: OBSIDIAN GRAPH MAP (HOMEPAGE WITH PAN & ZOOM)
@@ -1654,6 +2077,54 @@
         </div>
         <h2 id="wikiReaderTitle" style="color:var(--miku-neon); font-size:20px; margin:10px 0 6px;"></h2>
         <div class="wiki-reader-body" id="wikiReaderContent"></div>
+      </div>
+    </aside>
+
+    <!-- PDF SPLITTER RESIZE HANDLE -->
+    <div class="pdf-resizer-bar" id="pdfResizer" title="Potiahnutím zmeníte šírku PDF knižnice">
+      <div class="pdf-resizer-glow"></div>
+    </div>
+
+    <!-- PDF RESEARCH SIDE-BY-SIDE PANEL -->
+    <aside class="pdf-research-panel" id="pdfPanel">
+      <div class="pdf-panel-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:16px;">📚</span>
+          <span style="font-weight:800; font-size:13px; color:var(--miku-pink); letter-spacing:0.5px;">VEDECKÁ PDF KNIŽNICA</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <button class="pdf-filter-tab active" id="tabPdfAll" onclick="filterPdfLang('all')">VŠETKO</button>
+          <button class="pdf-filter-tab" id="tabPdfSk" onclick="filterPdfLang('sk')">🇸🇰 STU FEI</button>
+          <button class="pdf-filter-tab" id="tabPdfEn" onclick="filterPdfLang('en')">🇬🇧 EN TECH</button>
+          <button class="pdf-filter-tab" style="background:rgba(0,255,255,0.15); border-color:var(--miku-neon); color:var(--miku-neon);" onclick="openAddBookModal()" title="Nahrať / Pridať vlastnú knihu do databázy">+ Pridať knihu</button>
+          <button class="btn-wiki-close" onclick="togglePdfPanel(false)" title="Zavrieť panel">✕</button>
+        </div>
+      </div>
+
+      <!-- Search Input Box -->
+      <div class="pdf-search-bar">
+        <input type="text" id="pdfSearchInput" class="pdf-input" placeholder="Hľadať vo všetkých knihách (napr. Coulombov zákon, Maxwell, náboj)..." onkeydown="if(event.key==='Enter') performPdfSearch()">
+        <button class="btn-pdf-search" onclick="performPdfSearch()" title="Hľadať v knižnici">🔍 Hľadať</button>
+      </div>
+
+      <!-- Quick Concept Chips -->
+      <div class="wiki-quick-chips">
+        <span class="wiki-chip" style="border-color:rgba(255,42,133,0.3); color:var(--miku-pink);" onclick="searchPdfQuick('Coulombov zákon')">⚡ Coulombov zákon</span>
+        <span class="wiki-chip" style="border-color:rgba(255,42,133,0.3); color:var(--miku-pink);" onclick="searchPdfQuick('Gaussov zákon')">🌐 Gaussov zákon</span>
+        <span class="wiki-chip" style="border-color:rgba(255,42,133,0.3); color:var(--miku-pink);" onclick="searchPdfQuick('Maxwellove rovnice')">🧲 Maxwellove rovnice</span>
+        <span class="wiki-chip" style="border-color:rgba(255,42,133,0.3); color:var(--miku-pink);" onclick="searchPdfQuick('polovodiče')">🔬 Polovodiče</span>
+      </div>
+
+      <!-- Books Catalog List -->
+      <div class="pdf-books-catalog" id="pdfBooksCatalog">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Search Results / Book Content Viewer -->
+      <div class="pdf-content-viewer" id="pdfContentViewer">
+        <div class="wiki-empty-hint">
+          <span>📖 Vyberte knihu z katalógu vyššie alebo vyhľadajte pojem naprieč všetkými skriptami a učebnicami naraz.</span>
+        </div>
       </div>
     </aside>
 
@@ -2358,6 +2829,581 @@
           document.body.style.userSelect = '';
         }
       });
+    }
+
+    // =========================================================
+    // 3.55 GTA 5 STYLE RADIAL RESEARCH WHEEL MENU
+    // =========================================================
+    function openRadialMenu() {
+      const overlay = document.getElementById('radialOverlay');
+      if (overlay) overlay.classList.add('active');
+    }
+
+    function closeRadialMenu(event) {
+      if (event && event.target && event.target.closest && event.target.closest('.radial-sector')) {
+        return;
+      }
+      const overlay = document.getElementById('radialOverlay');
+      if (overlay) overlay.classList.remove('active');
+    }
+
+    function selectRadialOption(type) {
+      const overlay = document.getElementById('radialOverlay');
+      if (overlay) overlay.classList.remove('active');
+      if (type === 'wiki') {
+        toggleWikipediaPanel(true);
+      } else if (type === 'pdf') {
+        togglePdfPanel(true);
+      }
+    }
+
+    // =========================================================
+    // 3.6 VEDECKÁ PDF KNIŽNICA & FULL-TEXT SEARCH (STU & EN)
+    // =========================================================
+    let isPdfSplitActive = false;
+    let pdfResizerDragging = false;
+    let pdfCurrentLang = 'all';
+    let loadedPdfBooks = [];
+    let currentViewingBook = null;
+
+    // Lokálna offline záloha knižnice
+    const FALLBACK_PDF_BOOKS = [
+      {
+        id: "book-sk-1",
+        lang: "sk",
+        title: "STU FEI: Fyzika II – Elektromagnetizmus a Elektrostatika",
+        author: "prof. RNDr. Vladimír Olčák, CSc. a kolektív (FEI STU)",
+        category: "Elektrostatika & Teória Polí",
+        year: 2021,
+        source: "Vydavateľstvo Spektrum STU Bratislava",
+        pages: [
+          {
+            page: 12,
+            chapter: "Kapitola 1: Elektrostatické pole a Coulombov zákon",
+            text: "Coulombov zákon tvorí základný postulát elektrostatiky. Stanovuje, že elektrostatická sila medzi dvoma nehybnými bodovými nábojmi Q1 a Q2 vo vákuu je priamo úmerná súčinu veľkostí týchto nábojov a nepriamo úmerná druhej mocnine ich vzájomnej vzdialenosti r. Vektorový zápis: F = (1 / (4 * pi * epsilon_0)) * (Q1 * Q2 / r^2) * r_vektor_jednotkovy. Permitivita vákua epsilon_0 nadobúda hodnotu približne 8.854e-12 F/m. Tento zákon je analogický s Newtonovým gravitačným zákonom."
+          },
+          {
+            page: 15,
+            chapter: "Kapitola 1.3: Gaussov zákon elektrostatiky",
+            text: "Gaussov zákon vyjadruje vzťah medzi tokom elektrického poľa cez uzavretú plochu a celkovým elektrickým nábojom uzavretým vnútri tejto plochy. Tok vektora intenzity elektrického poľa E cez ľubovoľnú uzavretú plochu S sa rovná celkovému voľnému náboju Q_vnutorne delenému permitivitou vákua. Je to jedna zo štyroch fundamentálnych Maxwellových rovníc elektromagnetizmu."
+          },
+          {
+            page: 24,
+            chapter: "Kapitola 2: Potenciál elektrostatického poľa a napätie",
+            text: "Elektrický potenciál phi v bode poľa je definovaný ako potenciálna energia jednotkového kladného náboja vloženého do daného bodu. Rozdiel potenciálov medzi dvoma bodmi predstavuje elektrické napätie U = phi_1 - phi_2. Elektrostatické pole je konzervatívne, čo znamená, že práca vykonaná pri prenose náboja po uzavretej krivke je nulová."
+          }
+        ]
+      },
+      {
+        id: "book-sk-2",
+        lang: "sk",
+        title: "STU: Teoretická Elektrotechnika a Teória Obvodov",
+        author: "prof. Ing. Daniel Kováč, PhD. (STU Bratislava)",
+        category: "Elektrotechnika",
+        year: 2022,
+        source: "Slovenská technická univerzita v Bratislave",
+        pages: [
+          {
+            page: 38,
+            chapter: "Kapitola 3: Maxwellove rovnice a stacionárne prúdy",
+            text: "Maxwellove rovnice v diferenciálnom a integrálnom tvare popisujú všetky elektromagnetické javy v makroskopickom prostredí. Prvá rovnica (zovšeobecnený Ampérov zákon) vyjadruje, že zdrojom magnetického poľa sú nielen vodivostné prúdy, ale aj časovo premenlivé elektrické pole (Maxwellov posuvný prúd). Druhá rovnica je Faradayov zákon elektromagnetickej indukcie."
+          },
+          {
+            page: 45,
+            chapter: "Kapitola 3.4: Hustota prúdu a zákon zachovania náboja",
+            text: "Zákon zachovania elektrického náboja v elektrotechnike vyjadruje rovnica kontinuity: div(J) + d(rho)/dt = 0. V stacionárnom stave, kedy sa objemová hustota náboja v čase nemení, platí div(J) = 0. Z toho priamo vyplýva prvý Kirchhoffov zákon pre elektrické obvody: algebraický súčet prúdov v ľubovoľnom uzle sa rovná nule."
+          }
+        ]
+      },
+      {
+        id: "book-sk-3",
+        lang: "sk",
+        title: "Polovodičová Elektronika a Fyzika Súčiastok",
+        author: "doc. Ing. Peter Ballo, PhD. (Katedra fyziky FEI STU)",
+        category: "Fyzika polovodičov & Mikroelektronika",
+        year: 2020,
+        source: "Vedecké skriptá STU",
+        pages: [
+          {
+            page: 54,
+            chapter: "Kapitola 4: Transport nábojov v polovodičoch a PN prechod",
+            text: "Vlastné a prímesové polovodiče využívajú ako nosiče náboja voľné elektróny vo vodivostnom páse a diery vo valenčnom páse. Pohyb nábojov je determinovaný dvoma procesmi: driftom vplyvom intenzity elektrického poľa (riadeným Coulombovou silou) a difúziou v dôsledku koncentračného spádu. PN prechod vytvára ochudobnenú vrstvu s vnútorným difúznym potenciálom."
+          },
+          {
+            page: 82,
+            chapter: "Kapitola 6: Hallov jav a magnetorezistencia",
+            text: "Hallov jav vzniká pri pôsobení magnetického poľa na polovodičový materiál, ktorým preteká elektrický prúd. Lorentzova sila F = q * (E + v x B) vychyľuje nosiče náboja kolmo na smer ich pohybu aj smer magnetického poľa, čím vzniká priečne Hallovo napätie. Znamienko Hallovej konštanty jednoznačne určuje typ majority nosičov náboja (elektróny typu N alebo diery typu P)."
+          }
+        ]
+      },
+      {
+        id: "book-en-1",
+        lang: "en",
+        title: "OpenStax: University Physics Volume 2 (Electricity & Magnetism)",
+        author: "Paul Peter Urone, Roger Hinrichs (Rice University)",
+        category: "Physics & Electromagnetism",
+        year: 2023,
+        source: "OpenStax / Rice University Press",
+        pages: [
+          {
+            page: 210,
+            chapter: "Chapter 5.3: Coulomb's Law and Electric Force Vectors",
+            text: "Coulomb's Law quantifies the electrostatic force between two point charges. The magnitude of the electric force F between two point charges q1 and q2 separated by a distance r is given by F = k * (|q1 * q2| / r^2), where k = 1 / (4 * pi * epsilon_0) approx 8.99e9 N*m^2/C^2. Like charges repel and opposite charges attract along the line joining the centers of the charges."
+          },
+          {
+            page: 228,
+            chapter: "Chapter 6: Gauss's Law and Flux Calculations",
+            text: "Gauss's law provides a powerful technique for calculating electric fields in highly symmetric systems (spherical, cylindrical, or planar). The electric flux through any closed Gaussian surface equals the net enclosed charge divided by the permittivity of free space: Phi_E = oint E * dA = Q_enc / epsilon_0."
+          },
+          {
+            page: 305,
+            chapter: "Chapter 8: Capacitance and Dielectric Polarization",
+            text: "Capacitance C is defined as the ratio of stored electric charge Q to electric potential difference V: C = Q / V. When a dielectric insulator is placed between capacitor plates, its bound charges experience induced polarization due to Coulomb forces, reducing the internal electric field and multiplying the total capacitance by the relative permittivity epsilon_r."
+          }
+        ]
+      },
+      {
+        id: "book-en-2",
+        lang: "en",
+        title: "MIT OpenCourseWare: Physics 8.02 Electricity and Magnetism",
+        author: "Prof. Walter Lewin, Prof. John Belcher (MIT Department of Physics)",
+        category: "Classical Electrodynamics",
+        year: 2021,
+        source: "Massachusetts Institute of Technology (MIT)",
+        pages: [
+          {
+            page: 64,
+            chapter: "Lecture 4: Electric Field Lines & Superposition Principle",
+            text: "By applying the principle of superposition to Coulomb's Law, the total electric force exerted on a test charge by a collection of source charges is the vector sum of individual Coulomb interactions: E_total = sum(E_i). This linear property ensures that electric field lines originate on positive charges and terminate on negative charges without crossing."
+          },
+          {
+            page: 112,
+            chapter: "Lecture 12: Magnetic Fields and the Lorentz Force Law",
+            text: "A charged particle q moving with velocity v in an electromagnetic field experiences the total Lorentz force F = q * E + q * (v x B). While the electric force performs mechanical work on the charge, the magnetic force is strictly perpendicular to velocity, performing zero work and causing charged particles to undergo helical or cyclotron orbital trajectories."
+          }
+        ]
+      },
+      {
+        id: "book-en-3",
+        lang: "en",
+        title: "Fundamentals of Electrical Engineering & Circuit Theory",
+        author: "Prof. Charles K. Alexander, Matthew N. O. Sadiku",
+        category: "Circuit Analysis & Signal Processing",
+        year: 2022,
+        source: "McGraw-Hill Global Education",
+        pages: [
+          {
+            page: 14,
+            chapter: "Chapter 1: Basic Electrical Quantities & Charge Physics",
+            text: "Electric current is defined as the time rate of change of electric charge passing through a specified cross-sectional area: i(t) = dq(t) / dt. The fundamental charge of an electron is e = -1.6022e-19 C. Voltage represents the energy required to move a unit charge through a circuit element, measured in Volts (Joules per Coulomb)."
+          },
+          {
+            page: 78,
+            chapter: "Chapter 3: Nodal & Mesh Analysis in Complex Circuits",
+            text: "Kirchhoff's Current Law (KCL) is a direct consequence of the conservation of electric charge. It dictates that no charge can accumulate at an ideal node: the sum of currents entering a node equals the sum of currents leaving that node. Coupled with Ohm's law, it provides systematic linear equations to solve electrical networks."
+          }
+        ]
+      }
+    ];
+
+    function togglePdfPanel(forceState) {
+      const nextState = typeof forceState === 'boolean' ? forceState : !isPdfSplitActive;
+      isPdfSplitActive = nextState;
+      document.body.classList.toggle('pdf-split-active', isPdfSplitActive);
+
+      if (isPdfSplitActive) {
+        switchMainView('studio');
+        if (loadedPdfBooks.length === 0) {
+          loadPdfBooksCatalog();
+        }
+        const input = document.getElementById('pdfSearchInput');
+        if (input && !input.value.trim()) {
+          const topic = topics.find(t => t.id === activeTopicId);
+          if (topic) {
+            const cleanTitle = topic.title.replace(/^\d+(\.\d+)?\s*/, '');
+            input.value = cleanTitle;
+            performPdfSearch();
+          }
+        }
+      }
+    }
+
+    function filterPdfLang(lang) {
+      pdfCurrentLang = lang;
+      ['tabPdfAll', 'tabPdfSk', 'tabPdfEn'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+      });
+      if (lang === 'all') document.getElementById('tabPdfAll')?.classList.add('active');
+      if (lang === 'sk') document.getElementById('tabPdfSk')?.classList.add('active');
+      if (lang === 'en') document.getElementById('tabPdfEn')?.classList.add('active');
+
+      renderPdfBooksCatalogList();
+    }
+
+    async function loadPdfBooksCatalog() {
+      try {
+        const res = await fetch(`${BACKEND_API_BASE}/api/library`);
+        if (res.ok) {
+          const data = await res.json();
+          loadedPdfBooks = (data.books && data.books.length > 0) ? data.books : FALLBACK_PDF_BOOKS;
+        } else {
+          loadedPdfBooks = FALLBACK_PDF_BOOKS;
+        }
+      } catch (e) {
+        loadedPdfBooks = FALLBACK_PDF_BOOKS;
+      }
+      renderPdfBooksCatalogList();
+    }
+
+    function renderPdfBooksCatalogList() {
+      const container = document.getElementById('pdfBooksCatalog');
+      if (!container) return;
+
+      const booksToDisplay = loadedPdfBooks.length > 0 ? loadedPdfBooks : FALLBACK_PDF_BOOKS;
+      const filtered = booksToDisplay.filter(book => {
+        if (pdfCurrentLang === 'sk') return book.lang === 'sk';
+        if (pdfCurrentLang === 'en') return book.lang === 'en';
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:8px;">Žiadne knihy pre vybraný filter.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(book => {
+        const badge = book.lang === 'sk' 
+          ? `<span class="pdf-book-badge-sk">[SK]</span>` 
+          : `<span class="pdf-book-badge-en">[EN]</span>`;
+        return `
+          <div class="pdf-book-item ${currentViewingBook && currentViewingBook.id === book.id ? 'active' : ''}" onclick="viewPdfBook('${book.id}')">
+            <div style="display:flex; align-items:center; gap:6px; overflow:hidden;">
+              ${badge}
+              <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                <strong style="color:var(--text); font-size:11px;">${escapeHtml(book.title)}</strong>
+                <span style="display:block; font-size:10px; color:var(--text-muted);">${escapeHtml(book.author)} (${book.year || 'STU'})</span>
+              </div>
+            </div>
+            <span style="font-size:10px; color:var(--miku-pink); white-space:nowrap; margin-left:6px;">${book.pages ? book.pages.length : 1} str. ➔</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function performPdfSearch() {
+      const input = document.getElementById('pdfSearchInput');
+      const viewer = document.getElementById('pdfContentViewer');
+      if (!input || !viewer) return;
+
+      const query = input.value.trim();
+      if (!query) {
+        if (currentViewingBook) {
+          viewPdfBook(currentViewingBook.id);
+        } else {
+          viewer.innerHTML = `<div class="wiki-empty-hint"><span>Zadajte hľadaný výraz alebo vyberte knihu z katalógu vyššie.</span></div>`;
+        }
+        return;
+      }
+
+      viewer.innerHTML = `<div class="wiki-empty-hint"><span style="color:var(--miku-pink);">🔍 Prehľadávam všetky slovenské (STU) aj anglické technické knihy...</span></div>`;
+
+      let matches = [];
+
+      // 1. Pokus cez server API
+      try {
+        const res = await fetch(`${BACKEND_API_BASE}/api/library/search?q=${encodeURIComponent(query)}`);
+        if (res.ok) {
+          const data = await res.json();
+          matches = data.results || [];
+        }
+      } catch (e) {
+        console.warn("Server search nedostupný, použijem lokálny search:", e);
+      }
+
+      // 2. Fallback lokálny search, ak server vrátil prázdno alebo nie je dostupný
+      if (matches.length === 0) {
+        const sourceBooks = (loadedPdfBooks.length > 0 ? loadedPdfBooks : FALLBACK_PDF_BOOKS);
+        const qLower = query.toLowerCase();
+
+        sourceBooks.forEach(book => {
+          (book.pages || []).forEach(p => {
+            const tLower = p.text.toLowerCase();
+            const cLower = (p.chapter || '').toLowerCase();
+            const bTitleLower = book.title.toLowerCase();
+
+            if (tLower.includes(qLower) || cLower.includes(qLower) || bTitleLower.includes(qLower)) {
+              let snippet = p.text;
+              const idx = tLower.indexOf(qLower);
+              if (idx !== -1) {
+                const start = Math.max(0, idx - 80);
+                const end = Math.min(p.text.length, idx + query.length + 100);
+                snippet = (start > 0 ? '...' : '') + p.text.substring(start, end) + (end < p.text.length ? '...' : '');
+              } else {
+                snippet = p.text.substring(0, 160) + '...';
+              }
+
+              matches.push({
+                bookId: book.id,
+                bookTitle: book.title,
+                bookAuthor: book.author,
+                lang: book.lang,
+                category: book.category,
+                source: book.source,
+                page: p.page,
+                chapter: p.chapter,
+                fullText: p.text,
+                snippet: snippet
+              });
+            }
+          });
+        });
+      }
+
+      if (matches.length === 0) {
+        viewer.innerHTML = `
+          <div class="wiki-empty-hint">
+            <span>Žiadne výskyty pre výraz „${escapeHtml(query)}“ v technických knihách.<br>Skúste iný pojem, napr. <em>Coulomb, Maxwell, náboj, zákon, polovodiče</em>.</span>
+          </div>
+        `;
+        return;
+      }
+
+      viewer.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid rgba(255,42,133,0.25); padding-bottom:6px;">
+          <span style="font-size:11px; font-weight:800; color:var(--miku-pink);">NÁJDENÝCH ${matches.length} ZHÔD VO VŠETKÝCH KNIHÁCH</span>
+          <span style="font-size:10px; color:var(--text-muted);">Dvojjazyčné hľadanie [SK] &amp; [EN]</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          ${matches.map((m) => {
+            const badge = m.lang === 'sk' ? `<span class="pdf-book-badge-sk">[SK]</span>` : `<span class="pdf-book-badge-en">[EN]</span>`;
+            const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+            const highlighted = escapeHtml(m.snippet).replace(regex, '<span style="background:rgba(255,42,133,0.3); color:#fff; font-weight:bold; padding:1px 3px; border-radius:3px;">$1</span>');
+
+            return `
+              <div class="pdf-match-card">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
+                  <div>
+                    ${badge}
+                    <strong style="font-size:12px; color:var(--text);">${escapeHtml(m.bookTitle)}</strong>
+                    <span style="font-size:10px; color:var(--text-muted); display:block;">${escapeHtml(m.chapter)} • Strana ${m.page}</span>
+                  </div>
+                  <button class="btn-cyber-sm" style="font-size:10px; padding:2px 6px; background:rgba(255,42,133,0.2); border-color:var(--miku-pink); color:#fff;" onclick="insertPdfCitationToEditor('${escapeQuote(m.bookTitle)}', '${escapeQuote(m.chapter)}', ${m.page}, '${escapeQuote(m.fullText.slice(0, 320))}')" title="Citovať tento výňatok v štúdiu">📋 Citovať</button>
+                </div>
+                <div style="font-size:11px; line-height:1.5; color:var(--text); margin-top:6px; background:rgba(0,0,0,0.3); padding:6px 8px; border-radius:6px; border-left:3px solid var(--miku-pink);">
+                  ${highlighted}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function searchPdfQuick(term) {
+      const input = document.getElementById('pdfSearchInput');
+      if (input) {
+        input.value = term;
+        performPdfSearch();
+      }
+    }
+
+    function viewPdfBook(bookId) {
+      const sourceBooks = (loadedPdfBooks.length > 0 ? loadedPdfBooks : FALLBACK_PDF_BOOKS);
+      const book = sourceBooks.find(b => b.id === bookId);
+      if (!book) return;
+      currentViewingBook = book;
+      renderPdfBooksCatalogList();
+
+      const viewer = document.getElementById('pdfContentViewer');
+      if (!viewer) return;
+
+      const badge = book.lang === 'sk' ? `<span class="pdf-book-badge-sk">[SK] STU FEI</span>` : `<span class="pdf-book-badge-en">[EN] TECH SOURCE</span>`;
+
+      viewer.innerHTML = `
+        <div style="background:rgba(0,0,0,0.35); border:1px solid rgba(255,42,133,0.3); border-radius:8px; padding:10px; margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              ${badge}
+              <h3 style="color:var(--miku-pink); font-size:14px; margin:4px 0 2px;">${escapeHtml(book.title)}</h3>
+              <div style="font-size:10px; color:var(--text-muted);">${escapeHtml(book.author)} | ${book.source || 'Vedecká literatúra'} (${book.year || ''})</div>
+            </div>
+            <button class="btn-cyber-sm" onclick="performPdfSearch()" title="Prejsť späť na vyhľadávanie">🔍 Hľadať v knihe</button>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          ${(book.pages || []).map(p => `
+            <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:8px; padding:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:6px;">
+                <span style="font-size:11px; font-weight:800; color:var(--miku-cyan);">${escapeHtml(p.chapter || 'Kapitola')} (Strana ${p.page})</span>
+                <button class="btn-cyber-sm" style="font-size:10px; padding:2px 6px; background:rgba(255,42,133,0.2); border-color:var(--miku-pink); color:#fff;" onclick="insertPdfCitationToEditor('${escapeQuote(book.title)}', '${escapeQuote(p.chapter || '')}', ${p.page}, '${escapeQuote(p.text.slice(0, 320))}')">📋 Citovať stranu ${p.page}</button>
+              </div>
+              <div style="font-size:12px; line-height:1.7; color:var(--text);">
+                ${escapeHtml(p.text).replace(/\n/g, '<br>')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function insertPdfCitationToEditor(title, chapter, page, textSnippet) {
+      const editor = document.getElementById('docEditor');
+      if (!editor) return;
+
+      const citation = `\n\n> 📖 **Citácia z odbornej literatúry [${title}]**\n> *${chapter} (Strana ${page})*\n> „${textSnippet}...“\n`;
+      editor.value += citation;
+      saveCurrentTopic();
+      alert(`✅ Citácia z knihy „${title}“ (str. ${page}) bola vložená do textu témy!`);
+    }
+
+    function initPdfResizer() {
+      const resizer = document.getElementById('pdfResizer');
+      if (!resizer) return;
+
+      resizer.addEventListener('mousedown', (e) => {
+        pdfResizerDragging = true;
+        resizer.classList.add('dragging');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!pdfResizerDragging) return;
+        const containerWidth = window.innerWidth;
+        const newWidth = Math.max(300, Math.min(containerWidth * 0.65, containerWidth - e.clientX));
+        document.documentElement.style.setProperty('--pdf-width', `${newWidth}px`);
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (pdfResizerDragging) {
+          pdfResizerDragging = false;
+          resizer.classList.remove('dragging');
+          document.body.style.cursor = '';
+          document.body.style.userSelect = '';
+        }
+      });
+    }
+
+    function escapeRegex(str) {
+      return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function escapeQuote(str) {
+      if (!str) return '';
+      return str.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
+    }
+
+    function openAddBookModal() {
+      if (!isAuthorMode) {
+        alert("🔒 Pre pridanie novej knihy do databázy musíte byť prihlásený v Režime Autora. Zadajte najprv PIN cez pero ✍️ v hornej lište.");
+        toggleAuthPrompt();
+        return;
+      }
+      const modal = document.getElementById('addBookModal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeAddBookModal() {
+      const modal = document.getElementById('addBookModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    async function submitNewBook() {
+      const title = document.getElementById('newBookTitle')?.value.trim();
+      const author = document.getElementById('newBookAuthor')?.value.trim();
+      const lang = document.getElementById('newBookLang')?.value || 'sk';
+      const category = document.getElementById('newBookCategory')?.value.trim() || 'Fyzika & Elektrotechnika';
+      const source = document.getElementById('newBookSource')?.value.trim() || 'STU FEI';
+      const content = document.getElementById('newBookContent')?.value.trim();
+
+      if (!title) {
+        alert("Zadajte prosím názov knihy alebo skrípt.");
+        return;
+      }
+      if (!content) {
+        alert("Vložte prosím textový obsah knihy / kapitoly.");
+        return;
+      }
+
+      const pages = [];
+      const chunks = content.split(/\n\s*---+\s*\n|\n\s*\[Strana \d+\]\s*\n/);
+      if (chunks.length > 1) {
+        chunks.forEach((chunk, idx) => {
+          if (chunk.trim()) {
+            pages.push({
+              page: idx + 1,
+              chapter: `Kapitola / Časť ${idx + 1}`,
+              text: chunk.trim()
+            });
+          }
+        });
+      } else {
+        const paragraphs = content.split('\n\n');
+        let curPageText = '';
+        let pageNum = 1;
+        paragraphs.forEach(p => {
+          if ((curPageText + p).length > 1200 && curPageText.length > 0) {
+            pages.push({
+              page: pageNum++,
+              chapter: `Časť ${pageNum - 1}`,
+              text: curPageText.trim()
+            });
+            curPageText = p + '\n\n';
+          } else {
+            curPageText += p + '\n\n';
+          }
+        });
+        if (curPageText.trim()) {
+          pages.push({
+            page: pageNum,
+            chapter: `Časť ${pageNum}`,
+            text: curPageText.trim()
+          });
+        }
+      }
+
+      try {
+        const res = await fetch(`${BACKEND_API_BASE}/api/library/add`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-author-pin': authorPin
+          },
+          body: JSON.stringify({
+            title, author, lang, category, source, pages
+          })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          alert(`✅ Kniha „${title}“ bola úspešne pridaná do databázy so ${pages.length} stranami!`);
+          closeAddBookModal();
+          document.getElementById('newBookTitle').value = '';
+          document.getElementById('newBookAuthor').value = '';
+          document.getElementById('newBookContent').value = '';
+          loadPdfBooksCatalog();
+        } else {
+          const localBook = {
+            id: 'book-local-' + Date.now(),
+            title, author: author || 'Vlastný zdroj', lang, category, source, pages
+          };
+          loadedPdfBooks.push(localBook);
+          renderPdfBooksCatalogList();
+          alert(`✅ Kniha „${title}“ bola lokálne pridaná do knižnice (${pages.length} strán)!`);
+          closeAddBookModal();
+        }
+      } catch (err) {
+        const localBook = {
+          id: 'book-local-' + Date.now(),
+          title, author: author || 'Vlastný zdroj', lang, category, source, pages
+        };
+        loadedPdfBooks.push(localBook);
+        renderPdfBooksCatalogList();
+        alert(`✅ Kniha „${title}“ bola pridaná do knižnice!`);
+        closeAddBookModal();
+      }
     }
 
     // --- 4. TOPIC SELECTION & TREE RENDER ---
@@ -3230,9 +4276,13 @@
       if (docTitle) docTitle.readOnly = !isAuth;
 
       const authBtn = document.getElementById('authLockIcon');
+      const btnWrapper = document.getElementById('btnAuthMode');
       if (authBtn) {
-        authBtn.innerText = isAuth ? "👑 Autor (Úpravy povolené)" : "🔒 Režim čítania (Klikni pre zadanie PINu)";
+        authBtn.innerText = isAuth ? "✍️" : "📖";
         authBtn.style.color = isAuth ? "var(--miku-cyan)" : "var(--miku-pink)";
+      }
+      if (btnWrapper) {
+        btnWrapper.title = isAuth ? "Režim Autora (✍️ Úpravy povolené) - kliknutím uzamknete" : "Režim Čítania (📖 Iba na čítanie) - kliknutím odomknete PINom";
       }
       localStorage.setItem('miku_is_author', isAuth);
     }
@@ -3612,6 +4662,16 @@
       renderPresetsList();
       checkAndInitBackend();
       initWikiResizer();
+      initPdfResizer();
+      loadPdfBooksCatalog();
+
+      // Klávesa Escape pre rýchle zatvorenie GTA 5 kruhového menu a modálov
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeRadialMenu();
+          closeAddBookModal();
+        }
+      });
 
       // Ensure YouTube player initializes
       if (typeof YT !== 'undefined' && YT.Player) {

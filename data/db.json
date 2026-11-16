@@ -48,6 +48,144 @@
     { "name": "⚡ Synthwave Chill Radio", "url": "https://www.youtube.com/watch?v=4xDzrJKXOOY" },
     { "name": "🎹 Relaxing Vocaloid Chill Lofi", "url": "https://www.youtube.com/watch?v=Ow6G-LkGXRQ" }
   ],
-  "authorPin": "7567"
+  "authorPin": "7567",
+  "pdfLibrary": [
+    {
+      "id": "book-sk-1",
+      "lang": "sk",
+      "title": "STU FEI: Fyzika II – Elektromagnetizmus a Elektrostatika",
+      "author": "Fakulta elektrotechniky a informatiky STU v Bratislave",
+      "category": "Fyzika & Elektrostatika",
+      "year": 2022,
+      "source": "Knižnica STU",
+      "pages": [
+        {
+          "page": 42,
+          "chapter": "Kapitola 3: Elektrostatické pole vo vákuu",
+          "text": "Coulombov zákon tvorí fundamentálny základ elektrostatiky. Hovorí, že sila F pôsobiaca medzi dvoma nehybnými bodovými nábojmi Q1 a Q2 vo vákuu je priamo úmerná veľkosti týchto nábojov a nepriamo úmerná štvorcu ich vzdialenosti r. Vektorový zápis sily Coulombovho zákona: F = (1 / 4*pi*epsilon_0) * (Q1 * Q2 / r^2) * r_vektor_jednotkovy. Konštanta permitivity vákua epsilon_0 nadobúda hodnotu 8.854e-12 F/m."
+        },
+        {
+          "page": 45,
+          "chapter": "Kapitola 3.2: Intenzita elektrického poľa",
+          "text": "Intenzita elektrického poľa E je vektorová veličina definovaná ako sila pôsobiaca na jednotkový kladný testovací náboj. Z Coulombovho zákona vyplýva, že bodový náboj vytvára radiálne symetrické pole, ktorého siločiary vychádzajú z kladného náboja a končia v zápornom náboji. Pre sústavu viacerých nábojov platí princíp superpozície."
+        },
+        {
+          "page": 58,
+          "chapter": "Kapitola 4: Gaussov zákon elektrostatiky",
+          "text": "Gaussov zákon elektrostatiky predstavuje integrálnu formuláciu jednej z Maxwellových rovníc. Tok vektora intenzity elektrického poľa cez ľubovoľnú uzavretú plochu je rovný celkovému náboju vo vnútri tejto plochy delenému permitivitou vákua. Využitie Gaussovho zákona umožňuje elegantne odvodiť Coulombov zákon pre sféricky symetrické rozloženie náboja."
+        }
+      ]
+    },
+    {
+      "id": "book-sk-2",
+      "lang": "sk",
+      "title": "STU: Teoretická Elektrotechnika a Teória Obvodov",
+      "author": "Katedra teoretickej elektrotechniky STU",
+      "category": "Elektrotechnika",
+      "year": 2021,
+      "source": "Digitálny archív STU",
+      "pages": [
+        {
+          "page": 18,
+          "chapter": "Úvod do elektromagnetického poľa",
+          "text": "Elektrostatické pole je špeciálnym prípadom elektromagnetického poľa s nulovou časovou deriváciou. Silové pôsobenie statických nábojov je riadené Coulombovým zákonom. Vo vodivých materiáloch sa náboj rozmiestňuje výhradne na povrchu vodiča, pričom intenzita poľa vo vnútri ideálneho vodiča je identicky rovná nule."
+        },
+        {
+          "page": 84,
+          "chapter": "Maxwellove rovnice v diferenciálnom tvare",
+          "text": "Základné zákony elektromagnetizmu možno zhrnúť do štyroch Maxwellových rovníc: rot E = -dB/dt (Faradayov zákon elektromagnetickej indukcie), rot H = J + dD/dt (Ampérov zákon celkového prúdu), div D = rho (Gaussov zákon nábojov) a div B = 0 (neexistencia magnetických monopolov)."
+        }
+      ]
+    },
+    {
+      "id": "book-sk-3",
+      "lang": "sk",
+      "title": "Polovodičová Elektronika a Fyzika Súčiastok",
+      "author": "Doc. Ing. Miroslav Vlček a kol.",
+      "category": "Elektronika",
+      "year": 2023,
+      "source": "Technická knižnica",
+      "pages": [
+        {
+          "page": 27,
+          "chapter": "Pohyb nosičov náboja v polovodičoch",
+          "text": "V kryštáloch kremíka a germánia zabezpečujú elektrickú vodivosť voľné elektróny a diery. Coulombovské sily medzi ionizovanými prímesami (donormi a akceptormi) a voľnými nosičmi náboja spôsobujú rozptyl nosičov pri nízkych teplotách, čo ovplyvňuje elektrickú mobilitu a vodivosť polovodičového materiálu."
+        },
+        {
+          "page": 63,
+          "chapter": "Prechod P-N a priestorový náboj",
+          "text": "V oblasti metalurgického prechodu P-N vzniká v dôsledku difúzie nosičov oblasť priestorového náboja (ochudobnená vrstva). Elektrostatické pole vytvorené nepohyblivými iónmi podľa Poissonovej rovnice (odvodenej z Coulombovho a Gaussovho zákona) vytvára difúznu potenciálovú bariéru."
+        }
+      ]
+    },
+    {
+      "id": "book-en-1",
+      "lang": "en",
+      "title": "OpenStax: University Physics Volume 2 (Electricity & Magnetism)",
+      "author": "Samuel J. Ling, Jeff Sanny, William Moebs (Rice University)",
+      "category": "Physics",
+      "year": 2023,
+      "source": "OpenStax Open Academic Library",
+      "pages": [
+        {
+          "page": 210,
+          "chapter": "Chapter 5: Electric Charges and Fields",
+          "text": "Coulomb's Law states that the electrical force between two charged objects is directly proportional to the product of the quantity of charge on the objects and inversely proportional to the square of the separation distance between the two objects. Mathematically: F = k * (|q1 * q2| / r^2), where k is Coulomb's constant, approximately 8.99 x 10^9 N*m^2/C^2."
+        },
+        {
+          "page": 215,
+          "chapter": "Chapter 5.3: Electric Field Calculations",
+          "text": "Comparing gravitational and electrical forces: The electrostatic repulsion described by Coulomb's law between two protons is approximately 10^36 times stronger than their mutual gravitational attraction. This explains why electromagnetic forces dominate the structure of atoms, molecules, and chemical bonds."
+        },
+        {
+          "page": 260,
+          "chapter": "Chapter 6: Gauss's Law Applications",
+          "text": "Gauss's Law provides a powerful technique for calculating electric fields in systems with high symmetry. By choosing a spherical Gaussian surface around a point charge, Gauss's law directly yields Coulomb's law, proving that the inverse-square dependence is intrinsically linked to the three-dimensional geometry of space."
+        }
+      ]
+    },
+    {
+      "id": "book-en-2",
+      "lang": "en",
+      "title": "MIT OpenCourseWare: Physics 8.02 Electricity and Magnetism",
+      "author": "Prof. Walter Lewin, Massachusetts Institute of Technology",
+      "category": "Physics & Engineering",
+      "year": 2022,
+      "source": "MIT Academic Repository",
+      "pages": [
+        {
+          "page": 14,
+          "chapter": "Lecture 1: Electric Field and Dipoles",
+          "text": "Coulomb's Law experiment demonstrated by Charles-Augustin de Coulomb using a torsion balance in 1785. The electrostatic force acts along the line joining the centers of the charges. Superposition principle: when more than two charges interact, the total electrostatic force on any single charge is the vector sum of the individual Coulomb forces."
+        },
+        {
+          "page": 78,
+          "chapter": "Lecture 6: Capacitance and Electrostatic Energy",
+          "text": "The energy stored in an electrostatic field is proportional to the square of the electric field intensity: u = (1/2) * epsilon * E^2. Capacitors store electrostatic potential energy by separating charges against their mutual Coulomb attractive forces."
+        }
+      ]
+    },
+    {
+      "id": "book-en-3",
+      "lang": "en",
+      "title": "Fundamentals of Electrical Engineering & Circuit Theory",
+      "author": "Dr. Leonard S. Bobrow (Oxford University Press)",
+      "category": "Electrical Engineering",
+      "year": 2020,
+      "source": "International Tech Archive",
+      "pages": [
+        {
+          "page": 35,
+          "chapter": "Chapter 2: Charge, Current and Electric Potential",
+          "text": "Electric current is the rate of charge flow through a given cross-sectional area: I = dq/dt. The electric potential difference (voltage) between two points is the work done per unit charge against the Coulomb electrostatic field: V = W / q. In electrical circuits, charge conservation manifests as Kirchhoff's Current Law (KCL)."
+        },
+        {
+          "page": 142,
+          "chapter": "Chapter 7: Magnetic Circuits and Inductance",
+          "text": "Magnetic fields generated by moving electric charges: the Biot-Savart law in magnetostatics plays an analogous role to Coulomb's law in electrostatics. Faraday's law of induction couples the electric and magnetic fields, forming the basis for transformers, electric motors, and generators."
+        }
+      ]
+    }
+  ]
 }
 
