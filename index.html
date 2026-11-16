@@ -289,6 +289,209 @@
     }
     #studioView.active { display: grid; }
 
+    /* WIKIPEDIA SPLIT-SCREEN REŠERŠ REŽIM */
+    body.wiki-split-active #studioView {
+      max-width: 98vw !important;
+      grid-template-columns: 260px 1fr 8px var(--wiki-width, 420px) !important;
+      gap: 10px !important;
+    }
+    body.wiki-split-active .side-panel-right {
+      display: none !important;
+    }
+    body.wiki-split-active .wiki-resizer-bar,
+    body.wiki-split-active .wiki-research-panel {
+      display: flex !important;
+    }
+
+    /* WIKIPEDIA RESIZER BAR */
+    .wiki-resizer-bar {
+      display: none;
+      width: 8px;
+      cursor: col-resize;
+      background: transparent;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      position: relative;
+      transition: background 0.2s;
+    }
+    .wiki-resizer-bar:hover, .wiki-resizer-bar.dragging {
+      background: rgba(0, 255, 255, 0.2);
+    }
+    .wiki-resizer-glow {
+      width: 2px;
+      height: 60px;
+      background: var(--miku-neon);
+      border-radius: 2px;
+      box-shadow: 0 0 8px var(--miku-glow);
+    }
+
+    /* WIKIPEDIA RESEARCH SIDE PANEL */
+    .wiki-research-panel {
+      display: none;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      flex-direction: column;
+      box-shadow: 0 0 25px rgba(0,0,0,0.6), 0 0 15px rgba(0,255,255,0.08);
+      position: relative;
+    }
+    .wiki-panel-header {
+      padding: 12px 14px;
+      background: rgba(4, 9, 15, 0.85);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .wiki-lang-select {
+      background: var(--surface);
+      color: var(--miku-cyan);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      outline: none;
+      cursor: pointer;
+    }
+    .btn-wiki-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .btn-wiki-close:hover { color: var(--miku-pink); transform: scale(1.1); }
+    .wiki-search-bar {
+      display: flex;
+      gap: 6px;
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(57, 197, 187, 0.2);
+    }
+    .wiki-input {
+      flex: 1;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 10px;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .wiki-input:focus { border-color: var(--miku-neon); box-shadow: 0 0 8px var(--miku-glow); }
+    .btn-wiki-search {
+      background: var(--miku-cyan);
+      color: #04090f;
+      border: none;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 0 12px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-wiki-search:hover { opacity: 0.85; }
+    .wiki-quick-chips {
+      display: flex;
+      gap: 6px;
+      padding: 6px 14px 10px;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--border);
+    }
+    .wiki-chip {
+      font-size: 10px;
+      background: rgba(0, 255, 255, 0.08);
+      border: 1px solid rgba(0, 255, 255, 0.25);
+      color: var(--miku-cyan);
+      padding: 2px 8px;
+      border-radius: 12px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .wiki-chip:hover {
+      background: rgba(0, 255, 255, 0.25);
+      color: var(--miku-neon);
+      box-shadow: 0 0 8px var(--miku-glow);
+    }
+    .wiki-results-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .wiki-result-card {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+    .wiki-result-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--miku-neon);
+      box-shadow: 0 0 12px var(--miku-glow);
+    }
+    .wiki-result-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--miku-neon);
+      margin-bottom: 4px;
+    }
+    .wiki-result-snippet {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .wiki-result-snippet .searchmatch {
+      color: var(--miku-cyan);
+      font-weight: bold;
+    }
+    .wiki-reader-view {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 16px;
+      flex-direction: column;
+    }
+    .wiki-reader-actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .wiki-reader-body {
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text);
+    }
+    .wiki-reader-body p { margin-bottom: 12px; }
+    .wiki-reader-body h2 { font-size: 16px; color: var(--miku-cyan); margin: 16px 0 8px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+    .wiki-reader-body h3 { font-size: 14px; color: var(--miku-neon); margin: 12px 0 6px; }
+    .wiki-reader-body a { color: var(--miku-cyan); text-decoration: underline; }
+    .wiki-reader-body table { width: 100%; border-collapse: collapse; font-size: 11px; margin: 10px 0; }
+    .wiki-reader-body th, .wiki-reader-body td { border: 1px solid var(--border); padding: 4px 6px; }
+    .wiki-empty-hint {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      padding: 20px;
+    }
+
     /* ZEN REŽIM: Ľavý panel s témami OSTÁVA viditeľný pre navigáciu, pravý panel (hudba, úlohy) sa skryje */
     body.zen-active #studioView {
       grid-template-columns: 280px 1fr !important;
@@ -1275,6 +1478,9 @@
       <button class="btn-nav" id="btnStudioNav" onclick="switchMainView('studio')">
         <span>📑 Štúdio Tém</span>
       </button>
+      <button class="btn-nav" id="btnWikiNav" onclick="toggleWikipediaPanel()" title="Otvoriť/Zatvoriť Wikipedia Rešerš (Split-Screen)">
+        <span>📖 Wikipedia Rešerš</span>
+      </button>
 
       <!-- Extensions (Vychytávky) Popup Trigger -->
       <button class="btn-nav" onclick="toggleExtensionsPopup()">
@@ -1395,6 +1601,61 @@
         <!-- Moduly sa vkladajú sem (Vzorce, Tabuľka s grafom, Callout) -->
       </div>
     </section>
+
+    <!-- WIKIPEDIA SPLITTER RESIZE HANDLE -->
+    <div class="wiki-resizer-bar" id="wikiResizer" title="Potiahnutím zmeníte šírku rozdelenia obrazovky">
+      <div class="wiki-resizer-glow"></div>
+    </div>
+
+    <!-- WIKIPEDIA RESEARCH SIDE-BY-SIDE PANEL -->
+    <aside class="wiki-research-panel" id="wikiPanel">
+      <div class="wiki-panel-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:16px;">📖</span>
+          <span style="font-weight:800; font-size:13px; color:var(--miku-neon); letter-spacing:0.5px;">WIKIPEDIA VEDECKÁ REŠERŠ</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <select id="wikiLangSelect" class="wiki-lang-select" onchange="performWikiSearch()">
+            <option value="sk" selected>🇸🇰 SK</option>
+            <option value="en">🇬🇧 EN</option>
+            <option value="cs">🇨🇿 CZ</option>
+          </select>
+          <button class="btn-wiki-close" onclick="toggleWikipediaPanel(false)" title="Zavrieť panel">✕</button>
+        </div>
+      </div>
+
+      <!-- Search Input Box -->
+      <div class="wiki-search-bar">
+        <input type="text" id="wikiSearchInput" class="wiki-input" placeholder="Vyhľadať pojem (napr. Coulombov zákon, Magnetizmus)..." onkeydown="if(event.key==='Enter') performWikiSearch()">
+        <button class="btn-wiki-search" onclick="performWikiSearch()" title="Hľadať">🔍 Hľadať</button>
+      </div>
+
+      <!-- Quick Concept Chips -->
+      <div class="wiki-quick-chips">
+        <span class="wiki-chip" onclick="searchWikiQuick('Coulombov zákon')">⚡ Coulombov zákon</span>
+        <span class="wiki-chip" onclick="searchWikiQuick('Elektrický náboj')">⚛️ Elektrický náboj</span>
+        <span class="wiki-chip" onclick="searchWikiQuick('Magnetické pole')">🧲 Magnetické pole</span>
+        <span class="wiki-chip" onclick="searchWikiQuick('Elementárny náboj')">🔬 Elementárny náboj</span>
+      </div>
+
+      <!-- Search Results List -->
+      <div class="wiki-results-list" id="wikiResultsList">
+        <div class="wiki-empty-hint">
+          <span>💡 Zadajte pojem hore a stlačte Enter alebo vyberte z rýchlych tém.</span>
+        </div>
+      </div>
+
+      <!-- Article Reader View in Miku Cyber Neon Style -->
+      <div class="wiki-reader-view" id="wikiReaderView">
+        <div class="wiki-reader-actions">
+          <button class="btn-cyber-sm" onclick="closeWikiReader()">➔ Späť na výsledky</button>
+          <button class="btn-cyber-sm" style="background:rgba(0,255,255,0.2); color:var(--miku-neon);" onclick="insertWikiCitationToEditor()">📋 Vložiť do témy</button>
+          <a id="wikiExternalLink" href="#" target="_blank" class="btn-cyber-sm" style="text-decoration:none;">↗ Otvoriť na webe</a>
+        </div>
+        <h2 id="wikiReaderTitle" style="color:var(--miku-neon); font-size:20px; margin:10px 0 6px;"></h2>
+        <div class="wiki-reader-body" id="wikiReaderContent"></div>
+      </div>
+    </aside>
 
     <!-- RIGHT PANEL: CYBER MUSIC PLAYER, TO-DO ÚLOHY, KONTEXT & OBSAH KAPITOLY -->
     <aside class="side-panel side-panel-right" id="rightPanel">
@@ -1893,6 +2154,210 @@
         btnStudio.classList.add('active');
         renderStudio();
       }
+    }
+
+    // =========================================================
+    // 3.5 WIKIPEDIA RESEARCH SIDE-BY-SIDE (SPLIT-SCREEN) MODULE
+    // =========================================================
+    let isWikiSplitActive = false;
+    let currentWikiArticle = null;
+    let wikiResizerDragging = false;
+
+    function toggleWikipediaPanel(forceState) {
+      const nextState = typeof forceState === 'boolean' ? forceState : !isWikiSplitActive;
+      isWikiSplitActive = nextState;
+      document.body.classList.toggle('wiki-split-active', isWikiSplitActive);
+      const btn = document.getElementById('btnWikiNav');
+      if (btn) btn.classList.toggle('active', isWikiSplitActive);
+
+      // Ak je otvorená mapa, automaticky prepni na štúdio, aby bolo vidieť split
+      if (isWikiSplitActive) {
+        switchMainView('studio');
+        // Ak je pole prázdne, predvyplň názov aktuálnej témy
+        const input = document.getElementById('wikiSearchInput');
+        if (input && !input.value.trim()) {
+          const topic = topics.find(t => t.id === activeTopicId);
+          if (topic) {
+            const cleanTitle = topic.title.replace(/^\d+(\.\d+)?\s*/, '');
+            input.value = cleanTitle;
+            performWikiSearch();
+          }
+        }
+      }
+    }
+
+    async function performWikiSearch() {
+      const input = document.getElementById('wikiSearchInput');
+      const listEl = document.getElementById('wikiResultsList');
+      const readerEl = document.getElementById('wikiReaderView');
+      const lang = document.getElementById('wikiLangSelect').value || 'sk';
+      if (!input || !listEl) return;
+
+      const query = input.value.trim();
+      if (!query) return;
+
+      listEl.style.display = 'flex';
+      if (readerEl) readerEl.style.display = 'none';
+      listEl.innerHTML = `<div class="wiki-empty-hint"><span style="color:var(--miku-neon);">🔍 Hľadám na Wikipédii (${lang.toUpperCase()})...</span></div>`;
+
+      try {
+        const url = `https://${lang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const results = data.query && data.query.search ? data.query.search : [];
+
+        if (results.length === 0) {
+          listEl.innerHTML = `
+            <div class="wiki-empty-hint">
+              <span>Žiadne výsledky pre výraz „${escapeHtml(query)}“. Skúste zmeniť jazyk na EN alebo upraviť hľadané slovo.</span>
+            </div>`;
+          return;
+        }
+
+        listEl.innerHTML = '';
+        results.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'wiki-result-card';
+          card.onclick = () => openWikiArticle(item.title, lang);
+          card.innerHTML = `
+            <div class="wiki-result-title">${escapeHtml(item.title)}</div>
+            <div class="wiki-result-snippet">${item.snippet}...</div>
+          `;
+          listEl.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Wikipedia search error:", err);
+        listEl.innerHTML = `<div class="wiki-empty-hint"><span style="color:var(--miku-pink);">Chyba pripojenia k Wikipédii. Skontrolujte internet.</span></div>`;
+      }
+    }
+
+    function searchWikiQuick(term) {
+      const input = document.getElementById('wikiSearchInput');
+      if (input) {
+        input.value = term;
+        performWikiSearch();
+      }
+    }
+
+    async function openWikiArticle(title, lang) {
+      const listEl = document.getElementById('wikiResultsList');
+      const readerEl = document.getElementById('wikiReaderView');
+      const titleEl = document.getElementById('wikiReaderTitle');
+      const bodyEl = document.getElementById('wikiReaderContent');
+      const extLink = document.getElementById('wikiExternalLink');
+      if (!readerEl || !bodyEl) return;
+
+      listEl.style.display = 'none';
+      readerEl.style.display = 'flex';
+      titleEl.innerText = title;
+      bodyEl.innerHTML = `<div style="text-align:center; padding:30px; color:var(--miku-neon);">⏳ Načítavam článok a vzorce...</div>`;
+
+      if (extLink) {
+        extLink.href = `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(title.replace(/\s+/g, '_'))}`;
+      }
+
+      try {
+        const url = `https://${lang}.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(title)}&prop=text&format=json&origin=*`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.parse && data.parse.text) {
+          let html = data.parse.text['*'];
+          // Vyčisti relatívne linky na wikipédii aby sa otvárali v novom okne
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+
+          // Odstráň nepotrebné navigačné tabuľky a referenčné boxy
+          doc.querySelectorAll('.navbox, .vertical-navbox, .ambox, .metadata, .mw-editsection').forEach(el => el.remove());
+
+          doc.querySelectorAll('a').forEach(a => {
+            const href = a.getAttribute('href');
+            if (href && href.startsWith('/wiki/')) {
+              const targetTitle = decodeURIComponent(href.replace('/wiki/', '')).replace(/_/g, ' ');
+              a.href = '#';
+              a.onclick = (e) => {
+                e.preventDefault();
+                openWikiArticle(targetTitle, lang);
+              };
+            } else if (href && href.startsWith('#')) {
+              // vnútorná kotva
+            } else if (href && !href.startsWith('http')) {
+              a.href = `https://${lang}.wikipedia.org` + href;
+              a.target = '_blank';
+            } else {
+              a.target = '_blank';
+            }
+          });
+
+          bodyEl.innerHTML = doc.body.innerHTML;
+          currentWikiArticle = {
+            title: title,
+            url: `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(title.replace(/\s+/g, '_'))}`,
+            summary: doc.body.querySelector('p') ? doc.body.querySelector('p').innerText.trim() : ''
+          };
+        } else {
+          bodyEl.innerHTML = `<div style="color:var(--miku-pink); padding:20px;">Článok sa nepodarilo načítať.</div>`;
+        }
+      } catch (err) {
+        console.error("Wikipedia article load error:", err);
+        bodyEl.innerHTML = `<div style="color:var(--miku-pink); padding:20px;">Chyba pri sťahovaní obsahu z Wikipédie.</div>`;
+      }
+    }
+
+    function closeWikiReader() {
+      const listEl = document.getElementById('wikiResultsList');
+      const readerEl = document.getElementById('wikiReaderView');
+      if (listEl) listEl.style.display = 'flex';
+      if (readerEl) readerEl.style.display = 'none';
+    }
+
+    function insertWikiCitationToEditor() {
+      if (!currentWikiArticle) {
+        alert("Najprv otvorte článok na Wikipédii.");
+        return;
+      }
+      const editor = document.getElementById('docEditor');
+      if (!editor) return;
+
+      const citation = `\n\n> 📚 **Zdroj Wikipedia (${currentWikiArticle.title}):**\n> ${currentWikiArticle.summary.slice(0, 320)}...\n> *Odkaz: [${currentWikiArticle.title}](${currentWikiArticle.url})*\n`;
+
+      editor.value += citation;
+      saveCurrentTopic();
+      alert(`✅ Citácia z článku „${currentWikiArticle.title}“ bola vložená do textu témy!`);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Posúvanie deliacej lišty myšou (Resizer Drag & Drop)
+    function initWikiResizer() {
+      const resizer = document.getElementById('wikiResizer');
+      if (!resizer) return;
+
+      resizer.addEventListener('mousedown', (e) => {
+        wikiResizerDragging = true;
+        resizer.classList.add('dragging');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!wikiResizerDragging) return;
+        const containerWidth = window.innerWidth;
+        const newWidth = Math.max(300, Math.min(containerWidth * 0.65, containerWidth - e.clientX));
+        document.documentElement.style.setProperty('--wiki-width', `${newWidth}px`);
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (wikiResizerDragging) {
+          wikiResizerDragging = false;
+          resizer.classList.remove('dragging');
+          document.body.style.cursor = '';
+          document.body.style.userSelect = '';
+        }
+      });
     }
 
     // --- 4. TOPIC SELECTION & TREE RENDER ---
@@ -3146,6 +3611,7 @@
       applyAuthorMode(isAuthorMode);
       renderPresetsList();
       checkAndInitBackend();
+      initWikiResizer();
 
       // Ensure YouTube player initializes
       if (typeof YT !== 'undefined' && YT.Player) {
