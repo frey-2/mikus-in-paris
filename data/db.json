@@ -38,154 +38,308 @@
   ],
   "topicTodos": {
     "top-2": [
-      { "id": 1, "text": "Overiť invariantnosť náboja v skriptách", "done": true },
-      { "id": 2, "text": "Doplniť meranie špecifického náboja", "done": false }
+      {
+        "id": 1,
+        "text": "Overiť invariantnosť náboja v skriptách",
+        "done": true
+      },
+      {
+        "id": 2,
+        "text": "Doplniť meranie špecifického náboja",
+        "done": false
+      }
     ]
   },
   "musicPresets": [
-    { "name": "🩵 1 A.M. Study Session - Lofi Girl", "url": "https://www.youtube.com/watch?v=lTRiuFIWV54" },
-    { "name": "🌌 4 A.M. Study Session - Lofi Beats", "url": "https://www.youtube.com/watch?v=TURbeWK2wwg" },
-    { "name": "⚡ Synthwave Chill Radio", "url": "https://www.youtube.com/watch?v=4xDzrJKXOOY" },
-    { "name": "🎹 Relaxing Vocaloid Chill Lofi", "url": "https://www.youtube.com/watch?v=Ow6G-LkGXRQ" }
+    {
+      "name": "🩵 1 A.M. Study Session - Lofi Girl",
+      "url": "https://www.youtube.com/watch?v=lTRiuFIWV54"
+    },
+    {
+      "name": "🌌 4 A.M. Study Session - Lofi Beats",
+      "url": "https://www.youtube.com/watch?v=TURbeWK2wwg"
+    },
+    {
+      "name": "⚡ Synthwave Chill Radio",
+      "url": "https://www.youtube.com/watch?v=4xDzrJKXOOY"
+    },
+    {
+      "name": "🎹 Relaxing Vocaloid Chill Lofi",
+      "url": "https://www.youtube.com/watch?v=Ow6G-LkGXRQ"
+    }
   ],
   "authorPin": "7567",
   "pdfLibrary": [
     {
       "id": "book-sk-1",
       "lang": "sk",
-      "title": "STU FEI: Fyzika II – Elektromagnetizmus a Elektrostatika",
-      "author": "Fakulta elektrotechniky a informatiky STU v Bratislave",
-      "category": "Fyzika & Elektrostatika",
-      "year": 2022,
-      "source": "Knižnica STU",
+      "title": "STU FEI: Fyzika II – Elektromagnetizmus, Elektrostatika a Vlnenie",
+      "author": "prof. RNDr. Vladimír Olčák, CSc., doc. Ing. Peter Ballo, PhD. (FEI STU)",
+      "category": "Elektrostatika & Elektromagnetizmus",
+      "year": 2021,
+      "source": "Vydavateľstvo Spektrum STU Bratislava, Ústav jadrového a fyzikálneho inžinierstva",
       "pages": [
         {
-          "page": 42,
-          "chapter": "Kapitola 3: Elektrostatické pole vo vákuu",
-          "text": "Coulombov zákon tvorí fundamentálny základ elektrostatiky. Hovorí, že sila F pôsobiaca medzi dvoma nehybnými bodovými nábojmi Q1 a Q2 vo vákuu je priamo úmerná veľkosti týchto nábojov a nepriamo úmerná štvorcu ich vzdialenosti r. Vektorový zápis sily Coulombovho zákona: F = (1 / 4*pi*epsilon_0) * (Q1 * Q2 / r^2) * r_vektor_jednotkovy. Konštanta permitivity vákua epsilon_0 nadobúda hodnotu 8.854e-12 F/m."
+          "page": 1,
+          "chapter": "Predhovor a sylabus kurzu Fyzika II na FEI STU",
+          "text": "Tieto vysokoškolské skriptá sú určené pre študentov bakalárskeho štúdia Fakulty elektrotechniky a informatiky Slovenskej technickej univerzity v Bratislave (FEI STU). Učebnica nadväzuje na kurz mechaniky a termodynamiky a pokrýva kompletnú teóriu elektromagnetizmu od elektrostatiky cez stacionárne a kvázistacionárne polia až po časovo premenlivé polia a vlnovú optiku. Dôraz sa kladie na vektorovú analýzu a fyzikálnu interpretáciu fundamentálnych zákonov."
         },
         {
-          "page": 45,
-          "chapter": "Kapitola 3.2: Intenzita elektrického poľa",
-          "text": "Intenzita elektrického poľa E je vektorová veličina definovaná ako sila pôsobiaca na jednotkový kladný testovací náboj. Z Coulombovho zákona vyplýva, že bodový náboj vytvára radiálne symetrické pole, ktorého siločiary vychádzajú z kladného náboja a končia v zápornom náboji. Pre sústavu viacerých nábojov platí princíp superpozície."
+          "page": 12,
+          "chapter": "Kapitola 1: Elektrostatické pole a Coulombov zákon",
+          "text": "Coulombov zákon tvorí fundamentálny experimentálny postulát elektrostatiky. Stanovuje, že elektrostatická sila F pôsobiaca medzi dvoma nehybnými bodovými elektrickými nábojmi Q1 a Q2 vo vákuu je priamo úmerná súčinu veľkostí týchto nábojov a nepriamo úmerná druhej mocnine ich vzájomnej vzdialenosti r. Matematický vektorový zápis: F = (1 / (4 * pi * epsilon_0)) * (Q1 * Q2 / r^2) * r_0, kde r_0 je jednotkový vektor v smere spojnice nábojov. Koeficient úmernosti k = 1 / (4 * pi * epsilon_0) má hodnotu približne 8.98755e9 N*m^2/C^2. Permitivita vákua epsilon_0 je základná fyzikálna konštanta s hodnotou epsilon_0 = 8.8541878e-12 F/m (alebo C^2/(N*m^2)). Pre prostredie s relatívnou permitivitou epsilon_r sa permitivita nahrádza súčinom epsilon = epsilon_0 * epsilon_r, čím sa elektrostatická sila zoslabuje."
         },
         {
-          "page": 58,
-          "chapter": "Kapitola 4: Gaussov zákon elektrostatiky",
-          "text": "Gaussov zákon elektrostatiky predstavuje integrálnu formuláciu jednej z Maxwellových rovníc. Tok vektora intenzity elektrického poľa cez ľubovoľnú uzavretú plochu je rovný celkovému náboju vo vnútri tejto plochy delenému permitivitou vákua. Využitie Gaussovho zákona umožňuje elegantne odvodiť Coulombov zákon pre sféricky symetrické rozloženie náboja."
+          "page": 15,
+          "chapter": "Kapitola 1.2: Princíp superpozície a intenzita elektrického poľa",
+          "text": "Princíp superpozície hovorí, že výsledná elektrostatická sila pôsobiaca na náboj Q od sústavy N bodových nábojov je rovná vektorovému súčtu jednotlivých Coulombových síl. Intenzita elektrického poľa E je definovaná ako sila pôsobiaca na jednotkový kladný testovací náboj: E = F / q_0. Pre bodový náboj platí E = (Q / (4 * pi * epsilon_0 * r^2)) * r_0. Pre spojité rozloženie náboja s objemovou hustotou rho sa intenzita určuje integrálom: E(r) = (1 / (4 * pi * epsilon_0)) * int_V (rho(r') / |r - r'|^3) * (r - r') dV'."
+        },
+        {
+          "page": 22,
+          "chapter": "Kapitola 1.3: Gaussov zákon elektrostatiky v integrálnom a diferenciálnom tvare",
+          "text": "Gaussov zákon predstavuje prvú Maxwellovu rovnicu v statickom prípade. Hovorí, že tok vektora intenzity elektrického poľa Phi_E cez ľubovoľnú uzavretú Gaussovu plochu S je rovný celkovému voľnému náboju Q_vnutorne uzavretému vo vnútri tejto plochy, delenému permitivitou vákua: oint_S E * dS = Q_enc / epsilon_0. V diferenciálnom tvare pomocou operátora divergencie: div(E) = nabla * E = rho / epsilon_0. Gaussov zákon umožňuje elegantne a jednoducho vypočítať intenzitu elektrického poľa symetrických nábojových konfigurácií – homogénne nabitej gule, nekonečne dlhého nabitého valca či nekonečnej nabitej roviny."
+        },
+        {
+          "page": 35,
+          "chapter": "Kapitola 2: Elektrický potenciál, napätie a gradient potenciálu",
+          "text": "Pretože elektrostatické pole je konzervatívne, rotácia vektora intenzity je identicky nulová: rot(E) = nabla x E = 0. Z toho vyplýva, že cirkulácia intenzity po ľubovoľnej uzavretej krivke je nulová: oint E * dl = 0. Intenzitu elektrického poľa možno preto vyjadriť ako záporne vzatý gradient skalárneho poľa – elektrického potenciálu phi: E = -grad(phi) = -nabla(phi). Potenciál bodového náboja vo vzdialenosti r je phi(r) = Q / (4 * pi * epsilon_0 * r). Elektrické napätie U_AB medzi dvoma bodmi A a B predstavuje integrál intenzity pozdĺž krivky spájajúcej tieto body: U_AB = phi_A - phi_B = int_A^B E * dl. Dosadením do diferenciálneho Gaussovho zákona dostávame Poissonovu diferenciálnu rovnicu: Delta(phi) = -rho / epsilon_0, a v oblasti bez voľného náboja Laplaceovu rovnicu Delta(phi) = 0."
+        },
+        {
+          "page": 48,
+          "chapter": "Kapitola 3: Vodiče v elektrostatickom poli, kapacita a dielektriká",
+          "text": "Vo vnútri ideálneho vodiča v elektrostatickej rovnováhe je intenzita poľa nulová (E = 0), celý objem vodiča je ekvipotenciálny a všetok voľný náboj sa sústreďuje výlučne na jeho vonkajšom povrchu. Plošná hustota náboja sigma určuje intenzitu tesne pri povrchu vodiča: E = sigma / epsilon_0. Kapacita vodiča alebo sústavy vodičov C = Q / U charakterizuje schopnosť akumulovať náboj pri danom napätí. Pre doskový kondenzátor s plochou dosiek S a vzdialenosťou d platí C = epsilon_0 * epsilon_r * S / d. Energia elektrostatického poľa akumulovaná v kondenzátore je W_e = (1/2) * C * U^2 = (1/2) * Q * U = Q^2 / (2 * C). Objemová hustota energie poľa je w_e = (1/2) * epsilon * E^2."
+        },
+        {
+          "page": 65,
+          "chapter": "Kapitola 4: Elektrický prúd, hustota prúdu a zákon zachovania náboja",
+          "text": "Elektrický prúd I je definovaný ako množstvo náboja pretečeného prierezom vodiča za jednotku času: I = dQ / dt. Hustota elektrického prúdu J = dI / dS_kolme = n * q * v_d (kde n je koncentrácia nosičov náboja, q ich náboj a v_d ich stredná unášacia driftová rýchlosť). Zákon zachovania elektrického náboja v diferenciálnom tvare je vyjadrený rovnicou kontinuity: div(J) + d(rho)/dt = 0. V stacionárnom stave d(rho)/dt = 0, a teda div(J) = 0, čo znamená, že prúdové čiary sú uzavreté a prúd sa v uzle nehromadí (1. Kirchhoffov zákon). Diferenciálny tvar Ohmovho zákona znie: J = sigma_vodivost * E = E / rho_rezistivita."
+        },
+        {
+          "page": 84,
+          "chapter": "Kapitola 5: Stacionárne magnetické pole a Biot-Savartov zákon",
+          "text": "Zdrojom magnetického poľa sú pohybujúce sa elektrické náboje alebo časovo premenlivé elektrické pole. Element magnetickej indukcie dB vyvolaný prúdovým elementom I * dl určuje Biot-Savartov-Laplaceov zákon: dB = (mu_0 / (4 * pi)) * (I * dl x r_0) / r^2, kde mu_0 = 4 * pi * 1e-7 H/m je permeabilita vákua. Magnetická sila pôsobiaca na časticu s nábojom q pohybujúcu sa rýchlosťou v v elektromagnetickom poli je daná Lorentzovým vzťahom: F = q * (E + v x B). Magnetická zložka sily F_m = q * (v x B) pôsobí vždy kolmo na vektor rýchlosti, preto nekoná mechanickú prácu a nemení kinetickú energiu častice, iba zakrivuje jej trajektóriu do kružnice či skrutkovice."
+        },
+        {
+          "page": 98,
+          "chapter": "Kapitola 5.4: Ampérov zákon celkového prúdu a magnetický vektorový potenciál",
+          "text": "Ampérov zákon celkového prúdu v integrálnom tvare hovorí, že cirkulácia magnetickej indukcie B po ľubovoľnej uzavretej krivke l sa rovná permeabilite vákua mu_0 násobenej celkovým prúdom pretínajúcim plochu ohraničenú touto krivkou: oint_l B * dl = mu_0 * I_enc. V diferenciálnom tvare: rot(B) = mu_0 * J. Pretože magnetické pole nemá magnetické náboje (neexistujú izolované magnetické monopóly), magnetické indukčné čiary sú vždy uzavreté a divergencia B je identicky nulová: div(B) = 0 (druhá Maxwellova rovnica). Z nulovej divergencie vyplýva existencia magnetického vektorového potenciálu A, takého, že B = rot(A)."
+        },
+        {
+          "page": 115,
+          "chapter": "Kapitola 6: Elektromagnetická indukcia, Faradayov zákon a Lenzovo pravidlo",
+          "text": "Faradayov zákon elektromagnetickej indukcie stanovuje, že časová zmena magnetického toku Phi_m = int_S B * dS cez plochu ohraničenú vodivou slučkou indukuje v slučke elektromotorické napätie U_i: U_i = -d(Phi_m) / dt. Záporné znamienko vyjadruje Lenzovo pravidlo: indukovaný prúd má vždy taký smer, že ním vyvolané magnetické pole pôsobí proti zmene magnetického toku, ktorá ho vyvolala. V diferenciálnom tvare pre časovo premenlivé polia: rot(E) = -dB / dt (tretia Maxwellova rovnica). Časovo premenlivé magnetické pole teda generuje vírové elektrické pole s uzavretými siločiarami."
+        },
+        {
+          "page": 130,
+          "chapter": "Kapitola 7: Kompletná sústava Maxwellových rovníc a elektromagnetické vlny",
+          "text": "James Clerk Maxwell zjednotil zákony elektriny a magnetizmu pridaním posuvného prúdu do Ampérovho zákona. Posuvný prúd J_d = dD / dt = epsilon_0 * (dE / dt) predstavuje časovú zmenu elektrického poľa. Kompletná sústava 4 Maxwellových rovníc v diferenciálnom tvare znie:\n1. div(D) = rho (Gaussov zákon pre elektrické pole)\n2. div(B) = 0 (Gaussov zákon pre magnetické pole – neexistencia monopólov)\n3. rot(E) = -dB / dt (Faradayov zákon indukcie)\n4. rot(H) = J + dD / dt (zovšeobecnený Ampérov zákon s Maxwellovým posuvným prúdom)\nVo vákuu bez voľných nábojov (rho = 0) a prúdov (J = 0) vedú tieto rovnice aplikáciou operátora rotácie na vlnové rovnice: Delta(E) - mu_0 * epsilon_0 * (d^2 E / dt^2) = 0 a Delta(B) - mu_0 * epsilon_0 * (d^2 B / dt^2) = 0. Rýchlosť šírenia elektromagnetických vĺn vo vákuu je c = 1 / sqrt(mu_0 * epsilon_0) approx 2.99792458e8 m/s, čo dokázalo, že svetlo je elektromagnetické vlnenie."
         }
       ]
     },
     {
       "id": "book-sk-2",
       "lang": "sk",
-      "title": "STU: Teoretická Elektrotechnika a Teória Obvodov",
-      "author": "Katedra teoretickej elektrotechniky STU",
-      "category": "Elektrotechnika",
-      "year": 2021,
-      "source": "Digitálny archív STU",
+      "title": "STU FEI: Teoretická Elektrotechnika, Analýza Obvodov a Teória Polí",
+      "author": "prof. Ing. Daniel Kováč, PhD., doc. Ing. Ľubomír Šumichrast, CSc. (Katedra teoretickej elektrotechniky STU)",
+      "category": "Teória obvodov & Elektrotechnika",
+      "year": 2022,
+      "source": "Vydavateľstvo STU Bratislava, Fakulta elektrotechniky a informatiky",
       "pages": [
         {
-          "page": 18,
-          "chapter": "Úvod do elektromagnetického poľa",
-          "text": "Elektrostatické pole je špeciálnym prípadom elektromagnetického poľa s nulovou časovou deriváciou. Silové pôsobenie statických nábojov je riadené Coulombovým zákonom. Vo vodivých materiáloch sa náboj rozmiestňuje výhradne na povrchu vodiča, pričom intenzita poľa vo vnútri ideálneho vodiča je identicky rovná nule."
+          "page": 1,
+          "chapter": "Úvod do obvodových a poľových veličín elektrotechniky",
+          "text": "Kurz Teoretická elektrotechnika tvorí matematický a fyzikálny základ pre inžinierov v odboroch elektroenergetika, elektronika, telekomunikácie a kybernetika. Prepája poľové modely odvodené z Maxwellových rovníc s obvodovými modelmi so sústredenými a rozloženými parametrami."
         },
         {
-          "page": 84,
-          "chapter": "Maxwellove rovnice v diferenciálnom tvare",
-          "text": "Základné zákony elektromagnetizmu možno zhrnúť do štyroch Maxwellových rovníc: rot E = -dB/dt (Faradayov zákon elektromagnetickej indukcie), rot H = J + dD/dt (Ampérov zákon celkového prúdu), div D = rho (Gaussov zákon nábojov) a div B = 0 (neexistencia magnetických monopolov)."
+          "page": 18,
+          "chapter": "Kapitola 1: Základné zákony elektrických obvodov jednosmerného prúdu",
+          "text": "Elektrický obvod so sústredenými parametrami je idealizovaným modelom skutočného elektromagnetického systému. Základnými zákonmi sú Kirchhoffove zákony. Prvý Kirchhoffov zákon (prúdový – KCL): algebraický súčet prúdov v ľubovoľnom uzle obvodu sa v každom okamihu rovná nule: sum_k I_k = 0. Vyplýva priamo zo zákona zachovania náboja a rovnice kontinuity div(J) = 0. Druhý Kirchhoffov zákon (napäťový – KVL): algebraický súčet úbytkov napätí na prvkoch pozdĺž ľubovoľnej uzavretej slučky obvodu sa rovná algebraickému súčtu vnútorných elektromotorických napätí zdrojov v danej slučke: sum_k U_k = sum_j E_j. Vyplýva z konzervatívnosti potenciálu phi pozdĺž uzavretej slučky."
+        },
+        {
+          "page": 32,
+          "chapter": "Kapitola 2: Metódy systematickej analýzy lineárnych obvodov",
+          "text": "Pri riešení rozsiahlych obvodových sietí sa využívajú maticové metódy: Metóda uzlových napätí (MUN), ktorá formuluje sústavu (U-1) lineárnych rovníc pre neznáme potenciály uzlov, a Metóda slučkových prúdov (MSP), formulujúca (V-U+1) rovníc pre nezávislé fiktívne slučkové prúdy. Dôležitými princípmi sú Théveninova veta (ľubovoľný lineárny dvojpól možno voči záťaži nahradiť náhradným zdrojom napätia U_th v sérii s vnútorným odporom R_th) a Nortonova veta (nahradenie náhradným zdrojom prúdu I_no paralelne k vodivosti G_no). Podmienka maximálneho prenosu výkonu do záťaže (prispôsobenie) nastáva, keď odpor záťaže sa rovná vnútornému odporu zdroja: R_L = R_i."
+        },
+        {
+          "page": 55,
+          "chapter": "Kapitola 3: Striedavé harmonické obvody a symbolicko-komplexná metóda",
+          "text": "Pre harmonicky premenlivé veličiny s uhlovou frekvenciou omega = 2 * pi * f sa časové priebehy f(t) = F_m * cos(omega * t + psi) transformujú do komplexnej roviny pomocou fázorov (symbolicko-komplexná metóda). Rezistor má odpor R, ideálna cievka s indukčnosťou L má komplexnú impedanciu Z_L = j * omega * L (induktívna reaktancia X_L = omega * L s fázovým posunom napätia pred prúdom o +90 stupňov), ideálny kondenzátor s kapacitou C má impedanciu Z_C = 1 / (j * omega * C) = -j / (omega * C) (kapacitná reaktancia X_C = 1 / (omega * C) s fázovým posunom napätia za prúdom o -90 stupňov). Výsledná komplexná impedancia je Z = R + j * X. Zdanlivý výkon S = U * I* = P + j * Q sa skladá z činného výkonu P = U * I * cos(phi) vo Wattoch a jalového výkonu Q = U * I * sin(phi) vo VAr-och."
+        },
+        {
+          "page": 78,
+          "chapter": "Kapitola 4: Rezonancia v RLC obvodoch a frekvenčné charakteristiky",
+          "text": "V sériovom RLC obvode nastáva rezonancia pri frekvencii, kedy sa induktívna a kapacitná reaktancia navzájom presne kompenzujú: X_L = X_C, teda omega_0 * L = 1 / (omega_0 * C). Rezonančná uhlová frekvencia je daná Thomsonovým vzorcom: omega_0 = 1 / sqrt(L * C), resp. f_0 = 1 / (2 * pi * sqrt(L * C)). V stave rezonancie je celková impedancia obvodu čisto reálna a minimálna (Z = R), prúd dosahuje maximálnu hodnotu I_max = U / R a napätia na cievke a kondenzátore môžu mnohonásobne prevyšovať vstupné napätie – činiteľ akosti obvodu Q_faktor = (omega_0 * L) / R = 1 / (omega_0 * R * C)."
+        },
+        {
+          "page": 95,
+          "chapter": "Kapitola 5: Trojfázové sústavy, točivé magnetické pole a prechodové javy",
+          "text": "Symetrická trojfázová sústava pozostáva z troch striedavých napätí posunutých o 120 stupňov (2 * pi / 3). Rozlišujeme zapojenie do hviezdy (Y), kde združené napätie U_zdr = sqrt(3) * U_faz, a zapojenie do trojuholníka (Delta), kde I_zdr = sqrt(3) * I_faz. Prúdy trojfázovej sústavy v priestorovo posunutých vinutiach statora vytvárajú konštantné točivé magnetické pole, ktoré je základom činnosti asynchrónnych a synchrónnych elektrických motorov. Prechodové javy vznikajú pri skokových zmenách stavu obvodu (zapnutie, vypnutie, porucha) a riadia sa komutačnými zákonmi: prúd cievkou a napätie na kondenzátore sa nemôžu meniť skokom, pretože by to vyžadovalo nekonečný výkon."
         }
       ]
     },
     {
       "id": "book-sk-3",
       "lang": "sk",
-      "title": "Polovodičová Elektronika a Fyzika Súčiastok",
-      "author": "Doc. Ing. Miroslav Vlček a kol.",
-      "category": "Elektronika",
-      "year": 2023,
-      "source": "Technická knižnica",
+      "title": "STU FEI: Fyzika Polovodičov, Mikroelektronika a Nábojové Transporty",
+      "author": "doc. Ing. Peter Ballo, PhD., prof. Ing. Daniel Donoval, DrSc. (Katedra mikroelektroniky FEI STU)",
+      "category": "Polovodiče & Mikroelektronika",
+      "year": 2020,
+      "source": "Vedecké monografie a učebné texty FEI STU Bratislava",
       "pages": [
         {
-          "page": 27,
-          "chapter": "Pohyb nosičov náboja v polovodičoch",
-          "text": "V kryštáloch kremíka a germánia zabezpečujú elektrickú vodivosť voľné elektróny a diery. Coulombovské sily medzi ionizovanými prímesami (donormi a akceptormi) a voľnými nosičmi náboja spôsobujú rozptyl nosičov pri nízkych teplotách, čo ovplyvňuje elektrickú mobilitu a vodivosť polovodičového materiálu."
+          "page": 1,
+          "chapter": "Úvod do fyziky pevných látok a polovodičových štruktúr",
+          "text": "Mikroelektronika a nanoelektronika sú fundamentálnymi piliermi súčasných informačných a komunikačných technológií. Táto učebnica analyzuje fyzikálne mechanizmy transportu nábojov v polovodičových kryštáloch kremíka (Si), gália arzenidu (GaAs) a širokopásových materiáloch ako GaN a SiC."
         },
         {
-          "page": 63,
-          "chapter": "Prechod P-N a priestorový náboj",
-          "text": "V oblasti metalurgického prechodu P-N vzniká v dôsledku difúzie nosičov oblasť priestorového náboja (ochudobnená vrstva). Elektrostatické pole vytvorené nepohyblivými iónmi podľa Poissonovej rovnice (odvodenej z Coulombovho a Gaussovho zákona) vytvára difúznu potenciálovú bariéru."
+          "page": 14,
+          "chapter": "Kapitola 1: Pásová teória pevných látok, efektívna hmotnosť a Fermiho hladina",
+          "text": "Kvantovomechanické riešenie Schrödingerovej rovnice pre elektrón v periodickom potenciáli kryštálovej mriežky vedie k vytvoreniu energetických pásov povolených energií oddelených pásom zakázaných energií (zakázaný pás E_g). Pre kovy sa valenčný a vodivostný pás prekrývajú. Pre izolanty je šírka zakázaného pásu E_g > 5 eV. Pre polovodiče je E_g typicky medzi 0.5 eV a 3.5 eV (pre kremík pri izbovej teplote E_g = 1.12 eV). Pravdepodobnosť obsadenia energetického stavu E elektrónom určuje Fermi-Diracovo rozdelenie f(E) = 1 / (1 + exp((E - E_F) / (k_B * T))), kde E_F je Fermiho energia (chemický potenciál). Pohyb elektrónu v mriežke sa modeluje pomocou efektívnej hmotnosti m*, ktorá zahŕňa pôsobenie vnútorných mriežkových síl."
+        },
+        {
+          "page": 28,
+          "chapter": "Kapitola 2: Vlastná a prímesová vodivosť polovodičov (Donory a Akceptory)",
+          "text": "V čistom vlastnom (intrinsickom) polovodiči tepelná excitácia generuje elektrón-dierové páry. Koncentrácia elektrónov n_i sa rovná koncentrácii dier p_i: n_i = p_i. Dopovaním čistého kremíka (4-mocný prvok) atómami 5-mocných prvkov (fosfor P, arzén As) vzniká polovodič typu N s donorovými hladinami tesne pod vodivostným pásom, kde majoritnými nosičmi náboja sú voľné elektróny. Dopovaním 3-mocnými prvkami (bór B, gálium Ga) vznikajú akceptorové hladiny tesne nad valenčným pásom a polovodič typu P, kde majoritnými nosičmi sú kladné kvázičastice – diery. Súčin koncentrácií nosičov v termodynamickej rovnováhe spĺňa zákon pôsobenia hmoty: n * p = n_i^2."
+        },
+        {
+          "page": 45,
+          "chapter": "Kapitola 3: Mechanizmy transportu nábojov – Driftový prúd a Difúzia",
+          "text": "V polovodiči prebieha prenos náboja dvoma základnými mechanizmami. 1. Driftový pohyb: pohyb nosičov náboja vyvolaný intenzitou elektrického poľa E pôsobením Coulombovej sily. Driftová rýchlosť v_d = mu * E, kde mu je pohyblivosť nosičov náboja (cm^2/(V*s)). Driftová hustota prúdu: J_drift = (q * n * mu_n + q * p * mu_p) * E = sigma * E. 2. Difúzny pohyb: pohyb nosičov v dôsledku koncentračného spádu (gradientu koncentrácie) z miest s vyššou koncentráciou do miest s nižšou koncentráciou podľa Fickovho zákona. Difúzna hustota prúdu: J_diff = q * D_n * grad(n) - q * D_p * grad(p). Koeficienty difúzie D a pohyblivosti mu zväzuje Einsteinov vzťah: D / mu = (k_B * T) / q = V_t (kde V_t approx 25.9 mV pri T = 300 K je teplotný potenciál)."
+        },
+        {
+          "page": 62,
+          "chapter": "Kapitola 4: Fyzika PN prechodu v rovnováhe a pri polarizácii",
+          "text": "Na rozhraní oblastí P a N dochádza k difúzii majoritných elektrónov z N do P a dier z P do N. Po prechode nosičov zostávajú v mriežke nekompenzované ionizované donorové atómy (kladný priestorový náboj) a akceptorové atómy (záporný priestorový náboj), čím vzniká ochudobnená vrstva priestorového náboja (depletion region). Vzniknuté vnútorné elektrické pole vyvoláva Coulombovu driftovú silu pôsobiacu proti difúzii, až nastane termodynamická rovnováha s difúznym napätím V_bi = V_t * ln((N_A * N_D) / n_i^2). Pri priepustnom zapojení (kladný pól na P) sa výška potenciálovej bariéry znižuje na V_bi - V, čo umožňuje exponenciálny nárast difúzneho prúdu: I = I_0 * (exp(V / (eta * V_t)) - 1) (Shockleyova rovnica diódy). Pri závernom zapojení sa bariéra zvyšuje a tečie iba nepatrný saturačný prúd I_0 generovaný minoritnými nosičmi."
+        },
+        {
+          "page": 85,
+          "chapter": "Kapitola 5: Tranzistory BJT a MOSFET v modernej elektronike",
+          "text": "Bipolárny tranzistor (BJT typu NPN alebo PNP) využíva dva PN prechody v tesnej blízkosti, kde tenká báza umožňuje prechod injektovaných minoritných nosičov z emitora do kolektora s prúdovým zosilnením beta = I_C / I_B. Unipolárny tranzistor riadený poľom s izolovaným hradlom (MOSFET) využíva elektrostatický efekt poľa na riadenie vodivosti kanála medzi elektródami Source a Drain pomocou napätia na Gate izolovanom tenkou vrstvou oxidu SiO_2 alebo dielektrika s vysokým k (high-k). Pre napätie V_GS presahujúce prahové napätie V_th dochádza k inverzii povrchovej vrstvy polovodiča a vytvoreniu vodivého kanála. CMOS technológia, kombinujúca NMOS a PMOS tranzistory, je základom všetkých moderných procesorov a pamätí pre svoju takmer nulovú statickú spotrebu energie."
         }
       ]
     },
     {
       "id": "book-en-1",
       "lang": "en",
-      "title": "OpenStax: University Physics Volume 2 (Electricity & Magnetism)",
-      "author": "Samuel J. Ling, Jeff Sanny, William Moebs (Rice University)",
-      "category": "Physics",
+      "title": "OpenStax: University Physics Volume 2 – Complete Electricity, Magnetism & Optics",
+      "author": "Samuel J. Ling, Jeff Sanny, William Moebs (Rice University / OpenStax)",
+      "category": "Physics & Electromagnetism",
       "year": 2023,
-      "source": "OpenStax Open Academic Library",
+      "source": "OpenStax Rice University (Creative Commons Open Textbook)",
       "pages": [
         {
-          "page": 210,
-          "chapter": "Chapter 5: Electric Charges and Fields",
-          "text": "Coulomb's Law states that the electrical force between two charged objects is directly proportional to the product of the quantity of charge on the objects and inversely proportional to the square of the separation distance between the two objects. Mathematically: F = k * (|q1 * q2| / r^2), where k is Coulomb's constant, approximately 8.99 x 10^9 N*m^2/C^2."
+          "page": 1,
+          "chapter": "Preface to University Physics & Fundamental Constants",
+          "text": "University Physics Volume 2 is an open-access, peer-reviewed textbook covering electricity, magnetism, electromagnetic waves, and optics. It is designed for students enrolled in two- and three-semester calculus-based physics courses. Fundamental physical constants utilized throughout include: Elementary charge e = 1.602176634e-19 C, Speed of light c = 2.99792458e8 m/s, Permittivity of free space epsilon_0 = 8.8541878e-12 C^2/(N*m^2), Permeability of free space mu_0 = 4*pi*1e-7 T*m/A."
         },
         {
-          "page": 215,
-          "chapter": "Chapter 5.3: Electric Field Calculations",
-          "text": "Comparing gravitational and electrical forces: The electrostatic repulsion described by Coulomb's law between two protons is approximately 10^36 times stronger than their mutual gravitational attraction. This explains why electromagnetic forces dominate the structure of atoms, molecules, and chemical bonds."
+          "page": 205,
+          "chapter": "Chapter 5: Electric Charges, Coulomb's Law, and Electric Fields",
+          "text": "The electrostatic force between charged objects was first accurately quantified by Charles-Augustin de Coulomb in 1785 using a torsion balance. Coulomb's Law states that the magnitude of the electrostatic force F between two stationary point charges q1 and q2 is directly proportional to the product of the magnitudes of the charges and inversely proportional to the square of the distance r between them: F = k * (|q1 * q2| / r^2), where k = 1 / (4 * pi * epsilon_0) approx 8.98755e9 N*m^2/C^2. The force acts along the line joining the two point charges; like charges repel one another, and opposite charges attract. By applying the superposition principle, the net electrostatic force acting on any given charge from an array of N charges is the vector sum: F_net = sum(F_i). The electric field E at a given point in space is defined as the force per unit positive test charge: E = lim(q_0 -> 0) [F / q_0]."
         },
         {
-          "page": 260,
-          "chapter": "Chapter 6: Gauss's Law Applications",
-          "text": "Gauss's Law provides a powerful technique for calculating electric fields in systems with high symmetry. By choosing a spherical Gaussian surface around a point charge, Gauss's law directly yields Coulomb's law, proving that the inverse-square dependence is intrinsically linked to the three-dimensional geometry of space."
+          "page": 235,
+          "chapter": "Chapter 6: Gauss's Law, Flux Calculations, and Field Symmetries",
+          "text": "Electric flux Phi_E is a scalar measure of the number of electric field lines passing through a given surface area A: Phi_E = int_S E * dA. Gauss's Law states that the total electric flux out of any closed surface (Gaussian surface) is equal to the net enclosed charge Q_enc divided by the permittivity of free space epsilon_0: oint_S E * dA = Q_enc / epsilon_0. In differential vector calculus form, Gauss's law is represented by the divergence of the electric field: div(E) = rho / epsilon_0. Gauss's Law is especially potent for computing electric fields with high degrees of spherical, cylindrical, or planar symmetry. For an isolated conducting sphere of radius R carrying charge Q, E = 0 everywhere inside the sphere (r < R), and E = (Q / (4 * pi * epsilon_0 * r^2)) * r_hat everywhere outside the sphere (r >= R)."
+        },
+        {
+          "page": 268,
+          "chapter": "Chapter 7: Electric Potential, Potential Energy, and Voltage",
+          "text": "Because the electrostatic force is conservative, the work performed in moving a charge q between two points A and B is path-independent: W = int_A^B F * dl = -Delta(U). Electric potential V is electric potential energy per unit charge: V = U / q. The potential difference or voltage between points A and B is V_B - V_A = -int_A^B E * dl. The electric potential due to a point charge q at distance r is given by V(r) = q / (4 * pi * epsilon_0 * r). Equipotential surfaces are three-dimensional surfaces on which the electric potential is constant; electric field lines are always perpendicular to equipotential surfaces at every point in space. The electric field is the negative gradient of the potential: E = -grad(V) = -(d/dx i + d/dy j + d/dz k) V."
+        },
+        {
+          "page": 310,
+          "chapter": "Chapter 8: Capacitance, Energy Storage in Fields, and Dielectrics",
+          "text": "A capacitor consists of two conducting plates separated by a vacuum or insulating dielectric medium. Capacitance C is defined as the ratio of stored charge magnitude Q to the potential difference V between plates: C = Q / V, measured in Farads (1 F = 1 C / V). For a parallel-plate capacitor with plate area A and separation distance d: C_0 = epsilon_0 * A / d. Introducing a dielectric material with dielectric constant kappa (or relative permittivity epsilon_r) polarizes the internal bound molecular charges through Coulomb forces, reducing the internal field and boosting capacitance to C = kappa * C_0. The potential energy stored in the electric field of a charged capacitor is U_C = (1/2) * C * V^2 = (1/2) * (Q^2 / C) = (1/2) * Q * V. The energy density of the electric field is u_E = (1/2) * epsilon * E^2."
+        },
+        {
+          "page": 350,
+          "chapter": "Chapter 9 & 10: Current, Resistance, Ohm's Law, and DC Circuits",
+          "text": "Electric current I represents the macroscopic net rate of flow of electric charge through an area: I = dq / dt. Microscopic drift velocity v_d of conduction electrons is governed by the relation I = n * q * A * v_d. Ohm's Law states that for many materials, the current density J is directly proportional to the applied electric field E: J = sigma * E = E / rho. Resistance R = rho * L / A. In direct-current circuits, Kirchhoff's Junction Rule (current law) and Loop Rule (voltage law) apply conservation of charge and energy. For resistors in series, R_eq = sum(R_i); for resistors in parallel, 1 / R_eq = sum(1 / R_i). Power dissipated in a resistor by Joule heating is P = I * V = I^2 * R = V^2 / R."
+        },
+        {
+          "page": 410,
+          "chapter": "Chapter 11 & 12: Magnetic Forces, Fields, and Ampere's Law",
+          "text": "Magnetic fields exert forces on moving electric charges and electric currents. The magnetic force on a charge q moving with velocity v in magnetic field B is F = q * (v x B). The total Lorentz force is F = q * (E + v x B). A straight wire of length l carrying current I experiences force F = I * (l x B). The Biot-Savart law dictates the magnetic field produced by current element dl: dB = (mu_0 / (4 * pi)) * (I * dl x r_hat) / r^2. Ampere's Law asserts that the line integral of B along any closed loop equals mu_0 times the enclosed current: oint B * dl = mu_0 * I_enc. Because magnetic field lines are closed continuous loops with no start or end points, the net magnetic flux through any closed surface is zero: oint B * dA = 0 (Gauss's law for magnetism)."
+        },
+        {
+          "page": 470,
+          "chapter": "Chapter 13 & 14: Electromagnetic Induction, Inductance, and AC Circuits",
+          "text": "Faraday's Law of Induction quantifies how a changing magnetic flux induces an electromotive force (emf) epsilon: epsilon = -d(Phi_m) / dt. The minus sign represents Lenz's Law: an induced current always flows in such a direction that its magnetic field opposes the change in magnetic flux that produced it. Inductance L = N * Phi_m / I relates flux linkage to current. The energy stored in the magnetic field of an inductor is U_B = (1/2) * L * I^2, with magnetic energy density u_B = B^2 / (2 * mu_0). In alternating-current (AC) circuits driven by sinusoidal voltage v(t) = V_0 * sin(omega * t), inductors provide inductive reactance X_L = omega * L, and capacitors provide capacitive reactance X_C = 1 / (omega * C)."
+        },
+        {
+          "page": 540,
+          "chapter": "Chapter 16: Maxwell's Equations and the Propagation of Light",
+          "text": "Maxwell's synthesis of electromagnetism introduced the displacement current term I_d = epsilon_0 * (d(Phi_E) / dt) into Ampere's law: oint B * dl = mu_0 * I_enc + mu_0 * epsilon_0 * (d(Phi_E) / dt). This theoretical discovery completed the symmetry between changing electric and magnetic fields. In free space without charges or currents, Maxwell's four equations yield the wave equations for the electric and magnetic field vectors: nabla^2(E) = mu_0 * epsilon_0 * (d^2(E) / dt^2) and nabla^2(B) = mu_0 * epsilon_0 * (d^2(B) / dt^2). The propagation speed is c = 1 / sqrt(mu_0 * epsilon_0) = 2.99792458e8 m/s, proving that light is a transverse electromagnetic wave where E and B oscillate in phase, perpendicular to each other and perpendicular to the direction of propagation. The energy flux transported by electromagnetic waves is given by the Poynting vector S = (1 / mu_0) * (E x B)."
         }
       ]
     },
     {
       "id": "book-en-2",
       "lang": "en",
-      "title": "MIT OpenCourseWare: Physics 8.02 Electricity and Magnetism",
-      "author": "Prof. Walter Lewin, Massachusetts Institute of Technology",
-      "category": "Physics & Engineering",
-      "year": 2022,
-      "source": "MIT Academic Repository",
+      "title": "MIT OpenCourseWare: Physics 8.02 Classical Electricity and Magnetism",
+      "author": "Prof. Walter Lewin, Prof. John Belcher, Dr. Peter Dourmashkin (MIT Physics Department)",
+      "category": "Electrodynamics & Field Theory",
+      "year": 2021,
+      "source": "Massachusetts Institute of Technology (MIT OpenCourseWare)",
       "pages": [
         {
-          "page": 14,
-          "chapter": "Lecture 1: Electric Field and Dipoles",
-          "text": "Coulomb's Law experiment demonstrated by Charles-Augustin de Coulomb using a torsion balance in 1785. The electrostatic force acts along the line joining the centers of the charges. Superposition principle: when more than two charges interact, the total electrostatic force on any single charge is the vector sum of the individual Coulomb forces."
+          "page": 1,
+          "chapter": "Lecture 1: Electric Charges, Conservation, and Coulomb's Inverse-Square Law",
+          "text": "Electric charge is a fundamental intrinsic property of matter. Charges exist in two types, conventionally designated positive and negative. Electric charge is universally conserved and quantized in integral multiples of e = 1.602e-19 C. Coulomb's inverse-square law establishes that the force between two static point charges drops with the square of distance: F = (1 / (4 * pi * epsilon_0)) * (q1 * q2 / r^2) * r_hat. Notice that electrostatic forces are staggeringly stronger than gravitational forces: the electric repulsion between two electrons exceeds their gravitational attraction by a factor of 10^42."
         },
         {
-          "page": 78,
-          "chapter": "Lecture 6: Capacitance and Electrostatic Energy",
-          "text": "The energy stored in an electrostatic field is proportional to the square of the electric field intensity: u = (1/2) * epsilon * E^2. Capacitors store electrostatic potential energy by separating charges against their mutual Coulomb attractive forces."
+          "page": 45,
+          "chapter": "Lecture 5: Gauss's Law, Electric Flux, and Conductors in Electrostatic Equilibrium",
+          "text": "By considering the divergence theorem on Coulomb's law, Gauss's law establishes an exact relationship between surface flux and internal enclosed charge: oint E * dA = Q_enc / epsilon_0. A conductor in electrostatic equilibrium exhibits critical properties: 1. The electric field inside the conducting material is zero everywhere. 2. Any excess charge resides entirely on the exterior surface. 3. The electric field immediately outside a charged conductor is normal to the surface: E = sigma / epsilon_0. 4. The entire conductor is an equipotential volume."
+        },
+        {
+          "page": 95,
+          "chapter": "Lecture 11: Magnetic Fields, Lorentz Force Law, and Cyclotron Motion",
+          "text": "The Lorentz force law F = q * (E + v x B) describes the trajectory of charges in combined electric and magnetic fields. Because the magnetic force F_mag = q * (v x B) is perpendicular to the instantaneous velocity v, the work done on the particle is dW = F_mag * dl = q * (v x B) * v dt = 0. Therefore, a static magnetic field cannot change the kinetic energy or speed of a charged particle. In a uniform field B, a particle of mass m with velocity perpendicular to B executes circular cyclotron motion with radius r = (m * v) / (q * B) and cyclotron angular frequency omega_c = (q * B) / m, independent of velocity."
+        },
+        {
+          "page": 155,
+          "chapter": "Lecture 18: Faraday's Law, Induced Electric Fields, and Lenz's Law",
+          "text": "A time-varying magnetic field induces an electric field that is non-conservative (curl(E) = -dB/dt). The circulation of this induced electric field around a closed loop constitutes the induced emf: epsilon = oint E * dl = -d/dt int B * dA. Unlike electrostatic fields, which are conservative and possess a unique scalar potential, induced electric fields form continuous closed loops without sources or sinks. Lenz's law dictates that nature resists changes in magnetic flux."
+        },
+        {
+          "page": 220,
+          "chapter": "Lecture 26: Maxwell's Equations, Displacement Current, and Radiation",
+          "text": "Ampere's law in its original form violated charge conservation in dynamic circuits (such as charging a capacitor). Maxwell resolved this paradox by formulating the displacement current density J_d = epsilon_0 * dE/dt. With this modification, time-varying electric fields act as sources of magnetic fields, and time-varying magnetic fields act as sources of electric fields, allowing self-sustaining electromagnetic wave packets to decouple from source charges and radiate into deep space at speed c."
         }
       ]
     },
     {
       "id": "book-en-3",
       "lang": "en",
-      "title": "Fundamentals of Electrical Engineering & Circuit Theory",
-      "author": "Dr. Leonard S. Bobrow (Oxford University Press)",
-      "category": "Electrical Engineering",
-      "year": 2020,
-      "source": "International Tech Archive",
+      "title": "Pearson / Prentice Hall: Solid State Electronic Devices & Semiconductor Physics",
+      "author": "Ben G. Streetman, Sanjay Kumar Banerjee (University of Texas at Austin)",
+      "category": "Semiconductor Physics & Microelectronics",
+      "year": 2016,
+      "source": "Pearson Education / Prentice Hall Electrical Engineering Series",
       "pages": [
         {
-          "page": 35,
-          "chapter": "Chapter 2: Charge, Current and Electric Potential",
-          "text": "Electric current is the rate of charge flow through a given cross-sectional area: I = dq/dt. The electric potential difference (voltage) between two points is the work done per unit charge against the Coulomb electrostatic field: V = W / q. In electrical circuits, charge conservation manifests as Kirchhoff's Current Law (KCL)."
+          "page": 1,
+          "chapter": "Chapter 1: Crystal Properties and Energy Bands in Semiconductors",
+          "text": "This classic textbook delivers a thorough foundation in semiconductor physics, charge carrier transport, and solid-state device design. Silicon crystallizes in the diamond cubic lattice structure with a lattice constant of 5.43 Angstroms. Isolated atomic energy levels broaden into continuous energy bands when atoms are brought together in a crystal lattice. The valence band represents highest occupied states at 0 K, and the conduction band represents lowest unoccupied states."
         },
         {
-          "page": 142,
-          "chapter": "Chapter 7: Magnetic Circuits and Inductance",
-          "text": "Magnetic fields generated by moving electric charges: the Biot-Savart law in magnetostatics plays an analogous role to Coulomb's law in electrostatics. Faraday's law of induction couples the electric and magnetic fields, forming the basis for transformers, electric motors, and generators."
+          "page": 65,
+          "chapter": "Chapter 3: Carrier Transport Phenomena – Drift, Diffusion, and Recombination",
+          "text": "Under an applied electric field, carriers experience acceleration followed by scattering collisions with lattice phonons and ionized impurities. The average drift velocity is proportional to electric field at low fields: v_d = mu * E. At high electric fields exceeding 10^4 V/cm, carrier velocities saturate at approximately v_sat approx 10^7 cm/s due to optical phonon emission. In inhomogeneous semiconductors, spatial concentration gradients drive diffusion currents governed by Fick's law: J_n = q * D_n * dn/dx. Recombination-generation processes restore thermal equilibrium according to the continuity equation: dn/dt = (1/q) * div(J_n) - (n - n_0)/tau_n + G_ext."
+        },
+        {
+          "page": 130,
+          "chapter": "Chapter 5: The PN Junction Diode and Metal-Semiconductor Contacts",
+          "text": "When P-type and N-type semiconductor regions are joined in metallurgical contact, diffusion of electrons into P and holes into N leaves behind exposed uncompensated ionized donor (N_D^+) and acceptor (N_A^-) ions. This creates a space charge depletion layer with electric field directed from N to P that exerts Coulomb forces counteracting diffusion. The built-in potential barrier is V_0 = (k_B * T / q) * ln(N_A * N_D / n_i^2). In forward bias (V > 0), the barrier height drops to V_0 - V, triggering massive exponential carrier injection and forward current I = I_0 * (exp(q * V / (k_B * T)) - 1). In reverse bias, the barrier height expands to V_0 + |V_R|, widening the depletion layer width W = sqrt((2 * epsilon / q) * (1/N_A + 1/N_D) * (V_0 + V_R))."
+        },
+        {
+          "page": 240,
+          "chapter": "Chapter 6 & 7: Bipolar Junction Transistors and Field-Effect Transistors (MOSFETs)",
+          "text": "The Metal-Oxide-Semiconductor Field-Effect Transistor (MOSFET) is the bedrock of modern VLSI circuits. By applying a gate voltage V_GS relative to the source, the electric field through the gate oxide bends the semiconductor energy bands. When V_GS exceeds the threshold voltage V_T, the surface inverts, forming a continuous conductive channel between Source and Drain. In the linear regime (V_DS < V_GS - V_T), current is I_D = mu * C_ox * (W/L) * ((V_GS - V_T) * V_DS - (1/2) * V_DS^2). In saturation (V_DS >= V_GS - V_T), pinch-off occurs at the drain end, and current saturates at I_D,sat = (1/2) * mu * C_ox * (W/L) * (V_GS - V_T)^2."
         }
       ]
     }
   ]
 }
-

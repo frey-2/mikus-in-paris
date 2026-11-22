@@ -128,12 +128,24 @@ app.get('/api/library', (req, res) => {
   res.json({ books: library, total: library.length });
 });
 
-// Full-Text vyhľadávanie vo všetkých knihách naraz (SK aj EN)
+// Pomocná funkcia na normalizáciu textu (odstránenie diakritiky, malých písmen a bežných preklepov)
+function normalizeSearchText(str) {
+  if (!str) return '';
+  return str.normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/columb/g, "coulomb");
+}
+
+// Full-Text vyhľadávanie vo všetkých knihách naraz (SK aj EN, bez ohľadu na diakritiku a preklepy)
 app.get('/api/library/search', (req, res) => {
-  const query = (req.query.q || '').trim().toLowerCase();
-  if (!query) {
+  const rawQuery = (req.query.q || '').trim();
+  if (!rawQuery) {
     return res.json({ query: '', results: [] });
   }
+
+  const normQuery = normalizeSearchText(rawQuery);
+  const queryTokens = normQuery.split(/\s+/).filter(t => t.length > 1);
 
   const db = readDatabase();
   const library = db.pdfLibrary || [];
@@ -141,20 +153,27 @@ app.get('/api/library/search', (req, res) => {
 
   library.forEach(book => {
     (book.pages || []).forEach(p => {
-      const textLower = p.text.toLowerCase();
-      const chapterLower = (p.chapter || '').toLowerCase();
-      const titleLower = book.title.toLowerCase();
+      const pageNorm = normalizeSearchText(`${book.title} ${p.chapter || ''} ${p.text}`);
+      
+      // Zhoda ak celý výraz alebo všetky kľúčové slová sa nachádzajú v texte strany
+      const fullMatch = pageNorm.includes(normQuery);
+      const tokenMatch = queryTokens.length > 0 && queryTokens.every(token => pageNorm.includes(token));
 
-      if (textLower.includes(query) || chapterLower.includes(query) || titleLower.includes(query)) {
-        // Nájdi úryvok (snippet) okolo zhody
+      if (fullMatch || tokenMatch) {
+        const textNorm = normalizeSearchText(p.text);
+        let idx = -1;
+        if (queryTokens.length > 0) {
+          idx = textNorm.indexOf(queryTokens[0]);
+        }
+        if (idx === -1) idx = textNorm.indexOf(normQuery);
+
         let snippet = p.text;
-        const idx = textLower.indexOf(query);
         if (idx !== -1) {
-          const start = Math.max(0, idx - 80);
-          const end = Math.min(p.text.length, idx + query.length + 100);
+          const start = Math.max(0, idx - 100);
+          const end = Math.min(p.text.length, idx + 200);
           snippet = (start > 0 ? '...' : '') + p.text.substring(start, end) + (end < p.text.length ? '...' : '');
         } else {
-          snippet = p.text.substring(0, 160) + '...';
+          snippet = p.text.substring(0, 220) + '...';
         }
 
         matches.push({
@@ -176,8 +195,8 @@ app.get('/api/library/search', (req, res) => {
   res.json({ query: req.query.q, totalMatches: matches.length, results: matches });
 });
 
-// Pridanie / Nahranie novej knihy do databázy (Online bez downloads)
-app.post('/api/library/add', requireAuthor, (req, res) => {
+// Pridanie / Nahranie novej knihy do databázy (Dostupné pre všetkých študentov a používateľov)
+app.post('/api/library/add', (req, res) => {
   const { title, author, lang, category, source, year, textContent, pages } = req.body;
   if (!title) {
     return res.status(400).json({ error: "Názov knihy je povinný." });
