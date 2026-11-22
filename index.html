@@ -687,6 +687,49 @@
       transform: translateY(-2px);
     }
 
+    /* KONTROLA TMAVÉHO REŽIMU PRE VSTAVANÝ PDF PREHLIADAČ */
+    .pdf-frame-container {
+      flex: 1;
+      width: 100%;
+      height: calc(100vh - 230px);
+      min-height: 550px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 42, 133, 0.3);
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+      position: relative;
+      transition: background 0.3s ease;
+      background: #111827;
+    }
+
+    /* Keď je stránka v tmavom motíve, PDF sa automaticky invertuje do nočného režimu */
+    :root[data-theme="dark"] #pdfDocFrame.pdf-auto-dark {
+      filter: invert(0.92) hue-rotate(180deg) brightness(0.95) contrast(0.95);
+      background: #111827 !important;
+      transition: filter 0.3s ease;
+    }
+
+    /* Keď je stránka v svetlom motíve */
+    :root[data-theme="light"] #pdfDocFrame.pdf-auto-dark {
+      filter: none;
+      background: #ffffff !important;
+      transition: filter 0.3s ease;
+    }
+
+    /* Manuálne zapnutý tmavý režim */
+    #pdfDocFrame.pdf-force-dark {
+      filter: invert(0.92) hue-rotate(180deg) brightness(0.95) contrast(0.95) !important;
+      background: #111827 !important;
+      transition: filter 0.3s ease;
+    }
+
+    /* Manuálne vypnutý tmavý režim (originálne biele PDF) */
+    #pdfDocFrame.pdf-force-light {
+      filter: none !important;
+      background: #ffffff !important;
+      transition: filter 0.3s ease;
+    }
+
     /* WIKIPEDIA RESIZER BAR */
     .wiki-resizer-bar {
       display: none;
@@ -2137,119 +2180,84 @@
       </div>
     </aside>
 
-        <!-- PDF SPLITTER RESIZE HANDLE -->
+            <!-- PDF SPLITTER RESIZE HANDLE -->
     <div class="pdf-resizer-bar" id="pdfResizer" title="Potiahnutím zmeníte šírku PDF knižnice">
       <div class="pdf-resizer-glow"></div>
     </div>
 
-    <!-- PDF RESEARCH & INTERACTIVE READER PANEL -->
+    <!-- PDF RESEARCH & REAL SCROLLABLE PDF VIEWER PANEL -->
     <aside class="pdf-research-panel" id="pdfPanel">
       <div class="pdf-panel-header">
         <div style="display:flex; align-items:center; gap:8px;">
           <span style="font-size:16px;">📚</span>
-          <span style="font-weight:800; font-size:13px; color:var(--miku-pink); letter-spacing:0.5px;">VEDECKÁ PDF KNIŽNICA &amp; ČÍTAČKA</span>
+          <span style="font-weight:800; font-size:13px; color:var(--miku-pink); letter-spacing:0.5px;">VEDECKÁ PDF KNIŽNICA &amp; DOKUMENTY</span>
         </div>
         <div style="display:flex; align-items:center; gap:6px;">
           <button class="pdf-filter-tab active" id="tabPdfAll" onclick="filterPdfLang('all')">VŠETKO</button>
           <button class="pdf-filter-tab" id="tabPdfSk" onclick="filterPdfLang('sk')">🇸🇰 STU FEI</button>
-          <button class="pdf-filter-tab" id="tabPdfEn" onclick="filterPdfLang('en')">🇬🇧 EN TECH</button>
-          <button class="pdf-filter-tab" style="background:rgba(255,42,133,0.2); border-color:var(--miku-pink); color:#fff;" onclick="triggerDirectPdfUpload()" title="Nahrať PDF knihu z PC">📄 + Nahrať PDF</button>
+          <button class="pdf-filter-tab" id="tabPdfEn" onclick="filterPdfLang('en')">🇬🇧 MIT TECH</button>
+          <button class="pdf-filter-tab" style="background:rgba(255,42,133,0.25); border-color:var(--miku-pink); color:#fff; font-weight:800;" onclick="triggerDirectPdfUpload()" title="Nahrať vlastné PDF z počítača">📄 + Nahrať vlastné PDF</button>
           <button class="btn-wiki-close" onclick="togglePdfPanel(false)" title="Zavrieť panel">✕</button>
         </div>
       </div>
 
-      <!-- Skrytý súborový input pre priame nahratie PDF -->
+      <!-- Skrytý súborový input pre okamžité nahratie PDF z počítača -->
       <input type="file" id="directPdfInput" accept=".pdf" style="display:none;" onchange="handleDirectPdfUpload(event)">
 
-      <!-- Search Input Box -->
-      <div class="pdf-search-bar">
-        <input type="text" id="pdfSearchInput" class="pdf-input" placeholder="Hľadať vo všetkých knihách (napr. Coulombov zákon, Maxwell, náboj)..." onkeydown="if(event.key==='Enter') performPdfSearch()">
-        <button class="btn-pdf-search" onclick="performPdfSearch()" title="Hľadať v knižnici">🔍 Hľadať</button>
+      <!-- Search & Quick Navigation Bar -->
+      <div class="pdf-search-bar" style="display:flex; gap:6px; align-items:center;">
+        <input type="text" id="pdfSearchInput" class="pdf-input" placeholder="Rýchly filter kníh a skrípt (napr. Coulomb, Gauss, Maxwell, Buzola)..." oninput="filterPdfShelfRealtime(this.value)">
+        <button class="btn-pdf-search" onclick="showPdfCatalogView()" title="Zobraziť všetky knihy">📚 Katalóg</button>
       </div>
 
       <!-- Quick Concept Chips -->
       <div class="wiki-quick-chips">
-        <span class="wiki-chip" style="border-color:rgba(57,197,187,0.4); color:var(--miku-cyan); font-weight:800;" onclick="showPdfCatalogView()">📚 Katalóg kníh</span>
-        <span class="wiki-chip" style="border-color:rgba(255,42,133,0.3); color:var(--miku-pink);" onclick="searchPdfQuick('Coulombov zákon')">⚡ Coulombov zákon</span>
-        <span class="wiki-chip" style="border-color:rgba(255,42,133,0.3); color:var(--miku-pink);" onclick="searchPdfQuick('Gaussov zákon')">🌐 Gaussov zákon</span>
-        <span class="wiki-chip" style="border-color:rgba(255,42,133,0.3); color:var(--miku-pink);" onclick="searchPdfQuick('Maxwellove rovnice')">🧲 Maxwellove rovnice</span>
-        <span class="wiki-chip" style="border-color:rgba(255,42,133,0.3); color:var(--miku-pink);" onclick="searchPdfQuick('polovodiče')">🔬 Polovodiče</span>
+        <span class="wiki-chip" style="border-color:rgba(57,197,187,0.4); color:var(--miku-cyan); font-weight:800;" onclick="showPdfCatalogView()">📚 Katalóg PDF kníh</span>
+        <span class="wiki-chip" style="border-color:rgba(255,42,133,0.3); color:var(--miku-pink);" onclick="filterPdfShelfRealtime('Coulomb')">⚡ Coulombov zákon</span>
+        <span class="wiki-chip" style="border-color:rgba(255,42,133,0.3); color:var(--miku-pink);" onclick="filterPdfShelfRealtime('Gauss')">🌐 Gaussov zákon</span>
+        <span class="wiki-chip" style="border-color:rgba(255,42,133,0.3); color:var(--miku-pink);" onclick="filterPdfShelfRealtime('Maxwell')">🧲 Maxwellove rovnice</span>
+        <span class="wiki-chip" style="border-color:rgba(255,42,133,0.3); color:var(--miku-pink);" onclick="filterPdfShelfRealtime('Buzola')">🔬 STU FEI Buzola</span>
       </div>
 
-      <!-- Upload Progress Banner -->
-      <div id="pdfUploadBanner" style="display:none; padding:8px 12px; background:rgba(255,42,133,0.2); border-bottom:1px solid var(--miku-pink); font-size:11px; color:#fff; font-weight:bold; text-align:center;">
-        ⏳ Spracovávam PDF dokument...
-      </div>
-
-      <!-- POHĽAD 1: INTERAKTÍVNA POLICA KNÍH (KATALÓG) -->
+      <!-- POHĽAD 1: POLICA S PDF KNIHAMI A NAHRÁVANÍM -->
       <div class="pdf-catalog-view" id="pdfCatalogView" style="flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:10px;">
-        <!-- Drag & Drop Zone -->
-        <div style="background:rgba(255,42,133,0.06); border:2px dashed rgba(255,42,133,0.35); border-radius:10px; padding:12px; text-align:center; cursor:pointer;" onclick="triggerDirectPdfUpload()" ondragover="event.preventDefault(); this.style.borderColor='var(--miku-pink)';" ondragleave="this.style.borderColor='rgba(255,42,133,0.35)';" ondrop="handlePdfDrop(event)">
-          <span style="font-size:22px;">📥</span>
-          <strong style="color:var(--miku-pink); font-size:12px; display:block; margin:2px 0;">Nahrajte vlastnú PDF knihu alebo skriptá z počítača (.pdf)</strong>
-          <span style="font-size:10px; color:var(--text-muted);">Kliknite sem pre výber súboru alebo ho sem pretiahnite (automaticky prečíta všetky strany).</span>
+        <!-- Drag & Drop Zóna pre ľubovoľné PDF -->
+        <div style="background:rgba(255,42,133,0.07); border:2px dashed rgba(255,42,133,0.45); border-radius:10px; padding:16px; text-align:center; cursor:pointer; transition:all 0.2s;" onclick="triggerDirectPdfUpload()" ondragover="event.preventDefault(); this.style.borderColor='var(--miku-pink)';" ondragleave="this.style.borderColor='rgba(255,42,133,0.45)';" ondrop="handlePdfDrop(event)">
+          <span style="font-size:26px;">📥</span>
+          <strong style="color:var(--miku-pink); font-size:13px; display:block; margin:4px 0 2px;">Nahrať vlastné PDF z počítača</strong>
+          <span style="font-size:11px; color:var(--text-muted);">Kliknite sem a vyberte PDF (alebo ho sem pretiahnite). Okamžite sa otvorí v plnej verzii s grafmi a vzorcami.</span>
         </div>
 
         <div style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px;">
-          📖 Dostupné technické knihy v knižnici:
+          📖 Dostupné originálne PDF knihy a skriptá:
         </div>
 
-        <div id="pdfBooksShelf" style="display:flex; flex-direction:column; gap:8px;">
-          <!-- Dynamicky generované karty kníh -->
+        <div id="pdfBooksShelf" style="display:flex; flex-direction:column; gap:10px;">
+          <!-- Renderované knihy -->
         </div>
       </div>
 
-      <!-- POHĽAD 2: VÝSLEDKY FULL-TEXTOVÉHO VYHĽADÁVANIA -->
-      <div class="pdf-search-results-view" id="pdfSearchResultsView" style="display:none; flex:1; overflow-y:auto; padding:12px; flex-direction:column; gap:8px;">
-        <!-- Renderované zhody -->
-      </div>
+      <!-- POHĽAD 2: SKUTOČNÁ SKROLOVATEĽNÁ PDF ČÍTAČKA -->
+      <div class="pdf-reader-view" id="pdfReaderView" style="display:none; flex:1; overflow:hidden; flex-direction:column; padding:8px 12px; height:100%;">
+        <!-- Horná lišta čítačky -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding-bottom:6px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:6px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button class="btn-cyber-sm" onclick="showPdfCatalogView()">⬅ Katalóg kníh</button>
+            <span id="readerBookBadge" class="pdf-book-badge-sk">[SK] STU FEI</span>
+            <span id="readerBookTitle" style="font-weight:800; font-size:12px; color:var(--text); max-width:280px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></span>
+          </div>
 
-      <!-- POHĽAD 3: INTERAKTÍVNA ČÍTAČKA KNIHY STRANA PO STRANE -->
-      <div class="pdf-reader-view" id="pdfReaderView" style="display:none; flex:1; overflow-y:auto; padding:12px 14px; flex-direction:column;">
-        <!-- Horná navigačná lišta čítačky -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:6px;">
-          <button class="btn-cyber-sm" onclick="showPdfCatalogView()">⬅ Katalóg kníh</button>
-          
           <div style="display:flex; align-items:center; gap:6px;">
-            <button class="btn-cyber-sm" onclick="navPdfPage(-1)" title="Predchádzajúca strana">◀</button>
-            <span id="pdfPageIndicator" style="font-size:11px; font-weight:800; color:var(--miku-cyan);">Strana 1 z 1</span>
-            <button class="btn-cyber-sm" onclick="navPdfPage(1)" title="Nasledujúca strana">▶</button>
-          </div>
-
-          <button class="btn-cyber-sm" style="background:rgba(255,42,133,0.2); border-color:var(--miku-pink); color:#fff;" onclick="insertCurrentPageCitation()">📋 Vložiť do témy</button>
-        </div>
-
-        <!-- Výber kapitoly -->
-        <div style="margin-bottom:10px;">
-          <select id="pdfChapterSelect" class="wiki-lang-select" style="width:100%; padding:6px 8px; font-size:11px;" onchange="jumpToPdfChapter(this.value)">
-            <!-- Zoznam kapitol -->
-          </select>
-        </div>
-
-        <!-- Informácie o knihe -->
-        <div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,42,133,0.25); border-radius:8px; padding:10px; margin-bottom:10px;">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div>
-              <span id="readerBookBadge" class="pdf-book-badge-sk">[SK] STU FEI</span>
-              <h3 id="readerBookTitle" style="color:var(--miku-pink); font-size:14px; margin:4px 0 2px;"></h3>
-              <div id="readerBookMeta" style="font-size:10px; color:var(--text-muted);"></div>
-            </div>
+            <button class="btn-cyber-sm" id="btnTogglePdfTheme" onclick="togglePdfDarkMode()" title="Prepnúť Tmavý / Svetlý podklad PDF dokumentu">🌙 Tmavé PDF (Auto)</button>
+            <button class="btn-cyber-sm" style="background:rgba(255,42,133,0.2); border-color:var(--miku-pink); color:#fff;" onclick="insertPdfCitationPrompt()">📋 Vložiť citáciu</button>
+            <button class="btn-cyber-sm" onclick="openCurrentPdfFullscreen()" title="Otvoriť PDF na celej obrazovke / v novej karte">↗ Celá obrazovka</button>
+            <button class="btn-cyber-sm" onclick="triggerDirectPdfUpload()" title="Nahrať iné PDF">📄 Otvoriť iné PDF</button>
           </div>
         </div>
 
-        <!-- Telo aktuálnej strany -->
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:16px; min-height:220px; box-shadow:inset 0 0 15px rgba(0,0,0,0.5);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:6px;">
-            <span id="readerChapterTitle" style="font-size:12px; font-weight:800; color:var(--miku-neon);"></span>
-            <span id="readerPageBadge" style="font-size:10px; color:var(--text-muted);"></span>
-          </div>
-          <div id="readerPageBody" style="font-size:13px; line-height:1.75; color:var(--text); white-space:pre-wrap; word-break:break-word;"></div>
-        </div>
-
-        <!-- Spodná navigácia medzi stranami -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:8px; border-top:1px solid var(--border);">
-          <button class="btn-cyber-sm" onclick="navPdfPage(-1)">◀ Predchádzajúca strana</button>
-          <button class="btn-cyber-sm" onclick="navPdfPage(1)">Nasledujúca strana ▶</button>
+        <!-- Vstavaný plný PDF iframe prehliadač s plynulým skrolovaním a zoomom -->
+        <div class="pdf-frame-container">
+          <iframe id="pdfDocFrame" class="pdf-auto-dark" src="" style="width:100%; height:100%; border:none; display:block;"></iframe>
         </div>
       </div>
     </aside>
@@ -2724,6 +2732,9 @@
         btn.title = "Prepnúť na tmavý neón";
       }
       localStorage.setItem('miku_theme', theme);
+      if (typeof applyPdfThemeClasses === 'function') {
+        applyPdfThemeClasses();
+      }
     }
 
     function toggleTheme() {
@@ -2983,303 +2994,98 @@
       }
     }
 
-        // =========================================================
-    // 3.6 VEDECKÁ PDF KNIŽNICA & INTERAKTÍVNA ČÍTAČKA
+            // =========================================================
+    // 3.6 REÁLNA VEDECKÁ PDF KNIŽNICA & SKROLOVATEĽNÝ VIEWER
     // =========================================================
     let isPdfSplitActive = false;
     let pdfResizerDragging = false;
     let pdfCurrentLang = 'all';
-    let loadedPdfBooks = [];
-    let currentReadingBook = null;
-    let currentReadingPageIndex = 0;
+    let currentLoadedPdfUrl = '';
+    let currentLoadedPdfTitle = '';
 
-    // Lokálna záloha knižnice priamo z db.json
-    const FALLBACK_PDF_BOOKS = [
-  {
-    "id": "book-sk-1",
-    "lang": "sk",
-    "title": "STU FEI: Fyzika II – Elektromagnetizmus, Elektrostatika a Vlnenie",
-    "author": "prof. RNDr. Vladimír Olčák, CSc., doc. Ing. Peter Ballo, PhD. (FEI STU)",
-    "category": "Elektrostatika & Elektromagnetizmus",
-    "year": 2021,
-    "source": "Vydavateľstvo Spektrum STU Bratislava, Ústav jadrového a fyzikálneho inžinierstva",
-    "pages": [
-      {
-        "page": 1,
-        "chapter": "Predhovor a sylabus kurzu Fyzika II na FEI STU",
-        "text": "Tieto vysokoškolské skriptá sú určené pre študentov bakalárskeho štúdia Fakulty elektrotechniky a informatiky Slovenskej technickej univerzity v Bratislave (FEI STU). Učebnica nadväzuje na kurz mechaniky a termodynamiky a pokrýva kompletnú teóriu elektromagnetizmu od elektrostatiky cez stacionárne a kvázistacionárne polia až po časovo premenlivé polia a vlnovú optiku. Dôraz sa kladie na vektorovú analýzu a fyzikálnu interpretáciu fundamentálnych zákonov."
-      },
-      {
-        "page": 12,
-        "chapter": "Kapitola 1: Elektrostatické pole a Coulombov zákon",
-        "text": "Coulombov zákon tvorí fundamentálny experimentálny postulát elektrostatiky. Stanovuje, že elektrostatická sila F pôsobiaca medzi dvoma nehybnými bodovými elektrickými nábojmi Q1 a Q2 vo vákuu je priamo úmerná súčinu veľkostí týchto nábojov a nepriamo úmerná druhej mocnine ich vzájomnej vzdialenosti r. Matematický vektorový zápis: F = (1 / (4 * pi * epsilon_0)) * (Q1 * Q2 / r^2) * r_0, kde r_0 je jednotkový vektor v smere spojnice nábojov. Koeficient úmernosti k = 1 / (4 * pi * epsilon_0) má hodnotu približne 8.98755e9 N*m^2/C^2. Permitivita vákua epsilon_0 je základná fyzikálna konštanta s hodnotou epsilon_0 = 8.8541878e-12 F/m (alebo C^2/(N*m^2)). Pre prostredie s relatívnou permitivitou epsilon_r sa permitivita nahrádza súčinom epsilon = epsilon_0 * epsilon_r, čím sa elektrostatická sila zoslabuje."
-      },
-      {
-        "page": 15,
-        "chapter": "Kapitola 1.2: Princíp superpozície a intenzita elektrického poľa",
-        "text": "Princíp superpozície hovorí, že výsledná elektrostatická sila pôsobiaca na náboj Q od sústavy N bodových nábojov je rovná vektorovému súčtu jednotlivých Coulombových síl. Intenzita elektrického poľa E je definovaná ako sila pôsobiaca na jednotkový kladný testovací náboj: E = F / q_0. Pre bodový náboj platí E = (Q / (4 * pi * epsilon_0 * r^2)) * r_0. Pre spojité rozloženie náboja s objemovou hustotou rho sa intenzita určuje integrálom: E(r) = (1 / (4 * pi * epsilon_0)) * int_V (rho(r') / |r - r'|^3) * (r - r') dV'."
-      },
-      {
-        "page": 22,
-        "chapter": "Kapitola 1.3: Gaussov zákon elektrostatiky v integrálnom a diferenciálnom tvare",
-        "text": "Gaussov zákon predstavuje prvú Maxwellovu rovnicu v statickom prípade. Hovorí, že tok vektora intenzity elektrického poľa Phi_E cez ľubovoľnú uzavretú Gaussovu plochu S je rovný celkovému voľnému náboju Q_vnutorne uzavretému vo vnútri tejto plochy, delenému permitivitou vákua: oint_S E * dS = Q_enc / epsilon_0. V diferenciálnom tvare pomocou operátora divergencie: div(E) = nabla * E = rho / epsilon_0. Gaussov zákon umožňuje elegantne a jednoducho vypočítať intenzitu elektrického poľa symetrických nábojových konfigurácií – homogénne nabitej gule, nekonečne dlhého nabitého valca či nekonečnej nabitej roviny."
-      },
-      {
-        "page": 35,
-        "chapter": "Kapitola 2: Elektrický potenciál, napätie a gradient potenciálu",
-        "text": "Pretože elektrostatické pole je konzervatívne, rotácia vektora intenzity je identicky nulová: rot(E) = nabla x E = 0. Z toho vyplýva, že cirkulácia intenzity po ľubovoľnej uzavretej krivke je nulová: oint E * dl = 0. Intenzitu elektrického poľa možno preto vyjadriť ako záporne vzatý gradient skalárneho poľa – elektrického potenciálu phi: E = -grad(phi) = -nabla(phi). Potenciál bodového náboja vo vzdialenosti r je phi(r) = Q / (4 * pi * epsilon_0 * r). Elektrické napätie U_AB medzi dvoma bodmi A a B predstavuje integrál intenzity pozdĺž krivky spájajúcej tieto body: U_AB = phi_A - phi_B = int_A^B E * dl. Dosadením do diferenciálneho Gaussovho zákona dostávame Poissonovu diferenciálnu rovnicu: Delta(phi) = -rho / epsilon_0, a v oblasti bez voľného náboja Laplaceovu rovnicu Delta(phi) = 0."
-      },
-      {
-        "page": 48,
-        "chapter": "Kapitola 3: Vodiče v elektrostatickom poli, kapacita a dielektriká",
-        "text": "Vo vnútri ideálneho vodiča v elektrostatickej rovnováhe je intenzita poľa nulová (E = 0), celý objem vodiča je ekvipotenciálny a všetok voľný náboj sa sústreďuje výlučne na jeho vonkajšom povrchu. Plošná hustota náboja sigma určuje intenzitu tesne pri povrchu vodiča: E = sigma / epsilon_0. Kapacita vodiča alebo sústavy vodičov C = Q / U charakterizuje schopnosť akumulovať náboj pri danom napätí. Pre doskový kondenzátor s plochou dosiek S a vzdialenosťou d platí C = epsilon_0 * epsilon_r * S / d. Energia elektrostatického poľa akumulovaná v kondenzátore je W_e = (1/2) * C * U^2 = (1/2) * Q * U = Q^2 / (2 * C). Objemová hustota energie poľa je w_e = (1/2) * epsilon * E^2."
-      },
-      {
-        "page": 65,
-        "chapter": "Kapitola 4: Elektrický prúd, hustota prúdu a zákon zachovania náboja",
-        "text": "Elektrický prúd I je definovaný ako množstvo náboja pretečeného prierezom vodiča za jednotku času: I = dQ / dt. Hustota elektrického prúdu J = dI / dS_kolme = n * q * v_d (kde n je koncentrácia nosičov náboja, q ich náboj a v_d ich stredná unášacia driftová rýchlosť). Zákon zachovania elektrického náboja v diferenciálnom tvare je vyjadrený rovnicou kontinuity: div(J) + d(rho)/dt = 0. V stacionárnom stave d(rho)/dt = 0, a teda div(J) = 0, čo znamená, že prúdové čiary sú uzavreté a prúd sa v uzle nehromadí (1. Kirchhoffov zákon). Diferenciálny tvar Ohmovho zákona znie: J = sigma_vodivost * E = E / rho_rezistivita."
-      },
-      {
-        "page": 84,
-        "chapter": "Kapitola 5: Stacionárne magnetické pole a Biot-Savartov zákon",
-        "text": "Zdrojom magnetického poľa sú pohybujúce sa elektrické náboje alebo časovo premenlivé elektrické pole. Element magnetickej indukcie dB vyvolaný prúdovým elementom I * dl určuje Biot-Savartov-Laplaceov zákon: dB = (mu_0 / (4 * pi)) * (I * dl x r_0) / r^2, kde mu_0 = 4 * pi * 1e-7 H/m je permeabilita vákua. Magnetická sila pôsobiaca na časticu s nábojom q pohybujúcu sa rýchlosťou v v elektromagnetickom poli je daná Lorentzovým vzťahom: F = q * (E + v x B). Magnetická zložka sily F_m = q * (v x B) pôsobí vždy kolmo na vektor rýchlosti, preto nekoná mechanickú prácu a nemení kinetickú energiu častice, iba zakrivuje jej trajektóriu do kružnice či skrutkovice."
-      },
-      {
-        "page": 98,
-        "chapter": "Kapitola 5.4: Ampérov zákon celkového prúdu a magnetický vektorový potenciál",
-        "text": "Ampérov zákon celkového prúdu v integrálnom tvare hovorí, že cirkulácia magnetickej indukcie B po ľubovoľnej uzavretej krivke l sa rovná permeabilite vákua mu_0 násobenej celkovým prúdom pretínajúcim plochu ohraničenú touto krivkou: oint_l B * dl = mu_0 * I_enc. V diferenciálnom tvare: rot(B) = mu_0 * J. Pretože magnetické pole nemá magnetické náboje (neexistujú izolované magnetické monopóly), magnetické indukčné čiary sú vždy uzavreté a divergencia B je identicky nulová: div(B) = 0 (druhá Maxwellova rovnica). Z nulovej divergencie vyplýva existencia magnetického vektorového potenciálu A, takého, že B = rot(A)."
-      },
-      {
-        "page": 115,
-        "chapter": "Kapitola 6: Elektromagnetická indukcia, Faradayov zákon a Lenzovo pravidlo",
-        "text": "Faradayov zákon elektromagnetickej indukcie stanovuje, že časová zmena magnetického toku Phi_m = int_S B * dS cez plochu ohraničenú vodivou slučkou indukuje v slučke elektromotorické napätie U_i: U_i = -d(Phi_m) / dt. Záporné znamienko vyjadruje Lenzovo pravidlo: indukovaný prúd má vždy taký smer, že ním vyvolané magnetické pole pôsobí proti zmene magnetického toku, ktorá ho vyvolala. V diferenciálnom tvare pre časovo premenlivé polia: rot(E) = -dB / dt (tretia Maxwellova rovnica). Časovo premenlivé magnetické pole teda generuje vírové elektrické pole s uzavretými siločiarami."
-      },
-      {
-        "page": 130,
-        "chapter": "Kapitola 7: Kompletná sústava Maxwellových rovníc a elektromagnetické vlny",
-        "text": "James Clerk Maxwell zjednotil zákony elektriny a magnetizmu pridaním posuvného prúdu do Ampérovho zákona. Posuvný prúd J_d = dD / dt = epsilon_0 * (dE / dt) predstavuje časovú zmenu elektrického poľa. Kompletná sústava 4 Maxwellových rovníc v diferenciálnom tvare znie:\n1. div(D) = rho (Gaussov zákon pre elektrické pole)\n2. div(B) = 0 (Gaussov zákon pre magnetické pole – neexistencia monopólov)\n3. rot(E) = -dB / dt (Faradayov zákon indukcie)\n4. rot(H) = J + dD / dt (zovšeobecnený Ampérov zákon s Maxwellovým posuvným prúdom)\nVo vákuu bez voľných nábojov (rho = 0) a prúdov (J = 0) vedú tieto rovnice aplikáciou operátora rotácie na vlnové rovnice: Delta(E) - mu_0 * epsilon_0 * (d^2 E / dt^2) = 0 a Delta(B) - mu_0 * epsilon_0 * (d^2 B / dt^2) = 0. Rýchlosť šírenia elektromagnetických vĺn vo vákuu je c = 1 / sqrt(mu_0 * epsilon_0) approx 2.99792458e8 m/s, čo dokázalo, že svetlo je elektromagnetické vlnenie."
-      }
-    ]
-  },
-  {
-    "id": "book-sk-2",
-    "lang": "sk",
-    "title": "STU FEI: Teoretická Elektrotechnika, Analýza Obvodov a Teória Polí",
-    "author": "prof. Ing. Daniel Kováč, PhD., doc. Ing. Ľubomír Šumichrast, CSc. (Katedra teoretickej elektrotechniky STU)",
-    "category": "Teória obvodov & Elektrotechnika",
-    "year": 2022,
-    "source": "Vydavateľstvo STU Bratislava, Fakulta elektrotechniky a informatiky",
-    "pages": [
-      {
-        "page": 1,
-        "chapter": "Úvod do obvodových a poľových veličín elektrotechniky",
-        "text": "Kurz Teoretická elektrotechnika tvorí matematický a fyzikálny základ pre inžinierov v odboroch elektroenergetika, elektronika, telekomunikácie a kybernetika. Prepája poľové modely odvodené z Maxwellových rovníc s obvodovými modelmi so sústredenými a rozloženými parametrami."
-      },
-      {
-        "page": 18,
-        "chapter": "Kapitola 1: Základné zákony elektrických obvodov jednosmerného prúdu",
-        "text": "Elektrický obvod so sústredenými parametrami je idealizovaným modelom skutočného elektromagnetického systému. Základnými zákonmi sú Kirchhoffove zákony. Prvý Kirchhoffov zákon (prúdový – KCL): algebraický súčet prúdov v ľubovoľnom uzle obvodu sa v každom okamihu rovná nule: sum_k I_k = 0. Vyplýva priamo zo zákona zachovania náboja a rovnice kontinuity div(J) = 0. Druhý Kirchhoffov zákon (napäťový – KVL): algebraický súčet úbytkov napätí na prvkoch pozdĺž ľubovoľnej uzavretej slučky obvodu sa rovná algebraickému súčtu vnútorných elektromotorických napätí zdrojov v danej slučke: sum_k U_k = sum_j E_j. Vyplýva z konzervatívnosti potenciálu phi pozdĺž uzavretej slučky."
-      },
-      {
-        "page": 32,
-        "chapter": "Kapitola 2: Metódy systematickej analýzy lineárnych obvodov",
-        "text": "Pri riešení rozsiahlych obvodových sietí sa využívajú maticové metódy: Metóda uzlových napätí (MUN), ktorá formuluje sústavu (U-1) lineárnych rovníc pre neznáme potenciály uzlov, a Metóda slučkových prúdov (MSP), formulujúca (V-U+1) rovníc pre nezávislé fiktívne slučkové prúdy. Dôležitými princípmi sú Théveninova veta (ľubovoľný lineárny dvojpól možno voči záťaži nahradiť náhradným zdrojom napätia U_th v sérii s vnútorným odporom R_th) a Nortonova veta (nahradenie náhradným zdrojom prúdu I_no paralelne k vodivosti G_no). Podmienka maximálneho prenosu výkonu do záťaže (prispôsobenie) nastáva, keď odpor záťaže sa rovná vnútornému odporu zdroja: R_L = R_i."
-      },
-      {
-        "page": 55,
-        "chapter": "Kapitola 3: Striedavé harmonické obvody a symbolicko-komplexná metóda",
-        "text": "Pre harmonicky premenlivé veličiny s uhlovou frekvenciou omega = 2 * pi * f sa časové priebehy f(t) = F_m * cos(omega * t + psi) transformujú do komplexnej roviny pomocou fázorov (symbolicko-komplexná metóda). Rezistor má odpor R, ideálna cievka s indukčnosťou L má komplexnú impedanciu Z_L = j * omega * L (induktívna reaktancia X_L = omega * L s fázovým posunom napätia pred prúdom o +90 stupňov), ideálny kondenzátor s kapacitou C má impedanciu Z_C = 1 / (j * omega * C) = -j / (omega * C) (kapacitná reaktancia X_C = 1 / (omega * C) s fázovým posunom napätia za prúdom o -90 stupňov). Výsledná komplexná impedancia je Z = R + j * X. Zdanlivý výkon S = U * I* = P + j * Q sa skladá z činného výkonu P = U * I * cos(phi) vo Wattoch a jalového výkonu Q = U * I * sin(phi) vo VAr-och."
-      },
-      {
-        "page": 78,
-        "chapter": "Kapitola 4: Rezonancia v RLC obvodoch a frekvenčné charakteristiky",
-        "text": "V sériovom RLC obvode nastáva rezonancia pri frekvencii, kedy sa induktívna a kapacitná reaktancia navzájom presne kompenzujú: X_L = X_C, teda omega_0 * L = 1 / (omega_0 * C). Rezonančná uhlová frekvencia je daná Thomsonovým vzorcom: omega_0 = 1 / sqrt(L * C), resp. f_0 = 1 / (2 * pi * sqrt(L * C)). V stave rezonancie je celková impedancia obvodu čisto reálna a minimálna (Z = R), prúd dosahuje maximálnu hodnotu I_max = U / R a napätia na cievke a kondenzátore môžu mnohonásobne prevyšovať vstupné napätie – činiteľ akosti obvodu Q_faktor = (omega_0 * L) / R = 1 / (omega_0 * R * C)."
-      },
-      {
-        "page": 95,
-        "chapter": "Kapitola 5: Trojfázové sústavy, točivé magnetické pole a prechodové javy",
-        "text": "Symetrická trojfázová sústava pozostáva z troch striedavých napätí posunutých o 120 stupňov (2 * pi / 3). Rozlišujeme zapojenie do hviezdy (Y), kde združené napätie U_zdr = sqrt(3) * U_faz, a zapojenie do trojuholníka (Delta), kde I_zdr = sqrt(3) * I_faz. Prúdy trojfázovej sústavy v priestorovo posunutých vinutiach statora vytvárajú konštantné točivé magnetické pole, ktoré je základom činnosti asynchrónnych a synchrónnych elektrických motorov. Prechodové javy vznikajú pri skokových zmenách stavu obvodu (zapnutie, vypnutie, porucha) a riadia sa komutačnými zákonmi: prúd cievkou a napätie na kondenzátore sa nemôžu meniť skokom, pretože by to vyžadovalo nekonečný výkon."
-      }
-    ]
-  },
-  {
-    "id": "book-sk-3",
-    "lang": "sk",
-    "title": "STU FEI: Fyzika Polovodičov, Mikroelektronika a Nábojové Transporty",
-    "author": "doc. Ing. Peter Ballo, PhD., prof. Ing. Daniel Donoval, DrSc. (Katedra mikroelektroniky FEI STU)",
-    "category": "Polovodiče & Mikroelektronika",
-    "year": 2020,
-    "source": "Vedecké monografie a učebné texty FEI STU Bratislava",
-    "pages": [
-      {
-        "page": 1,
-        "chapter": "Úvod do fyziky pevných látok a polovodičových štruktúr",
-        "text": "Mikroelektronika a nanoelektronika sú fundamentálnymi piliermi súčasných informačných a komunikačných technológií. Táto učebnica analyzuje fyzikálne mechanizmy transportu nábojov v polovodičových kryštáloch kremíka (Si), gália arzenidu (GaAs) a širokopásových materiáloch ako GaN a SiC."
-      },
-      {
-        "page": 14,
-        "chapter": "Kapitola 1: Pásová teória pevných látok, efektívna hmotnosť a Fermiho hladina",
-        "text": "Kvantovomechanické riešenie Schrödingerovej rovnice pre elektrón v periodickom potenciáli kryštálovej mriežky vedie k vytvoreniu energetických pásov povolených energií oddelených pásom zakázaných energií (zakázaný pás E_g). Pre kovy sa valenčný a vodivostný pás prekrývajú. Pre izolanty je šírka zakázaného pásu E_g > 5 eV. Pre polovodiče je E_g typicky medzi 0.5 eV a 3.5 eV (pre kremík pri izbovej teplote E_g = 1.12 eV). Pravdepodobnosť obsadenia energetického stavu E elektrónom určuje Fermi-Diracovo rozdelenie f(E) = 1 / (1 + exp((E - E_F) / (k_B * T))), kde E_F je Fermiho energia (chemický potenciál). Pohyb elektrónu v mriežke sa modeluje pomocou efektívnej hmotnosti m*, ktorá zahŕňa pôsobenie vnútorných mriežkových síl."
-      },
-      {
-        "page": 28,
-        "chapter": "Kapitola 2: Vlastná a prímesová vodivosť polovodičov (Donory a Akceptory)",
-        "text": "V čistom vlastnom (intrinsickom) polovodiči tepelná excitácia generuje elektrón-dierové páry. Koncentrácia elektrónov n_i sa rovná koncentrácii dier p_i: n_i = p_i. Dopovaním čistého kremíka (4-mocný prvok) atómami 5-mocných prvkov (fosfor P, arzén As) vzniká polovodič typu N s donorovými hladinami tesne pod vodivostným pásom, kde majoritnými nosičmi náboja sú voľné elektróny. Dopovaním 3-mocnými prvkami (bór B, gálium Ga) vznikajú akceptorové hladiny tesne nad valenčným pásom a polovodič typu P, kde majoritnými nosičmi sú kladné kvázičastice – diery. Súčin koncentrácií nosičov v termodynamickej rovnováhe spĺňa zákon pôsobenia hmoty: n * p = n_i^2."
-      },
-      {
-        "page": 45,
-        "chapter": "Kapitola 3: Mechanizmy transportu nábojov – Driftový prúd a Difúzia",
-        "text": "V polovodiči prebieha prenos náboja dvoma základnými mechanizmami. 1. Driftový pohyb: pohyb nosičov náboja vyvolaný intenzitou elektrického poľa E pôsobením Coulombovej sily. Driftová rýchlosť v_d = mu * E, kde mu je pohyblivosť nosičov náboja (cm^2/(V*s)). Driftová hustota prúdu: J_drift = (q * n * mu_n + q * p * mu_p) * E = sigma * E. 2. Difúzny pohyb: pohyb nosičov v dôsledku koncentračného spádu (gradientu koncentrácie) z miest s vyššou koncentráciou do miest s nižšou koncentráciou podľa Fickovho zákona. Difúzna hustota prúdu: J_diff = q * D_n * grad(n) - q * D_p * grad(p). Koeficienty difúzie D a pohyblivosti mu zväzuje Einsteinov vzťah: D / mu = (k_B * T) / q = V_t (kde V_t approx 25.9 mV pri T = 300 K je teplotný potenciál)."
-      },
-      {
-        "page": 62,
-        "chapter": "Kapitola 4: Fyzika PN prechodu v rovnováhe a pri polarizácii",
-        "text": "Na rozhraní oblastí P a N dochádza k difúzii majoritných elektrónov z N do P a dier z P do N. Po prechode nosičov zostávajú v mriežke nekompenzované ionizované donorové atómy (kladný priestorový náboj) a akceptorové atómy (záporný priestorový náboj), čím vzniká ochudobnená vrstva priestorového náboja (depletion region). Vzniknuté vnútorné elektrické pole vyvoláva Coulombovu driftovú silu pôsobiacu proti difúzii, až nastane termodynamická rovnováha s difúznym napätím V_bi = V_t * ln((N_A * N_D) / n_i^2). Pri priepustnom zapojení (kladný pól na P) sa výška potenciálovej bariéry znižuje na V_bi - V, čo umožňuje exponenciálny nárast difúzneho prúdu: I = I_0 * (exp(V / (eta * V_t)) - 1) (Shockleyova rovnica diódy). Pri závernom zapojení sa bariéra zvyšuje a tečie iba nepatrný saturačný prúd I_0 generovaný minoritnými nosičmi."
-      },
-      {
-        "page": 85,
-        "chapter": "Kapitola 5: Tranzistory BJT a MOSFET v modernej elektronike",
-        "text": "Bipolárny tranzistor (BJT typu NPN alebo PNP) využíva dva PN prechody v tesnej blízkosti, kde tenká báza umožňuje prechod injektovaných minoritných nosičov z emitora do kolektora s prúdovým zosilnením beta = I_C / I_B. Unipolárny tranzistor riadený poľom s izolovaným hradlom (MOSFET) využíva elektrostatický efekt poľa na riadenie vodivosti kanála medzi elektródami Source a Drain pomocou napätia na Gate izolovanom tenkou vrstvou oxidu SiO_2 alebo dielektrika s vysokým k (high-k). Pre napätie V_GS presahujúce prahové napätie V_th dochádza k inverzii povrchovej vrstvy polovodiča a vytvoreniu vodivého kanála. CMOS technológia, kombinujúca NMOS a PMOS tranzistory, je základom všetkých moderných procesorov a pamätí pre svoju takmer nulovú statickú spotrebu energie."
-      }
-    ]
-  },
-  {
-    "id": "book-en-1",
-    "lang": "en",
-    "title": "OpenStax: University Physics Volume 2 – Complete Electricity, Magnetism & Optics",
-    "author": "Samuel J. Ling, Jeff Sanny, William Moebs (Rice University / OpenStax)",
-    "category": "Physics & Electromagnetism",
-    "year": 2023,
-    "source": "OpenStax Rice University (Creative Commons Open Textbook)",
-    "pages": [
-      {
-        "page": 1,
-        "chapter": "Preface to University Physics & Fundamental Constants",
-        "text": "University Physics Volume 2 is an open-access, peer-reviewed textbook covering electricity, magnetism, electromagnetic waves, and optics. It is designed for students enrolled in two- and three-semester calculus-based physics courses. Fundamental physical constants utilized throughout include: Elementary charge e = 1.602176634e-19 C, Speed of light c = 2.99792458e8 m/s, Permittivity of free space epsilon_0 = 8.8541878e-12 C^2/(N*m^2), Permeability of free space mu_0 = 4*pi*1e-7 T*m/A."
-      },
-      {
-        "page": 205,
-        "chapter": "Chapter 5: Electric Charges, Coulomb's Law, and Electric Fields",
-        "text": "The electrostatic force between charged objects was first accurately quantified by Charles-Augustin de Coulomb in 1785 using a torsion balance. Coulomb's Law states that the magnitude of the electrostatic force F between two stationary point charges q1 and q2 is directly proportional to the product of the magnitudes of the charges and inversely proportional to the square of the distance r between them: F = k * (|q1 * q2| / r^2), where k = 1 / (4 * pi * epsilon_0) approx 8.98755e9 N*m^2/C^2. The force acts along the line joining the two point charges; like charges repel one another, and opposite charges attract. By applying the superposition principle, the net electrostatic force acting on any given charge from an array of N charges is the vector sum: F_net = sum(F_i). The electric field E at a given point in space is defined as the force per unit positive test charge: E = lim(q_0 -> 0) [F / q_0]."
-      },
-      {
-        "page": 235,
-        "chapter": "Chapter 6: Gauss's Law, Flux Calculations, and Field Symmetries",
-        "text": "Electric flux Phi_E is a scalar measure of the number of electric field lines passing through a given surface area A: Phi_E = int_S E * dA. Gauss's Law states that the total electric flux out of any closed surface (Gaussian surface) is equal to the net enclosed charge Q_enc divided by the permittivity of free space epsilon_0: oint_S E * dA = Q_enc / epsilon_0. In differential vector calculus form, Gauss's law is represented by the divergence of the electric field: div(E) = rho / epsilon_0. Gauss's Law is especially potent for computing electric fields with high degrees of spherical, cylindrical, or planar symmetry. For an isolated conducting sphere of radius R carrying charge Q, E = 0 everywhere inside the sphere (r < R), and E = (Q / (4 * pi * epsilon_0 * r^2)) * r_hat everywhere outside the sphere (r >= R)."
-      },
-      {
-        "page": 268,
-        "chapter": "Chapter 7: Electric Potential, Potential Energy, and Voltage",
-        "text": "Because the electrostatic force is conservative, the work performed in moving a charge q between two points A and B is path-independent: W = int_A^B F * dl = -Delta(U). Electric potential V is electric potential energy per unit charge: V = U / q. The potential difference or voltage between points A and B is V_B - V_A = -int_A^B E * dl. The electric potential due to a point charge q at distance r is given by V(r) = q / (4 * pi * epsilon_0 * r). Equipotential surfaces are three-dimensional surfaces on which the electric potential is constant; electric field lines are always perpendicular to equipotential surfaces at every point in space. The electric field is the negative gradient of the potential: E = -grad(V) = -(d/dx i + d/dy j + d/dz k) V."
-      },
-      {
-        "page": 310,
-        "chapter": "Chapter 8: Capacitance, Energy Storage in Fields, and Dielectrics",
-        "text": "A capacitor consists of two conducting plates separated by a vacuum or insulating dielectric medium. Capacitance C is defined as the ratio of stored charge magnitude Q to the potential difference V between plates: C = Q / V, measured in Farads (1 F = 1 C / V). For a parallel-plate capacitor with plate area A and separation distance d: C_0 = epsilon_0 * A / d. Introducing a dielectric material with dielectric constant kappa (or relative permittivity epsilon_r) polarizes the internal bound molecular charges through Coulomb forces, reducing the internal field and boosting capacitance to C = kappa * C_0. The potential energy stored in the electric field of a charged capacitor is U_C = (1/2) * C * V^2 = (1/2) * (Q^2 / C) = (1/2) * Q * V. The energy density of the electric field is u_E = (1/2) * epsilon * E^2."
-      },
-      {
-        "page": 350,
-        "chapter": "Chapter 9 & 10: Current, Resistance, Ohm's Law, and DC Circuits",
-        "text": "Electric current I represents the macroscopic net rate of flow of electric charge through an area: I = dq / dt. Microscopic drift velocity v_d of conduction electrons is governed by the relation I = n * q * A * v_d. Ohm's Law states that for many materials, the current density J is directly proportional to the applied electric field E: J = sigma * E = E / rho. Resistance R = rho * L / A. In direct-current circuits, Kirchhoff's Junction Rule (current law) and Loop Rule (voltage law) apply conservation of charge and energy. For resistors in series, R_eq = sum(R_i); for resistors in parallel, 1 / R_eq = sum(1 / R_i). Power dissipated in a resistor by Joule heating is P = I * V = I^2 * R = V^2 / R."
-      },
-      {
-        "page": 410,
-        "chapter": "Chapter 11 & 12: Magnetic Forces, Fields, and Ampere's Law",
-        "text": "Magnetic fields exert forces on moving electric charges and electric currents. The magnetic force on a charge q moving with velocity v in magnetic field B is F = q * (v x B). The total Lorentz force is F = q * (E + v x B). A straight wire of length l carrying current I experiences force F = I * (l x B). The Biot-Savart law dictates the magnetic field produced by current element dl: dB = (mu_0 / (4 * pi)) * (I * dl x r_hat) / r^2. Ampere's Law asserts that the line integral of B along any closed loop equals mu_0 times the enclosed current: oint B * dl = mu_0 * I_enc. Because magnetic field lines are closed continuous loops with no start or end points, the net magnetic flux through any closed surface is zero: oint B * dA = 0 (Gauss's law for magnetism)."
-      },
-      {
-        "page": 470,
-        "chapter": "Chapter 13 & 14: Electromagnetic Induction, Inductance, and AC Circuits",
-        "text": "Faraday's Law of Induction quantifies how a changing magnetic flux induces an electromotive force (emf) epsilon: epsilon = -d(Phi_m) / dt. The minus sign represents Lenz's Law: an induced current always flows in such a direction that its magnetic field opposes the change in magnetic flux that produced it. Inductance L = N * Phi_m / I relates flux linkage to current. The energy stored in the magnetic field of an inductor is U_B = (1/2) * L * I^2, with magnetic energy density u_B = B^2 / (2 * mu_0). In alternating-current (AC) circuits driven by sinusoidal voltage v(t) = V_0 * sin(omega * t), inductors provide inductive reactance X_L = omega * L, and capacitors provide capacitive reactance X_C = 1 / (omega * C)."
-      },
-      {
-        "page": 540,
-        "chapter": "Chapter 16: Maxwell's Equations and the Propagation of Light",
-        "text": "Maxwell's synthesis of electromagnetism introduced the displacement current term I_d = epsilon_0 * (d(Phi_E) / dt) into Ampere's law: oint B * dl = mu_0 * I_enc + mu_0 * epsilon_0 * (d(Phi_E) / dt). This theoretical discovery completed the symmetry between changing electric and magnetic fields. In free space without charges or currents, Maxwell's four equations yield the wave equations for the electric and magnetic field vectors: nabla^2(E) = mu_0 * epsilon_0 * (d^2(E) / dt^2) and nabla^2(B) = mu_0 * epsilon_0 * (d^2(B) / dt^2). The propagation speed is c = 1 / sqrt(mu_0 * epsilon_0) = 2.99792458e8 m/s, proving that light is a transverse electromagnetic wave where E and B oscillate in phase, perpendicular to each other and perpendicular to the direction of propagation. The energy flux transported by electromagnetic waves is given by the Poynting vector S = (1 / mu_0) * (E x B)."
-      }
-    ]
-  },
-  {
-    "id": "book-en-2",
-    "lang": "en",
-    "title": "MIT OpenCourseWare: Physics 8.02 Classical Electricity and Magnetism",
-    "author": "Prof. Walter Lewin, Prof. John Belcher, Dr. Peter Dourmashkin (MIT Physics Department)",
-    "category": "Electrodynamics & Field Theory",
-    "year": 2021,
-    "source": "Massachusetts Institute of Technology (MIT OpenCourseWare)",
-    "pages": [
-      {
-        "page": 1,
-        "chapter": "Lecture 1: Electric Charges, Conservation, and Coulomb's Inverse-Square Law",
-        "text": "Electric charge is a fundamental intrinsic property of matter. Charges exist in two types, conventionally designated positive and negative. Electric charge is universally conserved and quantized in integral multiples of e = 1.602e-19 C. Coulomb's inverse-square law establishes that the force between two static point charges drops with the square of distance: F = (1 / (4 * pi * epsilon_0)) * (q1 * q2 / r^2) * r_hat. Notice that electrostatic forces are staggeringly stronger than gravitational forces: the electric repulsion between two electrons exceeds their gravitational attraction by a factor of 10^42."
-      },
-      {
-        "page": 45,
-        "chapter": "Lecture 5: Gauss's Law, Electric Flux, and Conductors in Electrostatic Equilibrium",
-        "text": "By considering the divergence theorem on Coulomb's law, Gauss's law establishes an exact relationship between surface flux and internal enclosed charge: oint E * dA = Q_enc / epsilon_0. A conductor in electrostatic equilibrium exhibits critical properties: 1. The electric field inside the conducting material is zero everywhere. 2. Any excess charge resides entirely on the exterior surface. 3. The electric field immediately outside a charged conductor is normal to the surface: E = sigma / epsilon_0. 4. The entire conductor is an equipotential volume."
-      },
-      {
-        "page": 95,
-        "chapter": "Lecture 11: Magnetic Fields, Lorentz Force Law, and Cyclotron Motion",
-        "text": "The Lorentz force law F = q * (E + v x B) describes the trajectory of charges in combined electric and magnetic fields. Because the magnetic force F_mag = q * (v x B) is perpendicular to the instantaneous velocity v, the work done on the particle is dW = F_mag * dl = q * (v x B) * v dt = 0. Therefore, a static magnetic field cannot change the kinetic energy or speed of a charged particle. In a uniform field B, a particle of mass m with velocity perpendicular to B executes circular cyclotron motion with radius r = (m * v) / (q * B) and cyclotron angular frequency omega_c = (q * B) / m, independent of velocity."
-      },
-      {
-        "page": 155,
-        "chapter": "Lecture 18: Faraday's Law, Induced Electric Fields, and Lenz's Law",
-        "text": "A time-varying magnetic field induces an electric field that is non-conservative (curl(E) = -dB/dt). The circulation of this induced electric field around a closed loop constitutes the induced emf: epsilon = oint E * dl = -d/dt int B * dA. Unlike electrostatic fields, which are conservative and possess a unique scalar potential, induced electric fields form continuous closed loops without sources or sinks. Lenz's law dictates that nature resists changes in magnetic flux."
-      },
-      {
-        "page": 220,
-        "chapter": "Lecture 26: Maxwell's Equations, Displacement Current, and Radiation",
-        "text": "Ampere's law in its original form violated charge conservation in dynamic circuits (such as charging a capacitor). Maxwell resolved this paradox by formulating the displacement current density J_d = epsilon_0 * dE/dt. With this modification, time-varying electric fields act as sources of magnetic fields, and time-varying magnetic fields act as sources of electric fields, allowing self-sustaining electromagnetic wave packets to decouple from source charges and radiate into deep space at speed c."
-      }
-    ]
-  },
-  {
-    "id": "book-en-3",
-    "lang": "en",
-    "title": "Pearson / Prentice Hall: Solid State Electronic Devices & Semiconductor Physics",
-    "author": "Ben G. Streetman, Sanjay Kumar Banerjee (University of Texas at Austin)",
-    "category": "Semiconductor Physics & Microelectronics",
-    "year": 2016,
-    "source": "Pearson Education / Prentice Hall Electrical Engineering Series",
-    "pages": [
-      {
-        "page": 1,
-        "chapter": "Chapter 1: Crystal Properties and Energy Bands in Semiconductors",
-        "text": "This classic textbook delivers a thorough foundation in semiconductor physics, charge carrier transport, and solid-state device design. Silicon crystallizes in the diamond cubic lattice structure with a lattice constant of 5.43 Angstroms. Isolated atomic energy levels broaden into continuous energy bands when atoms are brought together in a crystal lattice. The valence band represents highest occupied states at 0 K, and the conduction band represents lowest unoccupied states."
-      },
-      {
-        "page": 65,
-        "chapter": "Chapter 3: Carrier Transport Phenomena – Drift, Diffusion, and Recombination",
-        "text": "Under an applied electric field, carriers experience acceleration followed by scattering collisions with lattice phonons and ionized impurities. The average drift velocity is proportional to electric field at low fields: v_d = mu * E. At high electric fields exceeding 10^4 V/cm, carrier velocities saturate at approximately v_sat approx 10^7 cm/s due to optical phonon emission. In inhomogeneous semiconductors, spatial concentration gradients drive diffusion currents governed by Fick's law: J_n = q * D_n * dn/dx. Recombination-generation processes restore thermal equilibrium according to the continuity equation: dn/dt = (1/q) * div(J_n) - (n - n_0)/tau_n + G_ext."
-      },
-      {
-        "page": 130,
-        "chapter": "Chapter 5: The PN Junction Diode and Metal-Semiconductor Contacts",
-        "text": "When P-type and N-type semiconductor regions are joined in metallurgical contact, diffusion of electrons into P and holes into N leaves behind exposed uncompensated ionized donor (N_D^+) and acceptor (N_A^-) ions. This creates a space charge depletion layer with electric field directed from N to P that exerts Coulomb forces counteracting diffusion. The built-in potential barrier is V_0 = (k_B * T / q) * ln(N_A * N_D / n_i^2). In forward bias (V > 0), the barrier height drops to V_0 - V, triggering massive exponential carrier injection and forward current I = I_0 * (exp(q * V / (k_B * T)) - 1). In reverse bias, the barrier height expands to V_0 + |V_R|, widening the depletion layer width W = sqrt((2 * epsilon / q) * (1/N_A + 1/N_D) * (V_0 + V_R))."
-      },
-      {
-        "page": 240,
-        "chapter": "Chapter 6 & 7: Bipolar Junction Transistors and Field-Effect Transistors (MOSFETs)",
-        "text": "The Metal-Oxide-Semiconductor Field-Effect Transistor (MOSFET) is the bedrock of modern VLSI circuits. By applying a gate voltage V_GS relative to the source, the electric field through the gate oxide bends the semiconductor energy bands. When V_GS exceeds the threshold voltage V_T, the surface inverts, forming a continuous conductive channel between Source and Drain. In the linear regime (V_DS < V_GS - V_T), current is I_D = mu * C_ox * (W/L) * ((V_GS - V_T) * V_DS - (1/2) * V_DS^2). In saturation (V_DS >= V_GS - V_T), pinch-off occurs at the drain end, and current saturates at I_D,sat = (1/2) * mu * C_ox * (W/L) * (V_GS - V_T)^2."
-      }
-    ]
-  }
-];
+    // PDF Tmavý režim: auto (podľa témy webu), 'dark', alebo 'light'
+    let pdfUserThemeOverride = null;
 
-    // Inicializácia PDF.js Workera
-    if (typeof pdfjsLib !== 'undefined') {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    function togglePdfDarkMode() {
+      const currentEffective = getEffectivePdfTheme();
+      pdfUserThemeOverride = (currentEffective === 'dark') ? 'light' : 'dark';
+      applyPdfThemeClasses();
     }
 
-    function normalizeSearchText(str) {
-      if (!str) return '';
-      return str.normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
-        .replace(/columb/g, "coulomb");
+    function getEffectivePdfTheme() {
+      if (pdfUserThemeOverride) return pdfUserThemeOverride;
+      const htmlTheme = document.documentElement.getAttribute('data-theme') || (typeof activeTheme !== 'undefined' ? activeTheme : 'dark');
+      return htmlTheme === 'dark' ? 'dark' : 'light';
     }
+
+    function applyPdfThemeClasses() {
+      const frame = document.getElementById('pdfDocFrame');
+      const btn = document.getElementById('btnTogglePdfTheme');
+      if (!frame) return;
+
+      frame.classList.remove('pdf-auto-dark', 'pdf-force-dark', 'pdf-force-light');
+
+      const isCurrentSiteDark = (document.documentElement.getAttribute('data-theme') || (typeof activeTheme !== 'undefined' ? activeTheme : 'dark')) === 'dark';
+
+      if (pdfUserThemeOverride === 'dark') {
+        frame.classList.add('pdf-force-dark');
+        if (btn) btn.innerHTML = '🌙 PDF Tmavé (Zapnuté)';
+      } else if (pdfUserThemeOverride === 'light') {
+        frame.classList.add('pdf-force-light');
+        if (btn) btn.innerHTML = '☀️ PDF Svetlé (Originál)';
+      } else {
+        frame.classList.add('pdf-auto-dark');
+        if (btn) btn.innerHTML = isCurrentSiteDark ? '🌙 Tmavé PDF (Auto)' : '☀️ Svetlé PDF (Auto)';
+      }
+    }
+
+    // Skutočné PDF učebnice priamo dostupné v projekte
+    const REAL_PDF_BOOKS = [
+      {
+        id: "pdf-stu-1",
+        title: "STU FEI: Tangenciálna buzola – Meranie magnetického poľa Zeme (Originálne PDF)",
+        author: "Katedra fyziky FEI STU Bratislava",
+        lang: "sk",
+        category: "Elektromagnetizmus & Laboratórne merania",
+        year: "FEI STU",
+        source: "Slovenská technická univerzita",
+        pdfUrl: "pdfs/STU_FEI_Tangencialna_Buzola.pdf",
+        description: "Kompletné slovenské laboratórne skriptá FEI STU s odvodzením vzorcov Biot-Savartovho zákona a meraním magnetických polí."
+      },
+      {
+        id: "pdf-mit-1",
+        title: "MIT 8.02: Coulombov zákon a elektrostatické pole (Originálne PDF)",
+        author: "Prof. Walter Lewin, Dr. Peter Dourmashkin (MIT Physics Department)",
+        lang: "en",
+        category: "Elektrostatika & Vektorové polia",
+        year: "MIT OpenCourseWare",
+        source: "Massachusetts Institute of Technology (35 strán)",
+        pdfUrl: "pdfs/MIT_802_Coulombs_Law.pdf",
+        description: "Kompletná vysokoškolská učebnica MIT: Coulombov zákon, princíp superpozície, elektrické dipóly, silové čiary a 3D vektorové polia."
+      },
+      {
+        id: "pdf-mit-2",
+        title: "MIT 8.02: Gaussov zákon elektrostatiky a elektrický tok (Originálne PDF)",
+        author: "Prof. Walter Lewin, Dr. Peter Dourmashkin (MIT Physics Department)",
+        lang: "en",
+        category: "Gaussov zákon & Výpočty polí",
+        year: "MIT OpenCourseWare",
+        source: "Massachusetts Institute of Technology (28 strán)",
+        pdfUrl: "pdfs/MIT_802_Gauss_Law.pdf",
+        description: "Kompletná učebnica MIT: Tok intenzity elektrického poľa, Gaussov zákon pre guľové, valcové a plošné náboje, vodiče v rovnováhe."
+      },
+      {
+        id: "pdf-mit-3",
+        title: "MIT 8.02: Maxwellove rovnice a elektromagnetické žiarenie (Originálne PDF)",
+        author: "Prof. Walter Lewin, Dr. Peter Dourmashkin (MIT Physics Department)",
+        lang: "en",
+        category: "Maxwellove rovnice & Vlny",
+        year: "MIT OpenCourseWare",
+        source: "Massachusetts Institute of Technology (45 strán)",
+        pdfUrl: "pdfs/MIT_802_Maxwells_Equations.pdf",
+        description: "Kompletná učebnica MIT: Zovšeobecnený Ampérov zákon, posuvný prúd, odvodenie vlnových rovníc svetla a Poyntingov vektor energie."
+      }
+    ];
 
     function togglePdfPanel(forceState) {
       const nextState = typeof forceState === 'boolean' ? forceState : !isPdfSplitActive;
@@ -3288,9 +3094,7 @@
 
       if (isPdfSplitActive) {
         switchMainView('studio');
-        if (loadedPdfBooks.length === 0) {
-          loadPdfBooksCatalog();
-        } else {
+        if (!currentLoadedPdfUrl) {
           showPdfCatalogView();
         }
       }
@@ -3309,65 +3113,57 @@
       renderPdfBooksShelf();
     }
 
-    async function loadPdfBooksCatalog() {
-      try {
-        const res = await fetch(`${BACKEND_API_BASE}/api/library`);
-        if (res.ok) {
-          const data = await res.json();
-          loadedPdfBooks = (data.books && data.books.length > 0) ? data.books : FALLBACK_PDF_BOOKS;
-        } else {
-          loadedPdfBooks = FALLBACK_PDF_BOOKS;
-        }
-      } catch (e) {
-        loadedPdfBooks = FALLBACK_PDF_BOOKS;
-      }
-      showPdfCatalogView();
-    }
-
     function showPdfCatalogView() {
       const catEl = document.getElementById('pdfCatalogView');
-      const searchEl = document.getElementById('pdfSearchResultsView');
       const readerEl = document.getElementById('pdfReaderView');
 
       if (catEl) catEl.style.display = 'flex';
-      if (searchEl) searchEl.style.display = 'none';
       if (readerEl) readerEl.style.display = 'none';
 
       renderPdfBooksShelf();
     }
 
-    function showPdfSearchResultsView() {
-      const catEl = document.getElementById('pdfCatalogView');
-      const searchEl = document.getElementById('pdfSearchResultsView');
-      const readerEl = document.getElementById('pdfReaderView');
-
-      if (catEl) catEl.style.display = 'none';
-      if (searchEl) searchEl.style.display = 'flex';
-      if (readerEl) readerEl.style.display = 'none';
+    function loadPdfBooksCatalog() {
+      showPdfCatalogView();
     }
 
-    function renderPdfBooksShelf() {
+    function filterPdfShelfRealtime(query) {
+      renderPdfBooksShelf(query);
+    }
+
+    function searchPdfQuick(term) {
+      const input = document.getElementById('pdfSearchInput');
+      if (input) input.value = term;
+      filterPdfShelfRealtime(term);
+    }
+
+    function renderPdfBooksShelf(searchFilter) {
       const container = document.getElementById('pdfBooksShelf');
       if (!container) return;
 
-      const booksToDisplay = loadedPdfBooks.length > 0 ? loadedPdfBooks : FALLBACK_PDF_BOOKS;
-      const filtered = booksToDisplay.filter(book => {
-        if (pdfCurrentLang === 'sk') return book.lang === 'sk';
-        if (pdfCurrentLang === 'en') return book.lang === 'en';
+      const q = (searchFilter || '').trim().toLowerCase();
+
+      const filtered = REAL_PDF_BOOKS.filter(book => {
+        // Filter jazyka
+        if (pdfCurrentLang === 'sk' && book.lang !== 'sk') return false;
+        if (pdfCurrentLang === 'en' && book.lang !== 'en') return false;
+        // Textový filter
+        if (q) {
+          const hay = (book.title + ' ' + book.author + ' ' + (book.category || '')).toLowerCase();
+          return hay.includes(q);
+        }
         return true;
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:12px;">Žiadne knihy pre zvolený filter jazyka.</div>`;
+        container.innerHTML = `<div style="font-size:12px; color:var(--text-muted); text-align:center; padding:16px;">Žiadne PDF knihy nezodpovedajú zvolenému filtru.</div>`;
         return;
       }
 
       container.innerHTML = filtered.map(book => {
         const badge = book.lang === 'sk'
           ? `<span class="pdf-book-badge-sk">[SK] STU FEI</span>`
-          : `<span class="pdf-book-badge-en">[EN] TECH LITERATURE</span>`;
-
-        const pagesCount = book.pages ? book.pages.length : 1;
+          : `<span class="pdf-book-badge-en">[EN] MIT TECH</span>`;
 
         return `
           <div class="pdf-shelf-card">
@@ -3375,363 +3171,117 @@
               <div>
                 ${badge}
                 <strong style="color:var(--text); font-size:13px; display:block; margin:4px 0 2px;">${escapeHtml(book.title)}</strong>
-                <span style="font-size:11px; color:var(--text-muted); display:block;">${escapeHtml(book.author)} (${book.year || 'STU'})</span>
-                <span style="font-size:10px; color:var(--miku-cyan); margin-top:2px; display:block;">🏷️ ${escapeHtml(book.category || 'Odborná literatúra')} • ${pagesCount} podrobných kapitol/strán</span>
+                <span style="font-size:11px; color:var(--text-muted); display:block;">${escapeHtml(book.author)} (${book.year || 'Učebnica'})</span>
+                <p style="font-size:11px; color:var(--text); margin:6px 0 2px; line-height:1.5;">${escapeHtml(book.description || '')}</p>
               </div>
             </div>
-            <div class="pdf-shelf-actions">
-              <button class="btn-pdf-action" onclick="openBookInReader('${book.id}', 1)">📖 Čítať knihu</button>
-              <button class="btn-cyber-sm" onclick="filterSearchBook('${escapeQuote(book.title)}')">🔍 Hľadať v tejto knihe</button>
+            <div class="pdf-shelf-actions" style="margin-top:8px;">
+              <button class="btn-pdf-action" onclick="openPdfFileInViewer('${escapeQuote(book.pdfUrl)}', '${escapeQuote(book.title)}', '${book.lang}')">📖 Čítať</button>
+              <button class="btn-cyber-sm" onclick="window.open('${escapeQuote(book.pdfUrl)}', '_blank')">↗ Otvoriť v novom okne</button>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    function openBookInReader(bookId, pageNum) {
-      const sourceBooks = (loadedPdfBooks.length > 0 ? loadedPdfBooks : FALLBACK_PDF_BOOKS);
-      const book = sourceBooks.find(b => b.id === bookId);
-      if (!book) return;
-
-      currentReadingBook = book;
-      const pages = book.pages || [];
-      const pageIndex = (typeof pageNum === 'number' && pageNum >= 1) ? Math.min(pageNum - 1, pages.length - 1) : 0;
-      currentReadingPageIndex = Math.max(0, pageIndex);
-
-      // Prepnúť zobrazenie na Reader
+    function openPdfFileInViewer(pdfUrl, title, lang) {
       const catEl = document.getElementById('pdfCatalogView');
-      const searchEl = document.getElementById('pdfSearchResultsView');
       const readerEl = document.getElementById('pdfReaderView');
 
       if (catEl) catEl.style.display = 'none';
-      if (searchEl) searchEl.style.display = 'none';
       if (readerEl) readerEl.style.display = 'flex';
 
-      // Nastaviť hlavičku knihy
       const badgeEl = document.getElementById('readerBookBadge');
       const titleEl = document.getElementById('readerBookTitle');
-      const metaEl = document.getElementById('readerBookMeta');
+      const frameEl = document.getElementById('pdfDocFrame');
 
       if (badgeEl) {
-        badgeEl.className = book.lang === 'sk' ? 'pdf-book-badge-sk' : 'pdf-book-badge-en';
-        badgeEl.innerText = book.lang === 'sk' ? '[SK] STU FEI' : '[EN] TECH SOURCE';
+        badgeEl.className = lang === 'sk' ? 'pdf-book-badge-sk' : 'pdf-book-badge-en';
+        badgeEl.innerText = lang === 'sk' ? '[SK] STU FEI' : '[EN] MIT TECH';
       }
-      if (titleEl) titleEl.innerText = book.title;
-      if (metaEl) metaEl.innerText = `${book.author} | ${book.source || 'Vedecká literatúra'} (${book.year || ''})`;
+      if (titleEl) titleEl.innerText = title;
 
-      // Naplniť dropdown kapitol
-      const chapterSel = document.getElementById('pdfChapterSelect');
-      if (chapterSel) {
-        chapterSel.innerHTML = pages.map((p, idx) => `
-          <option value="${idx}" ${idx === currentReadingPageIndex ? 'selected' : ''}>
-            Strana ${p.page}: ${escapeHtml(p.chapter || 'Kapitola')}
-          </option>
-        `).join('');
-      }
+      currentLoadedPdfUrl = pdfUrl;
+      currentLoadedPdfTitle = title;
 
-      renderCurrentReaderPage();
-    }
-
-    function renderCurrentReaderPage() {
-      if (!currentReadingBook) return;
-      const pages = currentReadingBook.pages || [];
-      if (pages.length === 0) return;
-
-      if (currentReadingPageIndex < 0) currentReadingPageIndex = 0;
-      if (currentReadingPageIndex >= pages.length) currentReadingPageIndex = pages.length - 1;
-
-      const p = pages[currentReadingPageIndex];
-
-      const indicator = document.getElementById('pdfPageIndicator');
-      const chTitle = document.getElementById('readerChapterTitle');
-      const pBadge = document.getElementById('readerPageBadge');
-      const pBody = document.getElementById('readerPageBody');
-      const chapterSel = document.getElementById('pdfChapterSelect');
-
-      if (indicator) indicator.innerText = `Strana ${p.page} z ${pages.length}`;
-      if (chTitle) chTitle.innerText = p.chapter || `Kapitola na strane ${p.page}`;
-      if (pBadge) pBadge.innerText = `Strana ${p.page}`;
-      if (pBody) pBody.innerText = p.text;
-
-      if (chapterSel) {
-        chapterSel.value = currentReadingPageIndex;
+      if (frameEl) {
+        frameEl.src = pdfUrl;
+        applyPdfThemeClasses();
       }
     }
 
-    function navPdfPage(delta) {
-      if (!currentReadingBook) return;
-      const pages = currentReadingBook.pages || [];
-      if (pages.length === 0) return;
-
-      currentReadingPageIndex += delta;
-      if (currentReadingPageIndex < 0) currentReadingPageIndex = 0;
-      if (currentReadingPageIndex >= pages.length) currentReadingPageIndex = pages.length - 1;
-
-      renderCurrentReaderPage();
-    }
-
-    function jumpToPdfChapter(idx) {
-      currentReadingPageIndex = parseInt(idx) || 0;
-      renderCurrentReaderPage();
-    }
-
-    function insertCurrentPageCitation() {
-      if (!currentReadingBook) return;
-      const pages = currentReadingBook.pages || [];
-      const p = pages[currentReadingPageIndex];
-      if (!p) return;
-
-      insertPdfCitationToEditor(currentReadingBook.title, p.chapter || `Strana ${p.page}`, p.page, p.text.slice(0, 320));
-    }
-
-    function filterSearchBook(bookTitle) {
-      const input = document.getElementById('pdfSearchInput');
-      if (input) {
-        input.value = bookTitle.slice(0, 25);
-        performPdfSearch();
+    function openCurrentPdfFullscreen() {
+      if (currentLoadedPdfUrl) {
+        window.open(currentLoadedPdfUrl, '_blank');
       }
     }
 
-    // Priame nahratie PDF súboru cez kliknutie alebo drag-and-drop
+    function insertPdfCitationPrompt() {
+      if (!currentLoadedPdfTitle) {
+        alert("Najprv otvorte knihu alebo PDF.");
+        return;
+      }
+
+      const pageStr = prompt(`Zadajte číslo strany alebo poznámku k citácii z PDF „${currentLoadedPdfTitle}“:`, "Strana 1");
+      if (pageStr === null) return;
+
+      const editor = document.getElementById('docEditor');
+      if (!editor) return;
+
+      const citation = `\n\n> 📖 **Citácia z odbornej literatúry [${currentLoadedPdfTitle}]**\n> *${pageStr}*\n`;
+      editor.value += citation;
+      saveCurrentTopic();
+      alert(`✅ Citácia bola vložená do textu témy!`);
+    }
+
+    // Priame nahratie a otvorenie ľubovoľného PDF z počítača
     function triggerDirectPdfUpload() {
       const fileInput = document.getElementById('directPdfInput');
       if (fileInput) fileInput.click();
     }
 
-    async function handleDirectPdfUpload(event) {
+    function handleDirectPdfUpload(event) {
       const file = event.target.files?.[0];
       if (file) {
-        await processPdfFileDirect(file);
+        loadUserPdfFile(file);
       }
     }
 
-    async function handlePdfDrop(event) {
+    function handlePdfDrop(event) {
       event.preventDefault();
       const files = event.dataTransfer?.files;
       if (files && files.length > 0) {
-        await processPdfFileDirect(files[0]);
+        loadUserPdfFile(files[0]);
       }
     }
 
-    async function processPdfFileDirect(file) {
+    function loadUserPdfFile(file) {
       if (!file.name.toLowerCase().endsWith('.pdf')) {
         alert("Prosím vyberte platný PDF súbor (.pdf).");
         return;
       }
 
-      const banner = document.getElementById('pdfUploadBanner');
-      if (banner) {
-        banner.style.display = 'block';
-        banner.innerText = `⏳ Otváram súbor „${file.name}“ cez PDF.js engine...`;
-      }
+      const blobUrl = URL.createObjectURL(file);
+      const cleanTitle = file.name.replace(/\.pdf$/i, '').replace(/[-_]/g, ' ');
 
-      try {
-        if (typeof pdfjsLib === 'undefined') {
-          throw new Error("PDF.js knižnica sa ešte inicializuje. Skúste to prosím znova o sekundu.");
-        }
+      const newBook = {
+        id: 'pdf-user-' + Date.now(),
+        title: cleanTitle + ' (Nahrané PDF)',
+        author: 'Vlastný dokument z PC',
+        lang: 'sk',
+        category: 'Používateľský dokument',
+        year: new Date().getFullYear(),
+        source: `${(file.size / (1024 * 1024)).toFixed(1)} MB súbor`,
+        pdfUrl: blobUrl,
+        description: `Používateľom nahraný PDF dokument (${file.name}). Plne skrolovateľný so všetkými stranami a grafikou.`
+      };
 
-        const arrayBuffer = await file.arrayBuffer();
-        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-        const pdf = await loadingTask.promise;
-        const numPages = pdf.numPages;
+      REAL_PDF_BOOKS.unshift(newBook);
+      renderPdfBooksShelf();
 
-        const pages = [];
-        for (let i = 1; i <= numPages; i++) {
-          if (banner) {
-            banner.innerText = `⏳ Čítam stranu ${i} z ${numPages}...`;
-          }
-          const page = await pdf.getPage(i);
-          const textContent = await page.getTextContent();
-          const pageText = textContent.items.map(item => item.str).join(' ');
-
-          pages.push({
-            page: i,
-            chapter: `Kapitola / Strana ${i}`,
-            text: pageText.trim() || `[Strana ${i} neobsahuje textovú vrstvu alebo ide o naskenovaný obrázok]`
-          });
-        }
-
-        const cleanTitle = file.name.replace(/\.pdf$/i, '').replace(/[-_]/g, ' ');
-
-        const newBook = {
-          id: 'book-user-' + Date.now(),
-          title: cleanTitle,
-          author: "Používateľská knižnica",
-          lang: "sk",
-          category: "Nahraná odborná literatúra",
-          year: new Date().getFullYear(),
-          source: `PDF súbor (${pages.length} strán)`,
-          pages: pages
-        };
-
-        // Uloženie na backend
-        try {
-          await fetch(`${BACKEND_API_BASE}/api/library/add`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newBook)
-          });
-        } catch(e) {
-          console.warn("Backend add error, saving locally:", e);
-        }
-
-        loadedPdfBooks.unshift(newBook);
-        if (banner) {
-          banner.innerText = `✅ Kniha „${cleanTitle}“ bola úspešne načítaná (${pages.length} strán)!`;
-          setTimeout(() => { banner.style.display = 'none'; }, 2500);
-        }
-
-        // Okamžite otvor nahranú knihu v čítačke!
-        openBookInReader(newBook.id, 1);
-        alert(`🎉 Úspech! Celá kniha „${cleanTitle}“ so ${pages.length} stranami bola nahraná. Teraz ju môžete čítať stranu po strane alebo v nej full-textovo vyhľadávať!`);
-
-      } catch (err) {
-        console.error("Chyba spracovania PDF:", err);
-        alert("Chyba pri spracovaní PDF: " + err.message);
-        if (banner) banner.style.display = 'none';
-      }
-    }
-
-    async function performPdfSearch() {
-      const input = document.getElementById('pdfSearchInput');
-      const searchResultsEl = document.getElementById('pdfSearchResultsView');
-      if (!input || !searchResultsEl) return;
-
-      const rawQuery = input.value.trim();
-      if (!rawQuery) {
-        showPdfCatalogView();
-        return;
-      }
-
-      showPdfSearchResultsView();
-      searchResultsEl.innerHTML = `<div class="wiki-empty-hint"><span style="color:var(--miku-pink);">🔍 Prehľadávam všetky slovenské aj svetové knihy v databáze...</span></div>`;
-
-      let matches = [];
-
-      // 1. Pokus cez server API
-      try {
-        const res = await fetch(`${BACKEND_API_BASE}/api/library/search?q=${encodeURIComponent(rawQuery)}`);
-        if (res.ok) {
-          const data = await res.json();
-          matches = data.results || [];
-        }
-      } catch (e) {
-        console.warn("Server search nedostupný, použijem lokálny search:", e);
-      }
-
-      // 2. Lokálny fallback search s normalizáciou a tokenizáciou
-      if (matches.length === 0) {
-        const sourceBooks = (loadedPdfBooks.length > 0 ? loadedPdfBooks : FALLBACK_PDF_BOOKS);
-        const normQuery = normalizeSearchText(rawQuery);
-        const queryTokens = normQuery.split(/\s+/).filter(t => t.length > 1);
-
-        sourceBooks.forEach(book => {
-          (book.pages || []).forEach(p => {
-            const pageNorm = normalizeSearchText(`${book.title} ${p.chapter || ''} ${p.text}`);
-            const fullMatch = pageNorm.includes(normQuery);
-            const tokenMatch = queryTokens.length > 0 && queryTokens.every(token => pageNorm.includes(token));
-
-            if (fullMatch || tokenMatch) {
-              const textNorm = normalizeSearchText(p.text);
-              let idx = -1;
-              if (queryTokens.length > 0) {
-                idx = textNorm.indexOf(queryTokens[0]);
-              }
-              if (idx === -1) idx = textNorm.indexOf(normQuery);
-
-              let snippet = p.text;
-              if (idx !== -1) {
-                const start = Math.max(0, idx - 100);
-                const end = Math.min(p.text.length, idx + 220);
-                snippet = (start > 0 ? '...' : '') + p.text.substring(start, end) + (end < p.text.length ? '...' : '');
-              } else {
-                snippet = p.text.substring(0, 240) + '...';
-              }
-
-              matches.push({
-                bookId: book.id,
-                bookTitle: book.title,
-                bookAuthor: book.author,
-                lang: book.lang,
-                category: book.category,
-                source: book.source,
-                page: p.page,
-                chapter: p.chapter,
-                fullText: p.text,
-                snippet: snippet
-              });
-            }
-          });
-        });
-      }
-
-      if (matches.length === 0) {
-        searchResultsEl.innerHTML = `
-          <div class="wiki-empty-hint">
-            <div>
-              <span style="display:block; margin-bottom:8px;">Žiadne výskyty pre výraz „${escapeHtml(rawQuery)}“ v knihách.</span>
-              <button class="btn-cyber-sm" onclick="showPdfCatalogView()">⬅ Späť do katalógu kníh</button>
-            </div>
-          </div>
-        `;
-        return;
-      }
-
-      searchResultsEl.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid rgba(255,42,133,0.25); padding-bottom:6px;">
-          <span style="font-size:11px; font-weight:800; color:var(--miku-pink);">NÁJDENÝCH ${matches.length} ZHÔD VO VŠETKÝCH KNIHÁCH</span>
-          <button class="btn-cyber-sm" onclick="showPdfCatalogView()">⬅ Katalóg kníh</button>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:8px;">
-          ${matches.map((m) => {
-            const badge = m.lang === 'sk' ? `<span class="pdf-book-badge-sk">[SK]</span>` : `<span class="pdf-book-badge-en">[EN]</span>`;
-            
-            let highlighted = escapeHtml(m.snippet);
-            const wordsToHighlight = rawQuery.split(/\s+/).filter(w => w.length > 2);
-            wordsToHighlight.forEach(w => {
-              const regex = new RegExp(`(${escapeRegex(w)})`, 'gi');
-              highlighted = highlighted.replace(regex, '<span style="background:rgba(255,42,133,0.35); color:#fff; font-weight:bold; padding:1px 3px; border-radius:3px;">$1</span>');
-            });
-
-            return `
-              <div class="pdf-match-card">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
-                  <div>
-                    ${badge}
-                    <strong style="font-size:12px; color:var(--text);">${escapeHtml(m.bookTitle)}</strong>
-                    <span style="font-size:10px; color:var(--text-muted); display:block;">${escapeHtml(m.chapter)} • Strana ${m.page}</span>
-                  </div>
-                  <div style="display:flex; gap:6px;">
-                    <button class="btn-pdf-action" onclick="openBookInReader('${m.bookId}', ${m.page})" title="Otvoriť túto stranu priamo v čítačke">📖 Čítať stranu ${m.page}</button>
-                    <button class="btn-cyber-sm" style="font-size:10px; padding:2px 6px; background:rgba(255,42,133,0.2); border-color:var(--miku-pink); color:#fff;" onclick="insertPdfCitationToEditor('${escapeQuote(m.bookTitle)}', '${escapeQuote(m.chapter)}', ${m.page}, '${escapeQuote(m.fullText.slice(0, 320))}')" title="Citovať tento výňatok v štúdiu">📋 Citovať</button>
-                  </div>
-                </div>
-                <div style="font-size:11px; line-height:1.6; color:var(--text); margin-top:6px; background:rgba(0,0,0,0.3); padding:8px 10px; border-radius:6px; border-left:3px solid var(--miku-pink);">
-                  ${highlighted}
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      `;
-    }
-
-    function searchPdfQuick(term) {
-      const input = document.getElementById('pdfSearchInput');
-      if (input) {
-        input.value = term;
-        performPdfSearch();
-      }
-    }
-
-    function insertPdfCitationToEditor(title, chapter, page, textSnippet) {
-      const editor = document.getElementById('docEditor');
-      if (!editor) return;
-
-      const citation = `\n\n> 📖 **Citácia z odbornej literatúry [${title}]**\n> *${chapter} (Strana ${page})*\n> „${textSnippet}...“\n`;
-      editor.value += citation;
-      saveCurrentTopic();
-      alert(`✅ Citácia z knihy „${title}“ (str. ${page}) bola vložená do textu témy!`);
+      // Okamžite otvor skutočné PDF v čítačke!
+      openPdfFileInViewer(blobUrl, cleanTitle, 'sk');
+      alert(`🎉 Súbor „${cleanTitle}“ bol úspešne načítaný do čítačky!`);
     }
 
     function initPdfResizer() {
@@ -3771,7 +3321,6 @@
       return str.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
     }
 
-    // --- 4. TOPIC SELECTION & TREE RENDER ---
     function renderStudio() {
       renderTopicTree();
       loadTopic(activeTopicId);
